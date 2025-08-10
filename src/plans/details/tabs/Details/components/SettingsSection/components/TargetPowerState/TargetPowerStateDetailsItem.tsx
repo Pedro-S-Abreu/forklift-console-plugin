@@ -5,35 +5,34 @@ import { isPlanEditable } from 'src/plans/details/components/PlanStatus/utils/ut
 import { useForkliftTranslation } from 'src/utils/i18n';
 
 import { Label } from '@patternfly/react-core';
+import { getPlanTargetPowerState } from '@utils/crds/plans/selectors';
 
 import type { EditableDetailsItemProps } from '../../../utils/types';
 
-import { getDiskRawCopy } from './utils/utils';
-import EditRawDiskCopy from './EditRawDiskCopy';
+import EditTargetPowerState from './EditTargetPowerState';
 
-const RawDiskCopyDetailsItem: FC<EditableDetailsItemProps> = ({ canPatch, plan, shouldRender }) => {
+const TargetPowerStateDetailsItem: FC<EditableDetailsItemProps> = ({ canPatch, plan }) => {
   const { t } = useForkliftTranslation();
   const { showModal } = useModal();
 
-  if (!shouldRender) return null;
-
-  const skipGuestConversion = getDiskRawCopy(plan);
-
   return (
     <DetailsItem
-      title={t('Raw copy mode')}
+      title={t('VM target power state')}
       content={
         <Label isCompact color="grey">
-          {skipGuestConversion ? t('Use raw copy mode') : t('Use default')}
+          {getPlanTargetPowerState(plan) ?? t('Auto')}
         </Label>
       }
-      crumbs={['spec', 'skipGuestConversion']}
+      helpContent={t(
+        `Choose what state you'd like all of the VMs in your plan to be powered to after migration. You can change this setting for specific VMs in the Virtual machines tab.`,
+      )}
+      crumbs={['spec', 'targetPowerState']}
       onEdit={() => {
-        showModal(<EditRawDiskCopy resource={plan} />);
+        showModal(<EditTargetPowerState resource={plan} />);
       }}
       canEdit={canPatch && isPlanEditable(plan)}
     />
   );
 };
 
-export default RawDiskCopyDetailsItem;
+export default TargetPowerStateDetailsItem;
