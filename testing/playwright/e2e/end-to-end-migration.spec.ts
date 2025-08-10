@@ -5,10 +5,21 @@ import { setupCreatePlanIntercepts } from '../intercepts';
 import { CreatePlanWizardPage } from '../page-objects/CreatePlanWizard/CreatePlanWizardPage';
 import { PlanDetailsPage } from '../page-objects/PlanDetailsPage';
 import { PlansListPage } from '../page-objects/PlansListPage';
+import { setupAuthentication } from '../utils/auth';
 
 test.describe('Plans - Critical End-to-End Migration', () => {
   test.beforeEach(async ({ page }) => {
-    await setupCreatePlanIntercepts(page);
+    // Authenticate if in Jenkins (real environment)
+    if (process.env.JENKINS === 'true') {
+      await setupAuthentication(page, {
+        baseUrl: process.env.BASE_ADDRESS,
+        username: process.env.CLUSTER_USERNAME,
+        password: process.env.CLUSTER_PASSWORD,
+      });
+    } else {
+      await setupCreatePlanIntercepts(page);
+    }
+
     const plansPage = new PlansListPage(page);
     await plansPage.navigateFromMainMenu();
   });
