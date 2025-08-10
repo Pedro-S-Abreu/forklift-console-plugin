@@ -15,5 +15,6 @@ export default defineConfig({
     video: 'retain-on-failure',
     // Use data-testid to match actual rendered HTML
     testIdAttribute: 'data-testid',
+    ignoreHTTPSErrors: true,
   },
 });
