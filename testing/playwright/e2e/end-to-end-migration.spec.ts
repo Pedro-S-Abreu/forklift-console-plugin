@@ -85,8 +85,8 @@ test.describe('Plans - Critical End-to-End Migration', () => {
     if (process.env.JENKINS === 'true') {
       await setupAuthentication(page, {
         baseUrl: process.env.BASE_ADDRESS ?? 'http://localhost:9000',
-        username: process.env.OPENSHIFT_USERNAME,
-        password: process.env.OPENSHIFT_PASSWORD,
+        username: process.env.CLUSTER_USERNAME,
+        password: process.env.CLUSTER_PASSWORD,
       });
     } else {
       await setupCreatePlanIntercepts(page);
