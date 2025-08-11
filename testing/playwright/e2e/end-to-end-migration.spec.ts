@@ -9,11 +9,14 @@ import { setupAuthentication } from '../utils/auth';
 
 test.describe('Plans - Critical End-to-End Migration', () => {
   test.beforeEach(async ({ page }) => {
+    // console.log('VSPHERE_URL', process.env.VSPHERE_URL);
+    // console.log('VSPHERE_USERNAME', process.env.VSPHERE_USERNAME);
+    // console.log('VSPHERE_PASSWORD length', process.env.VSPHERE_PASSWORD?.length);
     // Authenticate if in Jenkins (real environment)
     if (process.env.JENKINS === 'true') {
       await setupAuthentication(page, {
         baseUrl: process.env.BASE_ADDRESS,
-        username: process.env.CLUSTER_USERNAME,
+        username: process.env.VSPHERE_URL,
         password: process.env.CLUSTER_PASSWORD,
       });
     } else {
