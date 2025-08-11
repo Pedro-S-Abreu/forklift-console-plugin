@@ -13,18 +13,18 @@ test.describe('Plans - Critical End-to-End Migration', () => {
   test.beforeEach(async ({ page }) => {
     // Debug: Check for providers file and environment variables
     // eslint-disable-next-line no-console
-    console.log('🔍 Debug: Checking test environment setup...');
+    console.error('🔍 Debug: Checking test environment setup...');
     // eslint-disable-next-line no-console
-    console.log(`Current working directory: ${process.cwd()}`);
+    console.error(`Current working directory: ${process.cwd()}`);
 
     // Check if providers file exists in current directory (should be /tmp/playwright-tests/testing)
     const providersPath = '.providers.json'; // File should be in current directory
     // eslint-disable-next-line no-console
-    console.log(`Checking for providers file: ${providersPath}`);
+    console.error(`Checking for providers file: ${providersPath}`);
 
     if (fs.existsSync(providersPath)) {
       // eslint-disable-next-line no-console
-      console.log('✅ .providers.json exists in test directory');
+      console.error('✅ .providers.json exists in test directory');
       try {
         const providersContent = fs.readFileSync(providersPath, 'utf8');
         const providers = JSON.parse(providersContent);
@@ -40,47 +40,50 @@ test.describe('Plans - Critical End-to-End Migration', () => {
         );
 
         // eslint-disable-next-line no-console
-        console.log('📄 Provider structure (without secrets):', JSON.stringify(sanitized, null, 2));
+        console.error(
+          '📄 Provider structure (without secrets):',
+          JSON.stringify(sanitized, null, 2),
+        );
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.log('❌ Error reading .providers.json:', (error as Error).message);
+        console.error('❌ Error reading .providers.json:', (error as Error).message);
       }
     } else {
       // eslint-disable-next-line no-console
-      console.log('❌ .providers.json not found in test directory');
+      console.error('❌ .providers.json not found in test directory');
       // eslint-disable-next-line no-console
-      console.log('Available files in test directory:');
+      console.error('Available files in test directory:');
       try {
         const files = fs.readdirSync('.');
         files.forEach((file) => {
           // eslint-disable-next-line no-console
-          console.log(`  - ${file}`);
+          console.error(`  - ${file}`);
         });
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.log('❌ Error listing files:', (error as Error).message);
+        console.error('❌ Error listing files:', (error as Error).message);
       }
     }
 
     // Check environment variables
     // eslint-disable-next-line no-console
-    console.log('🔍 Environment variables for tests:');
+    console.error('🔍 Environment variables for tests:');
     // eslint-disable-next-line no-console
-    console.log(`CLUSTER_USERNAME: ${process.env.CLUSTER_USERNAME ?? 'NOT_SET'}`);
+    console.error(`CLUSTER_USERNAME: ${process.env.CLUSTER_USERNAME ?? 'NOT_SET'}`);
     // eslint-disable-next-line no-console
-    console.log(`CLUSTER_PASSWORD: ${process.env.CLUSTER_PASSWORD ? '***SET***' : 'NOT_SET'}`);
+    console.error(`CLUSTER_PASSWORD: ${process.env.CLUSTER_PASSWORD ? '***SET***' : 'NOT_SET'}`);
     // eslint-disable-next-line no-console
-    console.log(`VSPHERE_USERNAME: ${process.env.VSPHERE_USERNAME ?? 'NOT_SET'}`);
+    console.error(`VSPHERE_USERNAME: ${process.env.VSPHERE_USERNAME ?? 'NOT_SET'}`);
     // eslint-disable-next-line no-console
-    console.log(`VSPHERE_PASSWORD: ${process.env.VSPHERE_PASSWORD ? '***SET***' : 'NOT_SET'}`);
+    console.error(`VSPHERE_PASSWORD: ${process.env.VSPHERE_PASSWORD ? '***SET***' : 'NOT_SET'}`);
     // eslint-disable-next-line no-console
-    console.log(`VSPHERE_URL: ${process.env.VSPHERE_URL ?? 'NOT_SET'}`);
+    console.error(`VSPHERE_URL: ${process.env.VSPHERE_URL ?? 'NOT_SET'}`);
     // eslint-disable-next-line no-console
-    console.log(`BASE_ADDRESS: ${process.env.BASE_ADDRESS ?? 'NOT_SET'}`);
+    console.error(`BASE_ADDRESS: ${process.env.BASE_ADDRESS ?? 'NOT_SET'}`);
     // eslint-disable-next-line no-console
-    console.log(`JENKINS: ${process.env.JENKINS ?? 'NOT_SET'}`);
+    console.error(`JENKINS: ${process.env.JENKINS ?? 'NOT_SET'}`);
     // eslint-disable-next-line no-console
-    console.log(`CI: ${process.env.CI ?? 'NOT_SET'}`);
+    console.error(`CI: ${process.env.CI ?? 'NOT_SET'}`);
     // Authenticate if in Jenkins (real environment)
     if (process.env.JENKINS === 'true') {
       await setupAuthentication(page, {
