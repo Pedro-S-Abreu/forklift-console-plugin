@@ -14,7 +14,7 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     return;
   }
 
-  const { baseURL, headless, ignoreHTTPSErrors, video } = config.projects[0].use;
+  const { baseURL, headless, ignoreHTTPSErrors, video, viewport } = config.projects[0].use;
   const browser = await chromium.launch({ headless });
 
   // Enable video recording for setup, mirroring the project config
@@ -22,8 +22,8 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     ignoreHTTPSErrors,
     recordVideo: video
       ? {
-          dir: './test-results/setup-videos/', // Specific directory for setup videos
-          size: { width: 1920, height: 1080 },
+          dir: './test-results/', // Save videos in the standard output directory
+          size: viewport, // Use viewport from config for video size
         }
       : undefined,
   });
