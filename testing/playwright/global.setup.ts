@@ -13,24 +13,53 @@ const globalSetup = async function globalSetup(config: FullConfig) {
   if (!needsAuth) {
     return;
   }
-  const { baseURL, headless, ignoreHTTPSErrors } = config.projects[0].use;
+
+  const { baseURL, headless, ignoreHTTPSErrors, video } = config.projects[0].use;
   const browser = await chromium.launch({ headless });
-  const context = await browser.newContext({ ignoreHTTPSErrors });
+
+  // Enable video recording for setup, mirroring the project config
+  const context = await browser.newContext({
+    ignoreHTTPSErrors,
+    recordVideo: video
+      ? {
+          dir: './test-results/setup-videos/', // Specific directory for setup videos
+          size: { width: 1920, height: 1080 },
+        }
+      : undefined,
+  });
+
   const page = await context.newPage();
 
   const username = process.env.CLUSTER_USERNAME;
   const password = process.env.CLUSTER_PASSWORD;
 
-  const loginPage = new LoginPage(page);
-  await loginPage.login(baseURL, username, password);
+  try {
+    const loginPage = new LoginPage(page);
+    await loginPage.login(baseURL, username, password);
 
-  const authDir = path.dirname(authFile);
-  if (!fs.existsSync(authDir)) {
-    fs.mkdirSync(authDir, { recursive: true });
+    const authDir = path.dirname(authFile);
+    if (!fs.existsSync(authDir)) {
+      fs.mkdirSync(authDir, { recursive: true });
+    }
+
+    await page.context().storageState({ path: authFile });
+    // eslint-disable-next-line no-console
+    console.log('✅ Authentication successful');
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('❌ Authentication failed:', (error as Error).message);
+
+    // Take a debug screenshot
+    await page.screenshot({
+      path: './test-results/auth-failure-debug.png',
+      fullPage: true,
+    });
+
+    throw error; // Re-throw to fail the setup
+  } finally {
+    await context.close(); // This will save the video if recording was enabled
+    await browser.close();
   }
-
-  await page.context().storageState({ path: authFile });
-  await browser.close();
 };
 
 export default globalSetup;
