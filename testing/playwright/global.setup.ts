@@ -33,21 +33,17 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     '--disable-dev-shm-usage',
     // CSP bypass flags
     '--disable-features=VizDisplayCompositor,VizServiceDisplayCompositor',
-    '--user-data-dir=/tmp/chrome-user-data',
     '--aggressive-cache-discard',
   ];
 
   // eslint-disable-next-line no-console
   console.error('🔧 Using browser args:', browserArgs.join(', '));
 
-  const browser = await chromium.launch({
+  const userDataDir = '/tmp/chrome-user-data';
+  const context = await chromium.launchPersistentContext(userDataDir, {
     headless,
     // Add additional browser args for Jenkins environment
     args: browserArgs,
-  });
-
-  // Enable video recording for setup, mirroring the project config
-  const context = await browser.newContext({
     ignoreHTTPSErrors: true, // Force this to true for Jenkins
     recordVideo: video
       ? {
@@ -226,7 +222,6 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     throw error; // Re-throw to fail the setup
   } finally {
     await context.close(); // This will save the video if recording was enabled
-    await browser.close();
   }
 };
 
