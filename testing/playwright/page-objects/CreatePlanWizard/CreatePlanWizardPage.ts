@@ -1,5 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
+import type { PlanTestData } from '../../e2e/shared/test-data';
+
 import { GeneralInformationStep } from './steps/GeneralInformationStep';
 import { NetworkMapStep } from './steps/NetworkMapStep';
 import { ReviewStep } from './steps/ReviewStep';
@@ -37,6 +39,58 @@ export class CreatePlanWizardPage {
 
   async clickSkipToReview() {
     await this.page.getByTestId('wizard-review-button').click();
+  }
+
+  async fillAndSubmit(testData: PlanTestData, { skipToReview = true } = {}): Promise<void> {
+    // STEP 1: General Information
+    await this.generalInformation.fillPlanName(testData.planName);
+    await this.generalInformation.selectPlanProject(testData.planProject);
+    await this.generalInformation.selectSourceProvider(testData.sourceProvider);
+    await this.generalInformation.selectTargetProvider(testData.targetProvider);
+    await this.generalInformation.waitForTargetProviderNamespaces();
+    await this.generalInformation.selectTargetProject(testData.targetProject);
+    await this.clickNext();
+
+    // STEP 2: Virtual Machines
+    await this.virtualMachines.verifyStepVisible();
+    await this.virtualMachines.verifyTableLoaded();
+    await this.virtualMachines.selectFirstVirtualMachine();
+    await this.clickNext();
+
+    // STEP 3: Network Map
+    await this.networkMap.verifyStepVisible();
+    await this.networkMap.waitForData();
+    await this.networkMap.selectNetworkMap(testData.networkMap);
+    await this.clickNext();
+
+    // STEP 4: Storage Map
+    await this.storageMap.verifyStepVisible();
+    await this.storageMap.waitForData();
+    await this.storageMap.selectStorageMap(testData.storageMap);
+    await this.clickNext();
+
+    // Skip to review or go through all steps
+    if (skipToReview) {
+      await this.clickSkipToReview();
+    }
+
+    // STEP 5: Review
+    await this.review.verifyStepVisible();
+    await this.review.verifyAllSections(
+      {
+        planName: testData.planName,
+        planProject: testData.planProject,
+        sourceProvider: testData.sourceProvider,
+        targetProvider: testData.targetProvider,
+        targetProject: testData.targetProject,
+      },
+      testData.networkMap,
+      testData.storageMap,
+    );
+
+    // STEP 6: Create the plan
+    await this.clickNext();
+    await this.waitForPlanCreation();
   }
 
   async waitForPlanCreation() {

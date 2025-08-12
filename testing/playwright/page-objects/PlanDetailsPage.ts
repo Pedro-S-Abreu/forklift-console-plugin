@@ -9,6 +9,7 @@ export class PlanDetailsPage {
 
   async verifyBasicPlanDetailsPage(planData?: {
     planName: string;
+    planProject: string;
     sourceProvider: string;
     targetProvider: string;
     targetProject: string;
@@ -22,6 +23,8 @@ export class PlanDetailsPage {
     if (planData?.planName) {
       await this.verifyPlanTitle(planData.planName);
     }
+    await this.verifyPlanDetails(planData);
+    await this.verifyPlanStatus();
   }
 
   async verifyBreadcrumbs() {
@@ -48,29 +51,13 @@ export class PlanDetailsPage {
     planProject: string;
     targetProject: string;
   }) {
-    // Verify Plan Details section content - use more specific selectors
-    const planDetailsSection = this.page.locator('section').filter({ hasText: 'Plan details' });
-
-    // Verify plan name (take first occurrence to avoid ambiguity)
-    await expect(
-      planDetailsSection.locator('dd').filter({ hasText: planData.planName }).first(),
-    ).toBeVisible();
-
-    // Verify project (should be a link with specific data-test attribute)
-    await expect(planDetailsSection.getByTestId(planData.planProject)).toBeVisible();
-
-    // Verify target project (take first occurrence)
-    await expect(
-      planDetailsSection.locator('dd').filter({ hasText: planData.targetProject }).first(),
-    ).toBeVisible();
-
-    // Verify created at timestamp exists
-    await expect(planDetailsSection.locator('.pf-v5-c-timestamp')).toBeVisible();
-
-    // Verify owner field shows "No owner"
-    await expect(
-      planDetailsSection.locator('dd').filter({ hasText: 'No owner' }).first(),
-    ).toBeVisible();
+    await expect(this.page.getByTestId('name-detail-item')).toContainText(planData.planName);
+    await expect(this.page.getByTestId('project-detail-item')).toContainText(planData.planProject);
+    await expect(this.page.getByTestId('target-project-detail-item')).toContainText(
+      planData.targetProject,
+    );
+    await expect(this.page.getByTestId('created-at-detail-item')).toBeVisible();
+    await expect(this.page.getByTestId('owner-detail-item')).toContainText('No owner');
   }
 
   async verifyPlanDetailsURL(planName: string) {
@@ -93,10 +80,7 @@ export class PlanDetailsPage {
 
   async verifyPlanTitle(planName: string): Promise<void> {
     const titleLocator = this.page.getByTestId('plan-details-title');
-    await expect(titleLocator).toBeVisible({ timeout: 15000 });
-
-    const actualText = await titleLocator.textContent();
-    expect(actualText).toContain(planName);
+    await expect(titleLocator).toContainText(planName, { timeout: 15000 });
   }
 
   async waitForPageLoad(): Promise<void> {

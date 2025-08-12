@@ -39,8 +39,14 @@ export class ReviewStep {
       targetProvider: string;
       targetProject: string;
     },
-    expectedNetworkMap?: string,
-    expectedStorageMap?: string,
+    expectedNetworkMap?: {
+      name: string;
+      exists: boolean;
+    },
+    expectedStorageMap?: {
+      name: string;
+      exists: boolean;
+    },
   ): Promise<void> {
     await this.verifyGeneralSection(generalData);
     await this.verifyVirtualMachinesSection();
@@ -86,14 +92,23 @@ export class ReviewStep {
     await expect(this.page.getByTestId('review-migration-type')).toBeVisible();
   }
 
-  async verifyNetworkMapSection(expectedNetworkMap?: string): Promise<void> {
-    await expect(this.page.getByTestId('review-network-map-section')).toBeVisible();
+  async verifyNetworkMapSection(expectedNetworkMap?: {
+    name: string;
+    exists: boolean;
+  }): Promise<void> {
+    const section = this.page.getByTestId('review-network-map-section');
+    await expect(section).toBeVisible();
 
-    // Verify network map is present and shows the expected name
-    const networkMapElement = this.page.getByTestId('review-network-map');
-    await expect(networkMapElement).toBeVisible();
     if (expectedNetworkMap) {
-      await expect(networkMapElement).toContainText(expectedNetworkMap);
+      if (expectedNetworkMap.exists) {
+        await expect(section.getByTestId('review-network-map')).toContainText(
+          expectedNetworkMap.name,
+        );
+      } else {
+        await expect(
+          section.locator('.pf-v5-c-description-list__group', { hasText: 'Network map name' }),
+        ).toContainText(expectedNetworkMap.name);
+      }
     }
   }
 
@@ -107,12 +122,22 @@ export class ReviewStep {
     await expect(this.page.getByRole('heading', { name: 'Review and create' })).toBeVisible();
   }
 
-  async verifyStorageMapSection(expectedStorageMap?: string): Promise<void> {
-    await expect(this.page.getByTestId('review-storage-map-section')).toBeVisible();
-    const storageMapElement = this.page.getByTestId('review-storage-map');
-    await expect(storageMapElement).toBeVisible();
+  async verifyStorageMapSection(expectedStorageMap?: {
+    name: string;
+    exists: boolean;
+  }): Promise<void> {
+    const section = this.page.getByTestId('review-storage-map-section');
+    await expect(section).toBeVisible();
     if (expectedStorageMap) {
-      await expect(storageMapElement).toContainText(expectedStorageMap);
+      if (expectedStorageMap.exists) {
+        await expect(section.getByTestId('review-storage-map')).toContainText(
+          expectedStorageMap.name,
+        );
+      } else {
+        await expect(
+          section.locator('.pf-v5-c-description-list__group', { hasText: 'Storage map name' }),
+        ).toContainText(expectedStorageMap.name);
+      }
     }
   }
 
