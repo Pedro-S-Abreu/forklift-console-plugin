@@ -31,6 +31,10 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     '--no-sandbox',
     '--disable-setuid-sandbox',
     '--disable-dev-shm-usage',
+    // CSP bypass flags
+    '--disable-features=VizDisplayCompositor,VizServiceDisplayCompositor',
+    '--user-data-dir=/tmp/chrome-user-data',
+    '--aggressive-cache-discard',
   ];
 
   // eslint-disable-next-line no-console
