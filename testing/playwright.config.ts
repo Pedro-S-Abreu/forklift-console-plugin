@@ -1,10 +1,25 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
+
+const authFile = 'playwright/.auth/user.json';
+const needsAuth = process.env.CLUSTER_USERNAME && process.env.CLUSTER_PASSWORD;
 
 export default defineConfig({
+  globalSetup: require.resolve('./playwright/global.setup.ts'),
   testDir: './playwright/e2e',
   timeout: 60_000,
+  fullyParallel: true,
 
   retries: process.env.GITHUB_ACTIONS ? 3 : 0,
+
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: needsAuth ? authFile : undefined,
+      },
+    },
+  ],
 
   use: {
     // GitHub Actions uses port 30080, local dev uses 9000

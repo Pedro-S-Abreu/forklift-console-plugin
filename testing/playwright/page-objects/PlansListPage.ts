@@ -21,7 +21,7 @@ export class PlansListPage {
   }
 
   get createPlanButton() {
-    // TODO: TEMPORARY FIX - The cluster version has wrong testId due to bug in git history
+    //TODO data-test-id create-plan-button
     // There are 2 buttons with text "Create Plan" - we want the first (enabled) one
     // This was fixed in commit ae2930a6 [MTV-2962] but cluster is running older version
     // REMOVE THIS FALLBACK when cluster is updated to include commit ae2930a6 or later
@@ -39,9 +39,6 @@ export class PlansListPage {
   async navigateFromMainMenu() {
     await disableGuidedTour(this.page);
     await this.page.goto('/');
-
-    // Ensure viewport is set correctly
-    await this.page.setViewportSize({ width: 1280, height: 720 });
 
     await waitForLoader(this.page);
 

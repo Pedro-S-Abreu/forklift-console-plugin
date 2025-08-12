@@ -1,0 +1,54 @@
+import { test } from '@playwright/test';
+
+import { setupCreatePlanIntercepts } from '../intercepts';
+import { CreatePlanWizardPage } from '../page-objects/CreatePlanWizard/CreatePlanWizardPage';
+import { PlanDetailsPage } from '../page-objects/PlanDetailsPage';
+import { PlansListPage } from '../page-objects/PlansListPage';
+
+import { createPlanTestData } from './shared/test-data';
+
+test.describe(
+  'Plans - Upstream End-to-End Migration',
+  {
+    tag: '@upstream',
+  },
+  () => {
+    test.beforeEach(async ({ page }) => {
+      await setupCreatePlanIntercepts(page);
+    });
+
+    test('should run plan creation wizard', async ({ page }) => {
+      const testData = createPlanTestData({
+        planName: 'test-create-plan',
+        planProject: 'openshift-mtv',
+        sourceProvider: 'test-source-provider',
+        targetProvider: 'test-target-provider',
+        targetProject: 'test-target-project',
+        networkMap: { name: 'test-network-map-1', exists: true },
+        storageMap: { name: 'test-storage-map-1', exists: true },
+      });
+
+      const plansPage = new PlansListPage(page);
+      await plansPage.navigateFromMainMenu();
+      const createWizard = new CreatePlanWizardPage(page);
+      const planDetailsPage = new PlanDetailsPage(page);
+
+      // Navigate to the wizard
+      await plansPage.clickCreatePlanButton();
+      await createWizard.waitForWizardLoad();
+
+      // Fill and submit the wizard
+      await createWizard.fillAndSubmit(testData);
+
+      // Verify plan details page
+      await planDetailsPage.waitForPageLoad();
+      await planDetailsPage.verifyBasicPlanDetailsPage({
+        planName: testData.planName,
+        planProject: testData.planProject,
+        sourceProvider: testData.sourceProvider,
+        targetProvider: testData.targetProvider,
+        targetProject: testData.targetProject,
+      });
+    });
+  },
+);
