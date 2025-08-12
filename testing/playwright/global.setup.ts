@@ -21,21 +21,25 @@ const globalSetup = async function globalSetup(config: FullConfig) {
   // eslint-disable-next-line no-console
   console.error(`🔧 Environment: headless=${headless}, ignoreHTTPSErrors=${ignoreHTTPSErrors}`);
 
+  const browserArgs = [
+    '--disable-web-security',
+    '--disable-features=VizDisplayCompositor',
+    '--allow-running-insecure-content',
+    '--disable-background-timer-throttling',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding',
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+  ];
+
+  // eslint-disable-next-line no-console
+  console.error('🔧 Using browser args:', browserArgs.join(', '));
+
   const browser = await chromium.launch({
     headless,
     // Add additional browser args for Jenkins environment
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--no-first-run',
-      '--no-default-browser-check',
-      '--disable-extensions',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-renderer-backgrounding',
-    ],
+    args: browserArgs,
   });
 
   // Enable video recording for setup, mirroring the project config
