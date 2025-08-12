@@ -15,6 +15,10 @@ const globalSetup = async function globalSetup(config: FullConfig) {
   }
 
   const { baseURL, headless, ignoreHTTPSErrors, video, viewport } = config.projects[0].use;
+
+  // eslint-disable-next-line no-console
+  console.log(`🚀 Starting setup with baseURL: ${baseURL}`);
+
   const browser = await chromium.launch({ headless });
 
   // Enable video recording for setup, mirroring the project config
