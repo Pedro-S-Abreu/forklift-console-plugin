@@ -14,21 +14,11 @@ test.describe('Plans - Critical End-to-End Migration', () => {
         console.error(`Browser console error: ${msg.text()}`);
       }
     });
-    await setupCreatePlanIntercepts(page);
+
     const plansPage = new PlansListPage(page);
+    await plansPage.loginProgrammatically();
+    await setupCreatePlanIntercepts(page);
     await plansPage.navigateFromMainMenu();
-
-    // eslint-disable-next-line no-console
-    console.error(`Page URL: ${page.url()}`);
-
-    const jsCheck = await page.evaluate(() => 1 + 1);
-    if (jsCheck === 2) {
-      // eslint-disable-next-line no-console
-      console.error('JavaScript is executing on the page.');
-    } else {
-      // eslint-disable-next-line no-console
-      console.error('JavaScript is NOT executing on the page.');
-    }
   });
 
   test('should run plan creation wizard', async ({ page }) => {
