@@ -17,7 +17,7 @@ test.describe.serial(
     tag: '@downstream',
   },
   () => {
-    test.beforeAll(async ({ page }) => {
+    test.beforeEach(async ({ page }) => {
       // Only perform login if credentials are provided
       if (!process.env.CLUSTER_USERNAME || !process.env.CLUSTER_PASSWORD) {
         return;
