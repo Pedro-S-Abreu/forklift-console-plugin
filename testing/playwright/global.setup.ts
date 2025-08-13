@@ -34,6 +34,16 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     // CSP bypass flags
     '--disable-features=VizDisplayCompositor,VizServiceDisplayCompositor',
     '--aggressive-cache-discard',
+    '--disable-gpu', // Often recommended for headless environments
+    '--disable-ipc-flooding-protection',
+    '--disable-extensions',
+    '--disable-default-apps',
+    '--disable-sync',
+    '--ignore-certificate-errors',
+    '--ignore-ssl-errors',
+    '--ignore-certificate-errors-spki-list',
+    '--no-first-run',
+    '--disable-background-networking',
   ];
 
   // eslint-disable-next-line no-console
@@ -84,7 +94,38 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     // eslint-disable-next-line no-console
     console.error(`📄 Response URL: ${response?.url()}`);
 
-    // Wait a bit for any redirects
+    // Wait for JavaScript to execute and check if we need to retry
+    let jsExecuted = false;
+    let retryCount = 0;
+    const maxRetries = 5;
+
+    while (!jsExecuted && retryCount < maxRetries) {
+      // eslint-disable-next-line no-await-in-loop
+      await page.waitForTimeout(2000 * (retryCount + 1)); // Progressive wait
+
+      // eslint-disable-next-line no-await-in-loop
+      const bodyText = await page.locator('body').textContent();
+      const isJsDisabledPage =
+        bodyText?.includes('JavaScript must be enabled') ?? (bodyText?.length ?? 0) < 100;
+
+      if (isJsDisabledPage) {
+        retryCount += 1;
+        // eslint-disable-next-line no-console
+        console.error(
+          `⚠️ JavaScript not executing (attempt ${retryCount}/${maxRetries}), retrying...`,
+        );
+
+        // Force reload to trigger JavaScript execution
+        // eslint-disable-next-line no-await-in-loop
+        await page.reload({ waitUntil: 'networkidle', timeout: 30000 });
+      } else {
+        jsExecuted = true;
+        // eslint-disable-next-line no-console
+        console.error(`✅ JavaScript execution confirmed after ${retryCount} retries`);
+      }
+    }
+
+    // Final wait for any redirects after JS execution
     await page.waitForTimeout(3000);
 
     // Take screenshot of what we actually see
@@ -174,7 +215,7 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     // If we have the right page, proceed with login
     if (usernameFields > 0 || passwordFields > 0) {
       const loginPage = new LoginPage(page);
-      await loginPage.login(baseURL, username, password);
+      await loginPage.login(baseURL, username!, password);
 
       const authDir = path.dirname(authFile);
       if (!fs.existsSync(authDir)) {
