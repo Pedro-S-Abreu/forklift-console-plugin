@@ -8,9 +8,27 @@ import { PlansListPage } from '../page-objects/PlansListPage';
 
 test.describe('Plans - Critical End-to-End Migration', () => {
   test.beforeEach(async ({ page }) => {
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        // eslint-disable-next-line no-console
+        console.error(`Browser console error: ${msg.text()}`);
+      }
+    });
     await setupCreatePlanIntercepts(page);
     const plansPage = new PlansListPage(page);
     await plansPage.navigateFromMainMenu();
+
+    // eslint-disable-next-line no-console
+    console.error(`Page URL: ${page.url()}`);
+
+    const jsCheck = await page.evaluate(() => 1 + 1);
+    if (jsCheck === 2) {
+      // eslint-disable-next-line no-console
+      console.error('JavaScript is executing on the page.');
+    } else {
+      // eslint-disable-next-line no-console
+      console.error('JavaScript is NOT executing on the page.');
+    }
   });
 
   test('should run plan creation wizard', async ({ page }) => {
