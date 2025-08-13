@@ -5,12 +5,33 @@ import { test } from '@playwright/test';
 import * as providers from '../../.providers.json';
 import { CreatePlanWizardPage } from '../page-objects/CreatePlanWizard/CreatePlanWizardPage';
 import { CreateProviderWizardPage } from '../page-objects/CreateProviderWizard/CreateProviderWizardPage';
+import { LoginPage } from '../page-objects/LoginPage';
 import { PlanDetailsPage } from '../page-objects/PlanDetailsPage';
 import { PlansListPage } from '../page-objects/PlansListPage';
 import { ProviderDetailsPage } from '../page-objects/ProviderDetailsPage';
 import { ProvidersListPage } from '../page-objects/ProvidersListPage';
 
 import { createPlanTestData, type ProviderData } from './shared/test-data';
+
+const authFile = 'playwright/.auth/user.json';
+
+test.beforeAll(async ({ browser }) => {
+  const needsAuth = process.env.CLUSTER_USERNAME && process.env.CLUSTER_PASSWORD;
+
+  if (!needsAuth) {
+    return;
+  }
+
+  const page = await browser.newPage();
+  const loginPage = new LoginPage(page);
+  await loginPage.login(
+    process.env.BASE_ADDRESS,
+    process.env.CLUSTER_USERNAME,
+    process.env.CLUSTER_PASSWORD,
+  );
+  await page.context().storageState({ path: authFile });
+  await page.close();
+});
 
 test.describe.serial(
   'Plans - Downstream End-to-End Migration',
@@ -101,12 +122,7 @@ test.describe.serial(
     });
 
     test.beforeEach(async ({ page: _page }) => {
-      // await setupAuthentication(page, {
-      //   baseUrl:
-      //     process.env.BASE_ADDRESS ?? process.env.BASE_ADDRESS ?? 'http://localhost:9000',
-      //   username: process.env.CLUSTER_USERNAME,
-      //   password: process.env.CLUSTER_PASSWORD,
-      // });
+      // The test storage state is created in the beforeAll hook.
     });
 
     let testProviderData: ProviderData = null;
