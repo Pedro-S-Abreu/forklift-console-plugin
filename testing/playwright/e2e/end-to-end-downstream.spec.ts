@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { test } from '@playwright/test';
 
 import * as providers from '../../.providers.json';
@@ -13,119 +11,181 @@ import { ProvidersListPage } from '../page-objects/ProvidersListPage';
 
 import { createPlanTestData, type ProviderData } from './shared/test-data';
 
-const authFile = 'playwright/.auth/user.json';
-
-test.beforeAll(async ({ browser }) => {
-  const needsAuth = process.env.CLUSTER_USERNAME && process.env.CLUSTER_PASSWORD;
-
-  if (!needsAuth) {
-    return;
-  }
-
-  const page = await browser.newPage();
-  const loginPage = new LoginPage(page);
-  await loginPage.login(
-    process.env.BASE_ADDRESS,
-    process.env.CLUSTER_USERNAME,
-    process.env.CLUSTER_PASSWORD,
-  );
-  await page.context().storageState({ path: authFile });
-  await page.close();
-});
-
 test.describe.serial(
   'Plans - Downstream End-to-End Migration',
   {
     tag: '@downstream',
   },
   () => {
-    test.beforeAll(() => {
-      // Debug: Check for providers file and environment variables
-      // eslint-disable-next-line no-console
-      console.error('🔍 Debug: Checking downstream test environment setup...');
-      // eslint-disable-next-line no-console
-      console.error(`Current working directory: ${process.cwd()}`);
-
-      // Check if providers file exists in current directory (should be /tmp/playwright-tests/testing)
-      const providersPath = '.providers.json'; // File should be in current directory
-      // eslint-disable-next-line no-console
-      console.error(`Checking for providers file: ${providersPath}`);
-
-      if (fs.existsSync(providersPath)) {
-        // eslint-disable-next-line no-console
-        console.error('✅ .providers.json exists in test directory');
-        try {
-          const providersContent = fs.readFileSync(providersPath, 'utf8');
-          const providersData = JSON.parse(providersContent);
-
-          // Create sanitized version without secrets
-          const sanitized = JSON.parse(
-            JSON.stringify(providersData, (key, value) => {
-              if (key === 'password' || key === 'thumbprint' || key === 'cacert') {
-                return '***REDACTED***';
-              }
-              return value as string;
-            }),
-          );
-
-          // eslint-disable-next-line no-console
-          console.error(
-            '📄 Provider structure (without secrets):',
-            JSON.stringify(sanitized, null, 2).length,
-          );
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('❌ Error reading .providers.json:', (error as Error).message);
-        }
-      } else {
-        // eslint-disable-next-line no-console
-        console.error('❌ .providers.json not found in test directory');
-        // eslint-disable-next-line no-console
-        console.error('Available files in test directory:');
-        try {
-          const files = fs.readdirSync('.');
-          files.forEach((file) => {
-            // eslint-disable-next-line no-console
-            console.error(`  - ${file}`);
-          });
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('❌ Error listing files:', (error as Error).message);
-        }
+    test.beforeEach(async ({ page }) => {
+      // Only perform login if credentials are provided
+      if (!process.env.CLUSTER_USERNAME || !process.env.CLUSTER_PASSWORD) {
+        return;
       }
 
-      // Check environment variables (downstream specific)
-      // eslint-disable-next-line no-console
-      console.error('🔍 Environment variables for downstream tests:');
-      // eslint-disable-next-line no-console
-      console.error(`CLUSTER_USERNAME: ${process.env.CLUSTER_USERNAME ?? 'NOT_SET'}`);
-      // eslint-disable-next-line no-console
-      console.error(`CLUSTER_PASSWORD: ${process.env.CLUSTER_PASSWORD ? '***SET***' : 'NOT_SET'}`);
-      // eslint-disable-next-line no-console
-      console.error(`VSPHERE_USERNAME: ${process.env.VSPHERE_USERNAME ?? 'NOT_SET'}`);
-      // eslint-disable-next-line no-console
-      console.error(`VSPHERE_PASSWORD: ${process.env.VSPHERE_PASSWORD ? '***SET***' : 'NOT_SET'}`);
-      // eslint-disable-next-line no-console
-      console.error(`VSPHERE_URL: ${process.env.VSPHERE_URL ?? 'NOT_SET'}`);
-      // eslint-disable-next-line no-console
-      console.error(`BASE_ADDRESS: ${process.env.BASE_ADDRESS ?? 'NOT_SET'}`);
+      const baseURL = process.env.BRIDGE_BASE_ADDRESS ?? process.env.BASE_ADDRESS;
 
-      // eslint-disable-next-line no-console
-      console.error(`JENKINS: ${process.env.JENKINS ?? 'NOT_SET'}`);
-      // eslint-disable-next-line no-console
-      console.error(`CI: ${process.env.CI ?? 'NOT_SET'}`);
+      if (!baseURL) {
+        throw new Error('BASE_ADDRESS is required for authentication');
+      }
 
-      // Downstream tests always run against real environment
+      try {
+        // eslint-disable-next-line no-console
+        console.error(`🚀 Starting login to: ${baseURL}`);
+        // eslint-disable-next-line no-console
+        console.error(`🔧 Environment: headless=${page.context().browser()?.browserType().name()}`);
 
-      // eslint-disable-next-line no-console
-      console.error('🌐 Downstream mode: Using real environment, no intercepts');
+        // Navigate with debugging
+        // eslint-disable-next-line no-console
+        console.error(`🌐 Navigating to: ${baseURL}`);
+        
+        const response = await page.goto(baseURL, { 
+          waitUntil: 'networkidle',
+          timeout: 60000 
+        });
+        
+        // eslint-disable-next-line no-console
+        console.error(`📄 Response status: ${response?.status()}`);
+        // eslint-disable-next-line no-console
+        console.error(`📄 Response URL: ${response?.url()}`);
+        
+        // Wait for JavaScript to execute and check if we need to retry
+        let jsExecuted = false;
+        let retryCount = 0;
+        const maxRetries = 5;
+        
+        while (!jsExecuted && retryCount < maxRetries) {
+          await page.waitForTimeout(2000 * (retryCount + 1)); // Progressive wait
+          
+          const bodyText = await page.locator('body').textContent();
+          const isJsDisabledPage = bodyText?.includes('JavaScript must be enabled') || bodyText?.length < 100;
+          
+          if (isJsDisabledPage) {
+            retryCount++;
+            // eslint-disable-next-line no-console
+            console.error(`⚠️ JavaScript not executing (attempt ${retryCount}/${maxRetries}), retrying...`);
+            
+            // Force reload to trigger JavaScript execution
+            await page.reload({ waitUntil: 'networkidle', timeout: 30000 });
+          } else {
+            jsExecuted = true;
+            // eslint-disable-next-line no-console
+            console.error(`✅ JavaScript execution confirmed after ${retryCount} retries`);
+          }
+        }
+        
+        // Final wait for any redirects after JS execution
+        await page.waitForTimeout(3000);
+        
+        // Log page details for debugging
+        const title = await page.title();
+        const url = page.url();
+        // eslint-disable-next-line no-console
+        console.error(`📄 Page title: "${title}"`);
+        // eslint-disable-next-line no-console
+        console.error(`📄 Current URL: ${url}`);
+        
+        // Check if page content is actually loaded
+        const bodyText = await page.locator('body').textContent();
+        // eslint-disable-next-line no-console
+        console.error(`📄 Body text length: ${bodyText?.length || 0}`);
+        // eslint-disable-next-line no-console
+        console.error(`📄 First 200 chars: "${bodyText?.substring(0, 200) || 'No body text'}"`);
+        
+        // Check for any error messages on the page
+        const errorElements = await page.locator('text=/error|Error|ERROR|failed|Failed|FAILED/i').count();
+        // eslint-disable-next-line no-console
+        console.error(`🚨 Error elements found: ${errorElements}`);
+        
+        // Look for login elements before attempting login
+        const usernameFields = await page.locator('input[type="text"], input[name="username"], #inputUsername').count();
+        const passwordFields = await page.locator('input[type="password"], input[name="password"], #inputPassword').count();
+        // eslint-disable-next-line no-console
+        console.error(`🔍 Username fields found: ${usernameFields}`);
+        // eslint-disable-next-line no-console
+        console.error(`🔍 Password fields found: ${passwordFields}`);
+        
+        // List all input elements for debugging
+        const allInputs = await page.locator('input').all();
+        // eslint-disable-next-line no-console
+        console.error(`🔍 Total input elements: ${allInputs.length}`);
+        for (let i = 0; i < allInputs.length; i++) {
+          const input = allInputs[i];
+          const type = await input.getAttribute('type');
+          const name = await input.getAttribute('name');
+          const id = await input.getAttribute('id');
+          const placeholder = await input.getAttribute('placeholder');
+          // eslint-disable-next-line no-console
+          console.error(
+            `  Input ${i}: Type="${type}", Name="${name}", ID="${id}", Placeholder="${placeholder}"`,
+          );
+        }
+        
+        // Check if we're on the right page (should contain login elements)
+        if (usernameFields === 0 && passwordFields === 0) {
+          // eslint-disable-next-line no-console
+          console.error('⚠️ No login fields found - this might be a redirect or wrong page');
+          
+          // Check for common redirect patterns
+          const loginLinks = await page.locator('a[href*="login"], a[href*="auth"], a[href*="oauth"]').count();
+          // eslint-disable-next-line no-console
+          console.error(`🔗 Login-related links found: ${loginLinks}`);
+          
+          // Look for any buttons that might trigger authentication
+          const buttons = await page.locator('button, input[type="submit"], a').all();
+          // eslint-disable-next-line no-console
+          console.error(`🔘 Buttons/links found: ${buttons.length}`);
+          for (let i = 0; i < Math.min(buttons.length, 5); i++) {
+            const button = buttons[i];
+            const text = await button.textContent();
+            const href = await button.getAttribute('href');
+            // eslint-disable-next-line no-console
+            console.error(`  Button ${i}: "${text?.trim()}" href="${href}"`);
+          }
+          
+          throw new Error('No login fields found on the page - this might not be the login page');
+        }
+
+        // If we have the right page, proceed with login
+        if (usernameFields > 0 || passwordFields > 0) {
+          const loginPage = new LoginPage(page);
+          await loginPage.login(baseURL, process.env.CLUSTER_USERNAME, process.env.CLUSTER_PASSWORD);
+          
+          // eslint-disable-next-line no-console
+          console.error('✅ Login successful');
+        }
+        
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('❌ Login failed:', (error as Error).message);
+        
+        // Take comprehensive debugging screenshots
+        await page.screenshot({
+          path: './test-results/auth-failure-debug.png',
+          fullPage: true,
+        });
+        
+        // Log final page state for debugging
+        try {
+          const finalTitle = await page.title();
+          const finalUrl = page.url();
+          const finalBodyText = await page.locator('body').textContent();
+          // eslint-disable-next-line no-console
+          console.error(`❌ Failed on page title: "${finalTitle}"`);
+          // eslint-disable-next-line no-console
+          console.error(`❌ Failed on URL: ${finalUrl}`);
+          // eslint-disable-next-line no-console
+          console.error(`❌ Final body text length: ${finalBodyText?.length || 0}`);
+        } catch (debugError) {
+          // eslint-disable-next-line no-console
+          console.error('❌ Could not get final page state:', (debugError as Error).message);
+        }
+        
+        throw error;
+      }
     });
 
-    test.beforeEach(async ({ page: _page }) => {
-      // The test storage state is created in the beforeAll hook.
-    });
-
-    let testProviderData: ProviderData = null;
+    let testProviderData: ProviderData;
 
     test('should create a new vsphere provider', async ({ page }) => {
       const providersPage = new ProvidersListPage(page);
