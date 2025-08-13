@@ -21,56 +21,26 @@ const globalSetup = async function globalSetup(config: FullConfig) {
   // eslint-disable-next-line no-console
   console.error(`🔧 Environment: headless=${headless}, ignoreHTTPSErrors=${ignoreHTTPSErrors}`);
 
-  // More aggressive browser args for Jenkins CI environment
   const browserArgs = [
     '--no-sandbox',
     '--disable-setuid-sandbox',
     '--disable-dev-shm-usage',
-    '--disable-gpu',
-    '--disable-gpu-sandbox',
-    '--disable-software-rasterizer',
-    '--disable-features=VizDisplayCompositor,TranslateUI,BlinkGenPropertyTrees',
+    '--disable-gpu', // Often recommended for headless environments
+    '--disable-features=VizDisplayCompositor,TranslateUI',
     '--disable-backgrounding-occluded-windows',
     '--disable-renderer-backgrounding',
-    '--disable-background-timer-throttling',
-    '--disable-background-networking',
     '--disable-ipc-flooding-protection',
     '--disable-extensions',
     '--disable-default-apps',
     '--disable-sync',
     '--disable-web-security',
-    '--disable-features=VizDisplayCompositor',
     '--allow-running-insecure-content',
     '--ignore-certificate-errors',
     '--ignore-ssl-errors',
     '--ignore-certificate-errors-spki-list',
-    '--ignore-urlfetcher-cert-requests',
     '--no-first-run',
-    '--no-default-browser-check',
-    '--disable-cloud-import',
-    '--disable-gesture-typing',
-    '--disable-offer-store-unmasked-wallet-cards',
-    '--disable-speech-api',
-    '--hide-scrollbars',
-    '--mute-audio',
-    '--disable-logging',
-    '--disable-gl-drawing-for-tests',
-    '--disable-canvas-aa',
-    '--disable-3d-apis',
-    '--disable-accelerated-2d-canvas',
-    '--disable-accelerated-jpeg-decoding',
-    '--disable-accelerated-mjpeg-decode',
-    '--disable-app-list-dismiss-on-blur',
-    '--disable-accelerated-video-decode',
-    '--num-raster-threads=1',
-    '--enable-viewport',
-    '--disable-partial-raster',
-    '--disable-rgbaa-heuristics',
-    '--disable-skia-runtime-opts',
-    '--in-process-gpu',
-    '--disable-low-res-tiling',
-    '--enable-experimental-web-platform-features',
-    '--js-flags=--expose-gc',
+    '--disable-background-timer-throttling',
+    '--disable-background-networking',
   ];
 
   // eslint-disable-next-line no-console
@@ -84,12 +54,6 @@ const globalSetup = async function globalSetup(config: FullConfig) {
   const context = await browser.newContext({
     baseURL,
     ignoreHTTPSErrors: true,
-    javaScriptEnabled: true,
-    // In CI/headless environments CSP can prevent inline scripts from executing,
-    // which results in the OpenShift console showing the fallback <noscript> content.
-    // Bypass CSP so the SPA can boot even under strict headers.
-    bypassCSP: true,
-    acceptDownloads: true,
     recordVideo: video
       ? {
           dir: './test-results/',
@@ -122,7 +86,32 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     // eslint-disable-next-line no-console
     console.error(`📄 Response URL: ${response?.url()}`);
     
-    // Wait a bit for any redirects
+    // Wait for JavaScript to execute and check if we need to retry
+    let jsExecuted = false;
+    let retryCount = 0;
+    const maxRetries = 5;
+    
+    while (!jsExecuted && retryCount < maxRetries) {
+      await page.waitForTimeout(2000 * (retryCount + 1)); // Progressive wait
+      
+      const bodyText = await page.locator('body').textContent();
+      const isJsDisabledPage = bodyText?.includes('JavaScript must be enabled') || bodyText?.length < 100;
+      
+      if (isJsDisabledPage) {
+        retryCount++;
+        // eslint-disable-next-line no-console
+        console.error(`⚠️ JavaScript not executing (attempt ${retryCount}/${maxRetries}), retrying...`);
+        
+        // Force reload to trigger JavaScript execution
+        await page.reload({ waitUntil: 'networkidle', timeout: 30000 });
+      } else {
+        jsExecuted = true;
+        // eslint-disable-next-line no-console
+        console.error(`✅ JavaScript execution confirmed after ${retryCount} retries`);
+      }
+    }
+    
+    // Final wait for any redirects after JS execution
     await page.waitForTimeout(3000);
     
     // Take screenshot of what we actually see
@@ -179,32 +168,12 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     if (usernameFields === 0 && passwordFields === 0) {
       // eslint-disable-next-line no-console
       console.error('⚠️ No login fields found - this might be a redirect or wrong page');
-
-      // If we landed on the SPA root without JS executing (e.g., headless CI), the body
-      // will often contain the fallback message. In that case, go straight to server-side
-      // auth endpoint that issues a 302 to the cluster OAuth login page (no JS required).
-      const bodyTextSnapshot = (await page.locator('body').textContent()) || '';
-      if (/javascript must be enabled\.?/i.test(bodyTextSnapshot)) {
-        // eslint-disable-next-line no-console
-        console.error('🔁 Detected noscript fallback. Navigating directly to /auth/login to trigger OAuth redirect.');
-        const authLoginUrl = `${baseURL?.replace(/\/?$/, '')}/auth/login`;
-        const authResp = await page.goto(authLoginUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
-        // eslint-disable-next-line no-console
-        console.error(`📎 /auth/login response: ${authResp?.status()} ${authResp?.url()}`);
-        await page.waitForLoadState('networkidle', { timeout: 60000 }).catch(() => undefined);
-
-        // Re-evaluate login fields after redirect
-        const recheckUsername = await page.locator('input[type="text"], input[name="username"], #inputUsername').count();
-        const recheckPassword = await page.locator('input[type="password"], input[name="password"], #inputPassword').count();
-        // eslint-disable-next-line no-console
-        console.error(`🔍 (After /auth/login) Username fields: ${recheckUsername}, Password fields: ${recheckPassword}`);
-      }
-
+      
       // Check for common redirect patterns
       const loginLinks = await page.locator('a[href*="login"], a[href*="auth"], a[href*="oauth"]').count();
       // eslint-disable-next-line no-console
       console.error(`🔗 Login-related links found: ${loginLinks}`);
-
+      
       // Look for any buttons that might trigger authentication
       const buttons = await page.locator('button, input[type="submit"], a').all();
       // eslint-disable-next-line no-console
@@ -214,15 +183,12 @@ const globalSetup = async function globalSetup(config: FullConfig) {
         const text = await button.textContent();
         const href = await button.getAttribute('href');
         // eslint-disable-next-line no-console
-        console.error(`  Button ${i}: "${text?.trim()}" href="${href}` + '"');
+        console.error(`  Button ${i}: "${text?.trim()}" href="${href}"`);
       }
     }
 
     // If we have the right page, proceed with login
     if (usernameFields > 0 || passwordFields > 0) {
-      if (!username || !password) {
-        throw new Error('Username and password must be provided');
-      }
       const loginPage = new LoginPage(page);
       await loginPage.login(baseURL, username, password);
 
