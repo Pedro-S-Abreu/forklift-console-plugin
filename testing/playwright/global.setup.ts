@@ -21,29 +21,25 @@ const globalSetup = async function globalSetup(config: FullConfig) {
   // eslint-disable-next-line no-console
   console.error(`🔧 Environment: headless=${headless}, ignoreHTTPSErrors=${ignoreHTTPSErrors}`);
 
-  const browserArgs = [
-    '--disable-web-security',
-    '--disable-features=VizDisplayCompositor',
-    '--allow-running-insecure-content',
-    '--disable-background-timer-throttling',
-    '--disable-backgrounding-occluded-windows',
-    '--disable-renderer-backgrounding',
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    // CSP bypass flags
-    '--disable-features=VizDisplayCompositor,VizServiceDisplayCompositor',
-    '--aggressive-cache-discard',
-  ];
-
-  // eslint-disable-next-line no-console
-  console.error('🔧 Using browser args:', browserArgs.join(', '));
-
-  const userDataDir = '/tmp/chrome-user-data';
-  const context = await chromium.launchPersistentContext(userDataDir, {
+  const browser = await chromium.launch({ 
     headless,
     // Add additional browser args for Jenkins environment
-    args: browserArgs,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox', 
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--no-first-run',
+      '--no-default-browser-check',
+      '--disable-extensions',
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
+      '--disable-renderer-backgrounding'
+    ]
+  });
+
+  // Enable video recording for setup, mirroring the project config
+  const context = await browser.newContext({
     ignoreHTTPSErrors: true, // Force this to true for Jenkins
     recordVideo: video
       ? {
@@ -53,9 +49,8 @@ const globalSetup = async function globalSetup(config: FullConfig) {
       : undefined,
     // Add extra context options for debugging
     extraHTTPHeaders: {
-      'User-Agent':
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    },
+      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
   });
 
   const page = await context.newPage();
@@ -65,34 +60,32 @@ const globalSetup = async function globalSetup(config: FullConfig) {
 
   try {
     if (!baseURL) {
-      throw new Error(
-        '`baseURL` is not defined in the Playwright config and is required for setup.',
-      );
+      throw new Error('`baseURL` is not defined in the Playwright config and is required for setup.');
     }
 
     // eslint-disable-next-line no-console
     console.error(`🌐 Navigating to: ${baseURL}`);
-
+    
     // Navigate with more debugging
-    const response = await page.goto(baseURL, {
+    const response = await page.goto(baseURL, { 
       waitUntil: 'networkidle',
-      timeout: 60000,
+      timeout: 60000 
     });
-
+    
     // eslint-disable-next-line no-console
     console.error(`📄 Response status: ${response?.status()}`);
     // eslint-disable-next-line no-console
     console.error(`📄 Response URL: ${response?.url()}`);
-
+    
     // Wait a bit for any redirects
     await page.waitForTimeout(3000);
-
+    
     // Take screenshot of what we actually see
-    await page.screenshot({
-      path: './test-results/setup-page-loaded.png',
-      fullPage: true,
+    await page.screenshot({ 
+      path: './test-results/setup-page-loaded.png', 
+      fullPage: true 
     });
-
+    
     // Log page details for debugging
     const title = await page.title();
     const url = page.url();
@@ -100,75 +93,64 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     console.error(`📄 Page title: "${title}"`);
     // eslint-disable-next-line no-console
     console.error(`📄 Current URL: ${url}`);
-
+    
     // Check if page content is actually loaded
     const bodyText = await page.locator('body').textContent();
     // eslint-disable-next-line no-console
-    console.error(`📄 Body text length: ${bodyText?.length ?? 0}`);
+    console.error(`📄 Body text length: ${bodyText?.length || 0}`);
     // eslint-disable-next-line no-console
-    console.error(`📄 First 200 chars: "${bodyText?.substring(0, 200) ?? 'No body text'}"`);
-
+    console.error(`📄 First 200 chars: "${bodyText?.substring(0, 200) || 'No body text'}"`);
+    
     // Check for any error messages on the page
-    const errorElements = await page
-      .locator('text=/error|Error|ERROR|failed|Failed|FAILED/i')
-      .count();
+    const errorElements = await page.locator('text=/error|Error|ERROR|failed|Failed|FAILED/i').count();
     // eslint-disable-next-line no-console
     console.error(`🚨 Error elements found: ${errorElements}`);
-
+    
     // Look for login elements before attempting login
-    const usernameFields = await page
-      .locator('input[type="text"], input[name="username"], #inputUsername')
-      .count();
-    const passwordFields = await page
-      .locator('input[type="password"], input[name="password"], #inputPassword')
-      .count();
+    const usernameFields = await page.locator('input[type="text"], input[name="username"], #inputUsername').count();
+    const passwordFields = await page.locator('input[type="password"], input[name="password"], #inputPassword').count();
     // eslint-disable-next-line no-console
     console.error(`🔍 Username fields found: ${usernameFields}`);
     // eslint-disable-next-line no-console
     console.error(`🔍 Password fields found: ${passwordFields}`);
-
+    
     // List all input elements for debugging
     const allInputs = await page.locator('input').all();
     // eslint-disable-next-line no-console
     console.error(`🔍 Total input elements: ${allInputs.length}`);
-    const inputDetails = await Promise.all(
-      allInputs.map(async (input, i) => {
-        const type = await input.getAttribute('type');
-        const name = await input.getAttribute('name');
-        const id = await input.getAttribute('id');
-        const placeholder = await input.getAttribute('placeholder');
-        return `  Input ${i}: Type="${type}", Name="${name}", ID="${id}", Placeholder="${placeholder}"`;
-      }),
-    );
-    // eslint-disable-next-line no-console
-    console.error(inputDetails.join('\n'));
-
+    for (let i = 0; i < allInputs.length; i++) {
+      const input = allInputs[i];
+      const type = await input.getAttribute('type');
+      const name = await input.getAttribute('name');
+      const id = await input.getAttribute('id');
+      const placeholder = await input.getAttribute('placeholder');
+      // eslint-disable-next-line no-console
+      console.error(
+        `  Input ${i}: Type="${type}", Name="${name}", ID="${id}", Placeholder="${placeholder}"`,
+      );
+    }
+    
     // Check if we're on the right page (should contain login elements)
     if (usernameFields === 0 && passwordFields === 0) {
       // eslint-disable-next-line no-console
       console.error('⚠️ No login fields found - this might be a redirect or wrong page');
-
+      
       // Check for common redirect patterns
-      const loginLinks = await page
-        .locator('a[href*="login"], a[href*="auth"], a[href*="oauth"]')
-        .count();
+      const loginLinks = await page.locator('a[href*="login"], a[href*="auth"], a[href*="oauth"]').count();
       // eslint-disable-next-line no-console
       console.error(`🔗 Login-related links found: ${loginLinks}`);
-
+      
       // Look for any buttons that might trigger authentication
       const buttons = await page.locator('button, input[type="submit"], a').all();
       // eslint-disable-next-line no-console
       console.error(`🔘 Buttons/links found: ${buttons.length}`);
-
-      const buttonDetails = await Promise.all(
-        buttons.slice(0, 5).map(async (button, i) => {
-          const text = await button.textContent();
-          const href = await button.getAttribute('href');
-          return `  Button ${i}: "${text?.trim()}" href="${href}"`;
-        }),
-      );
-      // eslint-disable-next-line no-console
-      console.error(buttonDetails.join('\n'));
+      for (let i = 0; i < Math.min(buttons.length, 5); i++) {
+        const button = buttons[i];
+        const text = await button.textContent();
+        const href = await button.getAttribute('href');
+        // eslint-disable-next-line no-console
+        console.error(`  Button ${i}: "${text?.trim()}" href="${href}"`);
+      }
     }
 
     // If we have the right page, proceed with login
@@ -187,6 +169,7 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     } else {
       throw new Error('No login fields found on the page - this might not be the login page');
     }
+    
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('❌ Authentication failed:', (error as Error).message);
@@ -196,13 +179,13 @@ const globalSetup = async function globalSetup(config: FullConfig) {
       path: './test-results/auth-failure-debug.png',
       fullPage: true,
     });
-
+    
     // Also take a viewport screenshot for comparison
     await page.screenshot({
       path: './test-results/auth-failure-viewport.png',
       fullPage: false,
     });
-
+    
     // Log final page state for debugging
     try {
       const finalTitle = await page.title();
@@ -213,7 +196,7 @@ const globalSetup = async function globalSetup(config: FullConfig) {
       // eslint-disable-next-line no-console
       console.error(`❌ Failed on URL: ${finalUrl}`);
       // eslint-disable-next-line no-console
-      console.error(`❌ Final body text length: ${finalBodyText?.length ?? 0}`);
+      console.error(`❌ Final body text length: ${finalBodyText?.length || 0}`);
     } catch (debugError) {
       // eslint-disable-next-line no-console
       console.error('❌ Could not get final page state:', (debugError as Error).message);
@@ -222,6 +205,7 @@ const globalSetup = async function globalSetup(config: FullConfig) {
     throw error; // Re-throw to fail the setup
   } finally {
     await context.close(); // This will save the video if recording was enabled
+    await browser.close();
   }
 };
 
