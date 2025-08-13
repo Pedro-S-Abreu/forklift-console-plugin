@@ -4,7 +4,7 @@ const authFile = 'playwright/.auth/user.json';
 const needsAuth = process.env.CLUSTER_USERNAME && process.env.CLUSTER_PASSWORD;
 
 export default defineConfig({
-  // globalSetup: require.resolve('./playwright/global.setup.ts'),
+  globalSetup: require.resolve('./playwright/global.setup.ts'),
   testDir: './playwright/e2e',
   timeout: 60_000,
   fullyParallel: true,
