@@ -21,36 +21,47 @@ const globalSetup = async function globalSetup(config: FullConfig) {
   // eslint-disable-next-line no-console
   console.error(`🔧 Environment: headless=${headless}, ignoreHTTPSErrors=${ignoreHTTPSErrors}`);
 
-  const browser = await chromium.launch({ 
+  const browserArgs = [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu', // Often recommended for headless environments
+    '--disable-features=VizDisplayCompositor,TranslateUI',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding',
+    '--disable-ipc-flooding-protection',
+    '--disable-extensions',
+    '--disable-default-apps',
+    '--disable-sync',
+    '--disable-web-security',
+    '--allow-running-insecure-content',
+    '--ignore-certificate-errors',
+    '--ignore-ssl-errors',
+    '--ignore-certificate-errors-spki-list',
+    '--no-first-run',
+    '--disable-background-timer-throttling',
+    '--disable-background-networking',
+  ];
+
+  // eslint-disable-next-line no-console
+  console.error('🔧 Using browser args:', browserArgs.join(', '));
+
+  const browser = await chromium.launch({
     headless,
-    // Add additional browser args for Jenkins environment
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox', 
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--no-first-run',
-      '--no-default-browser-check',
-      '--disable-extensions',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-renderer-backgrounding'
-    ]
+    args: browserArgs,
   });
 
-  // Enable video recording for setup, mirroring the project config
   const context = await browser.newContext({
-    ignoreHTTPSErrors: true, // Force this to true for Jenkins
+    baseURL,
+    ignoreHTTPSErrors: true,
+    javaScriptEnabled: true,
+    acceptDownloads: true,
     recordVideo: video
       ? {
-          dir: './test-results/', // Save videos in the standard output directory
-          size: viewport ?? undefined, // Use viewport from config for video size
+          dir: './test-results/',
+          size: viewport ?? undefined,
         }
       : undefined,
-    // Add extra context options for debugging
-    extraHTTPHeaders: {
-      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
   });
 
   const page = await context.newPage();
@@ -155,6 +166,9 @@ const globalSetup = async function globalSetup(config: FullConfig) {
 
     // If we have the right page, proceed with login
     if (usernameFields > 0 || passwordFields > 0) {
+      if (!username || !password) {
+        throw new Error('Username and password must be provided');
+      }
       const loginPage = new LoginPage(page);
       await loginPage.login(baseURL, username, password);
 
