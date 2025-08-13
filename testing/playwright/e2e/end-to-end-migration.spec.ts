@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 
 import { TEST_DATA } from '../fixtures/test-data';
-import { setupCreatePlanIntercepts } from '../intercepts';
 import { CreatePlanWizardPage } from '../page-objects/CreatePlanWizard/CreatePlanWizardPage';
 import { PlanDetailsPage } from '../page-objects/PlanDetailsPage';
 import { PlansListPage } from '../page-objects/PlansListPage';
@@ -16,8 +15,6 @@ test.describe('Plans - Critical End-to-End Migration', () => {
     });
 
     const plansPage = new PlansListPage(page);
-    await plansPage.loginProgrammatically();
-    await setupCreatePlanIntercepts(page);
     await plansPage.navigateFromMainMenu();
   });
 
