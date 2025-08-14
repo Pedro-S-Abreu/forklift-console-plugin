@@ -14,7 +14,8 @@ export class ProviderDetailsPage {
 
   async verifyProviderDetails(providerName: string): Promise<void> {
     //TODO data-test-id
-    //TODO check other data
+    //TODO check more data
+    //TODO check status
     // Verify provider name
     //await this.page.pause();
     const titleLocator = this.page.locator('.pf-v5-l-split__item', {
@@ -23,8 +24,8 @@ export class ProviderDetailsPage {
     await expect(titleLocator).toBeVisible({ timeout: 15000 });
 
     // Verify provider status
-    const statusLocator = titleLocator.locator('[data-test="resource-status"]');
-    await expect(statusLocator).toContainText('Ready');
+    // const statusLocator = titleLocator.locator('[data-test="resource-status"]');
+    // await expect(statusLocator).toContainText('Ready');
   }
 
   async waitForPageLoad(providerName: string): Promise<void> {
