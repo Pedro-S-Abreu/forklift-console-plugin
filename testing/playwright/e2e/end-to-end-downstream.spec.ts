@@ -89,6 +89,10 @@ test.describe.serial(
       }
     });
 
+    test.afterEach(async ({ page }) => {
+      await captureAuthContext(page);
+    });
+
     let testProviderData: ProviderData = {
       name: '',
       type: 'vsphere',
@@ -134,7 +138,6 @@ test.describe.serial(
       await providersPage.clickCreateProviderButton();
       await createWizard.waitForWizardLoad();
       await createWizard.fillAndSubmit(testProviderData);
-      //await providersPage.waitForPageLoad();
 
       // Navigate to provider details and verify
       //await page.click(`text=${testProviderData.name}`);
@@ -142,8 +145,6 @@ test.describe.serial(
       await providerDetailsPage.verifyProviderDetails({
         providerName: testProviderData.name,
       });
-
-      await captureAuthContext(page);
     });
 
     test(
@@ -202,7 +203,6 @@ test.describe.serial(
         await createWizard.fillAndSubmit(testPlanData);
 
         // Verify plan details page
-        await planDetailsPage.waitForPageLoad();
         await planDetailsPage.verifyBasicPlanDetailsPage({
           planName: testPlanData.planName,
           planProject: testPlanData.planProject,
@@ -210,9 +210,6 @@ test.describe.serial(
           targetProvider: testPlanData.targetProvider,
           targetProject: testPlanData.targetProject,
         });
-
-        // Capture auth context for cleanup hook
-        await captureAuthContext(page);
       },
     );
 

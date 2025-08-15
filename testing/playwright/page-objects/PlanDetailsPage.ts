@@ -14,15 +14,12 @@ export class PlanDetailsPage {
     targetProvider: string;
     targetProject: string;
   }) {
-    await this.waitForPageLoad();
+    // Verify that the Plan title is visible and correct
+
+    await this.verifyPlanTitle(planData.planName);
 
     // Verify that navigation tabs are visible
     await this.verifyNavigationTabs();
-
-    // Verify that the Plan title is visible and correct
-    if (planData?.planName) {
-      await this.verifyPlanTitle(planData.planName);
-    }
     await this.verifyPlanDetails(planData);
     await this.verifyPlanStatus();
   }
@@ -71,24 +68,14 @@ export class PlanDetailsPage {
   async verifyPlanStatus(expectedStatus = 'Ready for migration') {
     await expect(
       this.page.locator('.forklift-page-headings__status .pf-v5-c-label__text'),
-    ).toContainText(expectedStatus);
+    ).toContainText(expectedStatus, { timeout: 30000 });
 
     // Verify the Start button is present
     await expect(this.page.getByRole('button', { name: 'Start' })).toBeVisible();
   }
 
   async verifyPlanTitle(planName: string): Promise<void> {
-    const titleLocator = this.page.getByTestId('plan-details-title');
+    const titleLocator = this.page.getByTestId('resource-details-title');
     await expect(titleLocator).toContainText(planName, { timeout: 15000 });
-  }
-
-  async waitForPageLoad(): Promise<void> {
-    await this.page.waitForLoadState('domcontentloaded', { timeout: 15000 });
-
-    // Verify the plan title is visible (using correct data-testid attribute)
-    const titleLocator = this.page.getByTestId('plan-details-title');
-    await expect(titleLocator).toBeVisible({ timeout: 15000 });
-
-    // Wait for the plan details page to load by ensuring key elements are present
   }
 }

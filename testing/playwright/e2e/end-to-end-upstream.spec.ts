@@ -40,7 +40,7 @@ test.describe(
       await createWizard.fillAndSubmit(testData);
 
       // Verify plan details page
-      await planDetailsPage.waitForPageLoad();
+
       await planDetailsPage.verifyBasicPlanDetailsPage({
         planName: testData.planName,
         planProject: testData.planProject,
