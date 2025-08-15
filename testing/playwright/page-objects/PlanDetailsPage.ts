@@ -39,11 +39,11 @@ export class PlanDetailsPage {
     // Verify the Details tab exists and is visible
     const detailsTab = this.page.locator('[data-test-id="horizontal-link-Details"]');
 
-    await expect(detailsTab).toBeVisible({ timeout: 10000 });
+    await expect(detailsTab).toBeVisible();
     const planDetailsSection = this.page
       .locator('section.pf-m-light')
       .filter({ hasText: 'Plan details' });
-    await expect(planDetailsSection).toBeVisible({ timeout: 15000 });
+    await expect(planDetailsSection).toBeVisible();
   }
 
   async verifyPlanDetails(planData: {
@@ -69,10 +69,9 @@ export class PlanDetailsPage {
   }
 
   async verifyPlanStatus(expectedStatus = 'Ready for migration') {
-    // Verify the plan status label
-    await expect(this.page.locator('.forklift-plan-status__grey-label')).toContainText(
-      expectedStatus,
-    );
+    await expect(
+      this.page.locator('.forklift-page-headings__status .pf-v5-c-label__text'),
+    ).toContainText(expectedStatus);
 
     // Verify the Start button is present
     await expect(this.page.getByRole('button', { name: 'Start' })).toBeVisible();
