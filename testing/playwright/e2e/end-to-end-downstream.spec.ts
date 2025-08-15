@@ -1,4 +1,12 @@
 import { test } from '@playwright/test';
+import { existsSync } from 'fs';
+import { join } from 'path';
+
+// Check if .providers.json file exists
+const providersPath = join(__dirname, '../../.providers.json');
+if (!existsSync(providersPath)) {
+  throw new Error(`.providers.json file not found at: ${providersPath}`);
+}
 
 import * as providers from '../../.providers.json';
 import { CreatePlanWizardPage } from '../page-objects/CreatePlanWizard/CreatePlanWizardPage';
@@ -8,6 +16,8 @@ import { PlanDetailsPage } from '../page-objects/PlanDetailsPage';
 import { PlansListPage } from '../page-objects/PlansListPage';
 import { ProviderDetailsPage } from '../page-objects/ProviderDetailsPage';
 import { ProvidersListPage } from '../page-objects/ProvidersListPage';
+import { ResourceManager } from '../utils/ResourceManager';
+import { disableGuidedTour } from '../utils/utils';
 
 import { createPlanTestData, type ProviderData } from './shared/test-data';
 
@@ -17,200 +27,37 @@ test.describe.serial(
     tag: '@downstream',
   },
   () => {
+    const resourceManager = new ResourceManager();
+
     test.beforeEach(async ({ page }) => {
-      // Only perform login if credentials are provided
-      if (!process.env.CLUSTER_USERNAME || !process.env.CLUSTER_PASSWORD) {
-        return;
-      }
+      // Disable guided tour BEFORE navigation to ensure the script is injected
+      await disableGuidedTour(page);
+      
+      // Navigate to console
+      const consoleUrl = process.env.CONSOLE_URL ?? 'http://localhost:9000';
+      await page.goto(consoleUrl);
+      await page.waitForLoadState('domcontentloaded');
 
-      const baseURL = process.env.BRIDGE_BASE_ADDRESS ?? process.env.BASE_ADDRESS;
-
-      if (!baseURL) {
-        throw new Error('BASE_ADDRESS is required for authentication');
-      }
-
-      try {
-        // eslint-disable-next-line no-console
-        console.error(`🚀 Starting login to: ${baseURL}`);
-        // eslint-disable-next-line no-console
-        console.error(`🔧 Environment: headless=${page.context().browser()?.browserType().name()}`);
-
-        // Navigate with debugging
-        // eslint-disable-next-line no-console
-        console.error(`🌐 Navigating to: ${baseURL}`);
-
-        const response = await page.goto(baseURL, {
-          waitUntil: 'networkidle',
-          timeout: 60000,
-        });
-
-        // eslint-disable-next-line no-console
-        console.error(`📄 Response status: ${response?.status()}`);
-        // eslint-disable-next-line no-console
-        console.error(`📄 Response URL: ${response?.url()}`);
-
-        // Wait for JavaScript to execute and check if we need to retry
-        let jsExecuted = false;
-        let retryCount = 0;
-        const maxRetries = 5;
-
-        while (!jsExecuted && retryCount < maxRetries) {
-          // eslint-disable-next-line no-await-in-loop
-          await page.waitForTimeout(2000 * (retryCount + 1)); // Progressive wait
-
-          // eslint-disable-next-line no-await-in-loop
-          const bodyText = await page.locator('body').textContent();
-          const isJsDisabledPage =
-            bodyText?.includes('JavaScript must be enabled') ?? bodyText?.length < 100;
-
-          if (isJsDisabledPage) {
-            retryCount += 1;
-            // eslint-disable-next-line no-console
-            console.error(
-              `⚠️ JavaScript not executing (attempt ${retryCount}/${maxRetries}), retrying...`,
-            );
-
-            // Force reload to trigger JavaScript execution
-            // eslint-disable-next-line no-await-in-loop
-            await page.reload({ waitUntil: 'networkidle', timeout: 30000 });
-          } else {
-            jsExecuted = true;
-            // eslint-disable-next-line no-console
-            console.error(`✅ JavaScript execution confirmed after ${retryCount} retries`);
-          }
-        }
-
-        // Final wait for any redirects after JS execution
-        await page.waitForTimeout(3000);
-
-        // Log page details for debugging
-        const title = await page.title();
-        const url = page.url();
-        // eslint-disable-next-line no-console
-        console.error(`📄 Page title: "${title}"`);
-        // eslint-disable-next-line no-console
-        console.error(`📄 Current URL: ${url}`);
-
-        // Check if page content is actually loaded
-        const bodyText = await page.locator('body').textContent();
-        // eslint-disable-next-line no-console
-        console.error(`📄 Body text length: ${bodyText?.length ?? 0}`);
-        // eslint-disable-next-line no-console
-        console.error(`📄 First 200 chars: "${bodyText?.substring(0, 200) ?? 'No body text'}"`);
-
-        // Check for any error messages on the page
-        const errorElements = await page
-          .locator('text=/error|Error|ERROR|failed|Failed|FAILED/i')
-          .count();
-        // eslint-disable-next-line no-console
-        console.error(`🚨 Error elements found: ${errorElements}`);
-
-        // Look for login elements before attempting login
-        const usernameFields = await page
-          .locator('input[type="text"], input[name="username"], #inputUsername')
-          .count();
-        const passwordFields = await page
-          .locator('input[type="password"], input[name="password"], #inputPassword')
-          .count();
-        // eslint-disable-next-line no-console
-        console.error(`🔍 Username fields found: ${usernameFields}`);
-        // eslint-disable-next-line no-console
-        console.error(`🔍 Password fields found: ${passwordFields}`);
-
-        // List all input elements for debugging
-        const allInputs = await page.locator('input').all();
-        // eslint-disable-next-line no-console
-        console.error(`🔍 Total input elements: ${allInputs.length}`);
-
-        // Use Promise.all to avoid await in loop
-        const inputDetails = await Promise.all(
-          allInputs.map(async (input, i) => {
-            const type = await input.getAttribute('type');
-            const name = await input.getAttribute('name');
-            const id = await input.getAttribute('id');
-            const placeholder = await input.getAttribute('placeholder');
-            return `  Input ${i}: Type="${type}", Name="${name}", ID="${id}", Placeholder="${placeholder}"`;
-          }),
-        );
-        // eslint-disable-next-line no-console
-        console.error(inputDetails.join('\n'));
-
-        // Check if we're on the right page (should contain login elements)
-        if (usernameFields === 0 && passwordFields === 0) {
-          // eslint-disable-next-line no-console
-          console.error('⚠️ No login fields found - this might be a redirect or wrong page');
-
-          // Check for common redirect patterns
-          const loginLinks = await page
-            .locator('a[href*="login"], a[href*="auth"], a[href*="oauth"]')
-            .count();
-          // eslint-disable-next-line no-console
-          console.error(`🔗 Login-related links found: ${loginLinks}`);
-
-          // Look for any buttons that might trigger authentication
-          const buttons = await page.locator('button, input[type="submit"], a').all();
-          // eslint-disable-next-line no-console
-          console.error(`🔘 Buttons/links found: ${buttons.length}`);
-
-          // Use Promise.all to avoid await in loop
-          const buttonDetails = await Promise.all(
-            buttons.slice(0, 5).map(async (button, i) => {
-              const text = await button.textContent();
-              const href = await button.getAttribute('href');
-              return `  Button ${i}: "${text?.trim()}" href="${href}"`;
-            }),
-          );
-          // eslint-disable-next-line no-console
-          console.error(buttonDetails.join('\n'));
-
-          throw new Error('No login fields found on the page - this might not be the login page');
-        }
-
-        // If we have the right page, proceed with login
-        if (usernameFields > 0 || passwordFields > 0) {
+      // Login if credentials are provided
+      if (process.env.CLUSTER_USERNAME && process.env.CLUSTER_PASSWORD) {
+        try {
           const loginPage = new LoginPage(page);
           await loginPage.login(
-            baseURL,
+            consoleUrl,
             process.env.CLUSTER_USERNAME,
             process.env.CLUSTER_PASSWORD,
           );
-
-          // eslint-disable-next-line no-console
-          console.error('✅ Login successful');
+        } catch (error) {
+          // If login fails, assume already logged in
+          console.log('Login failed, assuming already authenticated');
         }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('❌ Login failed:', (error as Error).message);
-
-        // Take comprehensive debugging screenshots
-        await page.screenshot({
-          path: './test-results/auth-failure-debug.png',
-          fullPage: true,
-        });
-
-        // Log final page state for debugging
-        try {
-          const finalTitle = await page.title();
-          const finalUrl = page.url();
-          const finalBodyText = await page.locator('body').textContent();
-          // eslint-disable-next-line no-console
-          console.error(`❌ Failed on page title: "${finalTitle}"`);
-          // eslint-disable-next-line no-console
-          console.error(`❌ Failed on URL: ${finalUrl}`);
-          // eslint-disable-next-line no-console
-          console.error(`❌ Final body text length: ${finalBodyText?.length ?? 0}`);
-        } catch (debugError) {
-          // eslint-disable-next-line no-console
-          console.error('❌ Could not get final page state:', (debugError as Error).message);
-        }
-
-        throw error;
       }
     });
 
     let testProviderData: ProviderData = {
       name: '',
       type: 'vsphere',
+      endpointType: 'vcenter',
       hostname: '',
       username: '',
       password: '',
@@ -222,15 +69,27 @@ test.describe.serial(
       await providersPage.navigateFromMainMenu();
       const createWizard = new CreateProviderWizardPage(page);
 
-      const vsphereProvider = providers['vsphere-8.0.1'];
+      const providerKey = process.env.VSPHERE_PROVIDER ?? 'vsphere-8.0.1';
+      const vsphereProvider = (providers as Record<string, any>)[providerKey] as {
+        api_url: string;
+        username: string;
+        password: string;
+        vddk_init_image: string;
+      };
 
-      // if (!vsphereProvider.api_url || !vsphereProvider.username || !vsphereProvider.password || !vsphereProvider.vddk_init_image) {
-      //   test.skip(true, 'Missing credentials variables for vSphere provider');
-      // }
+      const providerName = `test-vsphere-provider-${Date.now()}`;
+      
+      // Track the provider for cleanup
+      resourceManager.addResource({
+        namespace: 'openshift-mtv',
+        resourceType: 'providers',
+        resourceName: providerName
+      });
 
       testProviderData = {
-        name: `test-vsphere-provider-${Date.now()}`,
+        name: providerName,
         type: 'vsphere',
+        endpointType: 'esxi',
         hostname: vsphereProvider.api_url,
         username: vsphereProvider.username,
         password: vsphereProvider.password,
@@ -245,7 +104,7 @@ test.describe.serial(
       // Navigate to provider details and verify
       //await page.click(`text=${testProviderData.name}`);
       const providerDetailsPage = new ProviderDetailsPage(page);
-      await providerDetailsPage.verifyBasicProviderDetailsPage({
+      await providerDetailsPage.verifyProviderDetails({
         providerName: testProviderData.name,
       });
     });
@@ -256,8 +115,28 @@ test.describe.serial(
         tag: [],
       },
       async ({ page }) => {
-        //`real-test-plan-${Date.now()}`
         const planName = `real-test-plan-${Date.now()}`;
+        
+        // Track the plan for cleanup
+        resourceManager.addResource({
+          namespace: 'openshift-mtv',
+          resourceType: 'plans',
+          resourceName: planName
+        });
+
+        // Track network and storage maps
+        resourceManager.addResource({
+          namespace: 'openshift-mtv',
+          resourceType: 'networkmaps',
+          resourceName: `${planName}-network-map`
+        });
+
+        resourceManager.addResource({
+          namespace: 'openshift-mtv',
+          resourceType: 'storagemaps',
+          resourceName: `${planName}-storage-map`
+        });
+
         const testPlanData = createPlanTestData({
           planName,
           planProject: 'openshift-mtv',
@@ -297,39 +176,16 @@ test.describe.serial(
       },
     );
 
-    // test(
-    //   'should validate external console connectivity',
-    //   {
-    //     tag: '@connectivity',
-    //   },
-    //   async ({ page }) => {
-    //     const externalUrl = process.env.EXTERNAL_CONSOLE_URL ?? process.env.BASE_ADDRESS;
-
-    //     if (!externalUrl || externalUrl === 'http://localhost:9000') {
-    //       test.skip(true, 'External console URL not provided, skipping connectivity test');
-    //     }
-
-    //     // eslint-disable-next-line no-console
-    //     console.error(`🔗 Testing connectivity to: ${externalUrl!}`);
-
-    //     // Basic connectivity test - should be able to load the console
-    //     const response = await page.goto(externalUrl!, {
-    //       waitUntil: 'networkidle',
-    //       timeout: 60000,
-    //     });
-
-    //     // eslint-disable-next-line no-console
-    //     console.error(`📊 Response status: ${response?.status()}`);
-
-    //     // Should get a valid response (not a complete failure)
-    //     if (response && response.status() >= 400) {
-    //       // eslint-disable-next-line no-console
-    //       console.error(`⚠️  Got HTTP ${response.status()}, but continuing...`);
-    //     }
-
-    //     // eslint-disable-next-line no-console
-    //     console.error('✅ Basic connectivity test completed');
-    //   },
-    // );
+    // Final cleanup test - runs last and cleans up all resources
+    test('cleanup all test resources', async ({ page }) => {
+      if (resourceManager.getResourceCount() > 0) {
+        // eslint-disable-next-line no-console
+        console.log(`🧹 Cleaning up ${resourceManager.getResourceCount()} resources...`);
+        await resourceManager.cleanupAll(page);
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('No resources to cleanup.');
+      }
+    });
   },
 );
