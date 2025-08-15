@@ -7,33 +7,50 @@ export class ProviderDetailsPage {
     this.page = page;
   }
 
-  async verifyBasicProviderDetailsPage(providerData: { providerName: string }): Promise<void> {
-    await this.waitForPageLoad(providerData.providerName);
-    await this.verifyProviderDetails(providerData.providerName);
+  async verifyProviderDetails(providerData: {
+    providerName: string;
+    providerType?: string;
+    providerUrl?: string;
+    providerProject?: string;
+    product?: string;
+    credentials?: string;
+    transferNetwork?: string;
+    vddkInitImage?: string;
+  }): Promise<void> {
+    await expect(this.page.getByTestId('resource-details-title')).toContainText(
+      providerData.providerName,
+    );
+    await expect(this.page.getByTestId('name-detail-item')).toContainText(
+      providerData.providerName,
+    );
+    await expect(this.page.getByTestId('type-detail-item')).toContainText(
+      providerData.providerType ?? '',
+    );
+    await expect(this.page.getByTestId('url-detail-item')).toContainText(
+      providerData.providerUrl ?? '',
+    );
+    await expect(this.page.getByTestId('project-detail-item')).toContainText(
+      providerData.providerProject ?? '',
+    );
+    await expect(this.page.getByTestId('product-detail-item')).toContainText(
+      providerData.product ?? '',
+    );
+    await expect(this.page.getByTestId('credentials-detail-item')).toContainText(
+      providerData.credentials ?? '',
+    );
+    await expect(this.page.getByTestId('vddk-detail-item')).toContainText(
+      providerData.vddkInitImage ?? '',
+    );
+    await expect(this.page.getByTestId('created-at-detail-item')).toBeVisible();
+    await expect(this.page.getByTestId('owner-detail-item')).toContainText('No owner');
+    const statusLocator = this.page.locator('[data-test="resource-status"]');
+    await expect(statusLocator).toContainText('Ready');
   }
 
-  async verifyProviderDetails(providerName: string): Promise<void> {
-    //TODO data-test-id
-    //TODO check more data
-    //TODO check status
-    // Verify provider name
-    //await this.page.pause();
-    const titleLocator = this.page.locator('.pf-v5-l-split__item', {
-      hasText: providerName,
-    });
-    await expect(titleLocator).toBeVisible({ timeout: 15000 });
+  async waitForPageLoad(): Promise<void> {
+    await this.page.waitForLoadState('domcontentloaded', { timeout: 15000 });
 
-    // Verify provider status
-    // const statusLocator = titleLocator.locator('[data-test="resource-status"]');
-    // await expect(statusLocator).toContainText('Ready');
-  }
-
-  async waitForPageLoad(providerName: string): Promise<void> {
-    //TODO data-test-id
-    await this.page.waitForLoadState('domcontentloaded', { timeout: 10000 });
-    // await this.page.pause();
-    // Using a locator that finds the title of the page.
-    //verifyProviderDetails
-    await this.verifyProviderDetails(providerName);
+    // Wait for the provider details page to load by ensuring key elements are present
+    await expect(this.page.getByTestId('name-detail-item')).toBeVisible({ timeout: 15000 });
   }
 }

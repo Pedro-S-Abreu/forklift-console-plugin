@@ -4,8 +4,7 @@ import { setupCreatePlanIntercepts } from '../intercepts';
 import { CreatePlanWizardPage } from '../page-objects/CreatePlanWizard/CreatePlanWizardPage';
 import { PlanDetailsPage } from '../page-objects/PlanDetailsPage';
 import { PlansListPage } from '../page-objects/PlansListPage';
-
-import { createPlanTestData } from './shared/test-data';
+import { createPlanTestData } from '../types/test-data';
 
 test.describe(
   'Plans - Upstream End-to-End Migration',

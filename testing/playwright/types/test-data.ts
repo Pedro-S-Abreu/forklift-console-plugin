@@ -38,6 +38,7 @@ export const createPlanTestData = ({
 export interface ProviderData {
   name: string;
   type: 'vsphere' | 'ovirt' | 'ova' | 'openstack';
+  endpointType?: 'vcenter' | 'esxi';
   hostname: string;
   username: string;
   password?: string;
