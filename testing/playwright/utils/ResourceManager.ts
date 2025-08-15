@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
-import { isEmpty } from '@utils/helpers';
+
+import { isEmpty } from '../../../src/utils/helpers';
 
 export interface ResourceToCleanup {
   namespace: string;
