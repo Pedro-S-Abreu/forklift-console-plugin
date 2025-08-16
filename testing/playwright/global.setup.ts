@@ -9,7 +9,7 @@ const RESOURCES_FILE = 'playwright/.resources.json';
 
 const globalSetup = async (config: FullConfig) => {
   console.error('🚀 Starting global setup...');
-  
+
   if (existsSync(RESOURCES_FILE)) {
     console.error(`🗑️ Removing existing resources file: ${RESOURCES_FILE}`);
     unlinkSync(RESOURCES_FILE);
@@ -39,23 +39,30 @@ const globalSetup = async (config: FullConfig) => {
       const url = response.url();
       const status = response.status();
       const statusText = response.statusText();
-      
+
       console.error(`📡 HTTP Response: ${status} ${statusText} - ${url}`);
-      
+
       // Log response body for failed requests or important endpoints
-      if (status >= 400 || url.includes('/auth') || url.includes('/login') || url.includes('/oauth')) {
+      if (
+        status >= 400 ||
+        url.includes('/auth') ||
+        url.includes('/login') ||
+        url.includes('/oauth')
+      ) {
         try {
           const body = await response.text();
-          console.error(`📄 Response body (${body.length} chars): ${body.substring(0, 500)}${body.length > 500 ? '...' : ''}`);
+          console.error(
+            `📄 Response body (${body.length} chars): ${body.substring(0, 500)}${body.length > 500 ? '...' : ''}`,
+          );
         } catch (error) {
-          console.error(`❌ Failed to read response body: ${error}`);
+          console.error(`❌ Failed to read response body: ${String(error)}`);
         }
       }
     });
 
     // Listen to console messages from the page
-    page.on('console', (msg) => {
-      console.error(`🖥️ Browser console [${msg.type()}]:`, msg.text());
+    page.on('console', (_msg) => {
+      // console.error(`🖥️ Browser console [${_msg.type()}]:`, _msg.text());
     });
 
     // Listen to page errors
@@ -69,6 +76,7 @@ const globalSetup = async (config: FullConfig) => {
     try {
       console.error('🔐 Attempting login...');
       const loginPage = new LoginPage(page);
+      console.error('📄 Page HTML before login:', await page.content());
       await loginPage.login(baseURL, username, password);
       console.error('✅ Login successful');
 
@@ -77,6 +85,7 @@ const globalSetup = async (config: FullConfig) => {
       console.error('✅ Authentication state saved');
     } catch (error) {
       console.error('❌ Login failed in global setup:', error);
+      console.error('📄 Page HTML on login failure:', await page.content());
       // Re-throwing the error is important to make sure the test run fails
       // if the setup can't complete.
       throw error;
