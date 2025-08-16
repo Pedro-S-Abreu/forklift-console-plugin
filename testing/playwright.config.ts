@@ -6,7 +6,7 @@ export default defineConfig({
   globalSetup: require.resolve('./playwright/global.setup.ts'),
   globalTeardown: require.resolve('./playwright/global.teardown.ts'),
   testDir: './playwright/e2e',
-  timeout: 60_000,
+  timeout: process.env.JENKINS ? 120_000 : 60_000,
   fullyParallel: true,
 
   retries: process.env.GITHUB_ACTIONS ? 3 : 0,
