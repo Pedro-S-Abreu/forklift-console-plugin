@@ -16,7 +16,7 @@ import { PlanDetailsPage } from '../page-objects/PlanDetailsPage';
 import { PlansListPage } from '../page-objects/PlansListPage';
 import { ProviderDetailsPage } from '../page-objects/ProviderDetailsPage';
 import { ProvidersListPage } from '../page-objects/ProvidersListPage';
-import { createPlanTestData, type ProviderData } from '../types/test-data';
+import { createPlanTestData, type ProviderConfig, type ProviderData } from '../types/test-data';
 import { ResourceManager } from '../utils/ResourceManager';
 
 test.describe.serial(
@@ -48,23 +48,17 @@ test.describe.serial(
         const createWizard = new CreateProviderWizardPage(page, resourceManager);
 
         const providerKey = process.env.VSPHERE_PROVIDER ?? 'vsphere-8.0.1';
-        const vsphereProvider = (providers as Record<string, unknown>)[providerKey] as {
-          api_url: string;
-          username: string;
-          password: string;
-          vddk_init_image: string;
-        };
-
         const providerName = `test-vsphere-provider-${Date.now()}`;
+        const providerConfig = (providers as Record<string, ProviderConfig>)[providerKey];
 
         testProviderData = {
           name: providerName,
           type: 'vsphere',
           endpointType: 'esxi',
-          hostname: vsphereProvider.api_url,
-          username: vsphereProvider.username,
-          password: vsphereProvider.password,
-          vddkInitImage: vsphereProvider.vddk_init_image,
+          hostname: providerConfig.api_url,
+          username: providerConfig.username,
+          password: providerConfig.password,
+          vddkInitImage: providerConfig.vddk_init_image,
         };
 
         await providersPage.clickCreateProviderButton();
@@ -75,10 +69,7 @@ test.describe.serial(
         //await page.click(`text=${testProviderData.name}`);
         const providerDetailsPage = new ProviderDetailsPage(page);
         await providerDetailsPage.waitForPageLoad();
-        await page.pause();
-        await providerDetailsPage.verifyProviderDetails({
-          providerName: testProviderData.name,
-        });
+        await providerDetailsPage.verifyProviderDetails(testProviderData);
       },
     );
 

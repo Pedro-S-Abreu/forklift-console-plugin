@@ -1,5 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
+import type { ProviderData } from '../types/test-data';
+
 export class ProviderDetailsPage {
   protected readonly page: Page;
 
@@ -7,37 +9,16 @@ export class ProviderDetailsPage {
     this.page = page;
   }
 
-  async verifyProviderDetails(providerData: {
-    providerName: string;
-    providerType?: string;
-    providerUrl?: string;
-    providerProject?: string;
-    product?: string;
-    credentials?: string;
-    transferNetwork?: string;
-    vddkInitImage?: string;
-  }): Promise<void> {
-    await expect(this.page.getByTestId('resource-details-title')).toContainText(
-      providerData.providerName,
-    );
-    await expect(this.page.getByTestId('name-detail-item')).toContainText(
-      providerData.providerName,
-    );
+  async verifyProviderDetails(providerData: ProviderData): Promise<void> {
+    await expect(this.page.getByTestId('resource-details-title')).toContainText(providerData.name);
+    await expect(this.page.getByTestId('name-detail-item')).toContainText(providerData.name);
     await expect(this.page.getByTestId('type-detail-item')).toContainText(
-      providerData.providerType ?? '',
+      providerData.type === 'vsphere' ? 'VMware' : providerData.type,
     );
-    await expect(this.page.getByTestId('url-detail-item')).toContainText(
-      providerData.providerUrl ?? '',
-    );
-    await expect(this.page.getByTestId('project-detail-item')).toContainText(
-      providerData.providerProject ?? '',
-    );
-    await expect(this.page.getByTestId('product-detail-item')).toContainText(
-      providerData.product ?? '',
-    );
-    await expect(this.page.getByTestId('credentials-detail-item')).toContainText(
-      providerData.credentials ?? '',
-    );
+    await expect(this.page.getByTestId('url-detail-item')).toContainText(providerData.hostname);
+    await expect(this.page.getByTestId('project-detail-item')).toContainText('openshift-mtv');
+    await expect(this.page.getByTestId('product-detail-item')).toContainText('');
+    await expect(this.page.getByTestId('credentials-detail-item')).toContainText('');
     await expect(this.page.getByTestId('vddk-detail-item')).toContainText(
       providerData.vddkInitImage ?? '',
     );

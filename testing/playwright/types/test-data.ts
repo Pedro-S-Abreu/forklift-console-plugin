@@ -35,6 +35,13 @@ export const createPlanTestData = ({
   storageMap,
 });
 
+export interface ProviderConfig {
+  api_url: string;
+  username: string;
+  password: string;
+  vddk_init_image?: string;
+}
+
 export interface ProviderData {
   name: string;
   type: 'vsphere' | 'ovirt' | 'ova' | 'openstack';
