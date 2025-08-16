@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
-import type { PlanTestData } from '../../e2e/shared/test-data';
+import type { PlanTestData } from '../../types/test-data';
+import type { ResourceManager } from '../../utils/ResourceManager';
 
 import { GeneralInformationStep } from './steps/GeneralInformationStep';
 import { NetworkMapStep } from './steps/NetworkMapStep';
@@ -9,6 +10,7 @@ import { StorageMapStep } from './steps/StorageMapStep';
 import { VirtualMachinesStep } from './steps/VirtualMachinesStep';
 
 export class CreatePlanWizardPage {
+  private readonly resourceManager?: ResourceManager;
   public readonly generalInformation: GeneralInformationStep;
   public readonly networkMap: NetworkMapStep;
   protected readonly page: Page;
@@ -16,8 +18,9 @@ export class CreatePlanWizardPage {
   public readonly storageMap: StorageMapStep;
   public readonly virtualMachines: VirtualMachinesStep;
 
-  constructor(page: Page) {
+  constructor(page: Page, resourceManager?: ResourceManager) {
     this.page = page;
+    this.resourceManager = resourceManager;
     this.generalInformation = new GeneralInformationStep(page);
     this.virtualMachines = new VirtualMachinesStep(page);
     this.networkMap = new NetworkMapStep(page);
@@ -87,6 +90,30 @@ export class CreatePlanWizardPage {
       testData.networkMap,
       testData.storageMap,
     );
+
+    if (this.resourceManager && testData.planName) {
+      this.resourceManager.addResource({
+        namespace: 'openshift-mtv',
+        resourceType: 'plans',
+        resourceName: testData.planName,
+      });
+
+      if (testData.networkMap && !testData.networkMap.isPreExisting) {
+        this.resourceManager.addResource({
+          namespace: 'openshift-mtv',
+          resourceType: 'networkmaps',
+          resourceName: `${testData.planName}-network-map`,
+        });
+      }
+
+      if (testData.storageMap && !testData.storageMap.isPreExisting) {
+        this.resourceManager.addResource({
+          namespace: 'openshift-mtv',
+          resourceType: 'storagemaps',
+          resourceName: `${testData.planName}-storage-map`,
+        });
+      }
+    }
 
     // STEP 6: Create the plan
     await this.clickNext();

@@ -23,8 +23,8 @@ test.describe(
         sourceProvider: 'test-source-provider',
         targetProvider: 'test-target-provider',
         targetProject: 'test-target-project',
-        networkMap: { name: 'test-network-map-1', exists: true },
-        storageMap: { name: 'test-storage-map-1', exists: true },
+        networkMap: { name: 'test-network-map-1', isPreExisting: true },
+        storageMap: { name: 'test-storage-map-1', isPreExisting: true },
       });
 
       const plansPage = new PlansListPage(page);

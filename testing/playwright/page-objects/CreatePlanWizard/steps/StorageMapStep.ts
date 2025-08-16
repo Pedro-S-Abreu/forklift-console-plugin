@@ -7,10 +7,10 @@ export class StorageMapStep {
     this.page = page;
   }
 
-  async selectStorageMap(storageMap: { name: string; exists: boolean }): Promise<void> {
+  async selectStorageMap(storageMap: { name: string; isPreExisting: boolean }): Promise<void> {
     //TODO set data-testid
     const selectElement = this.page.getByTestId('storage-map-select');
-    if (storageMap.exists) {
+    if (storageMap.isPreExisting) {
       await selectElement.click();
       await this.page.getByRole('option', { name: storageMap.name }).click();
     } else {

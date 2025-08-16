@@ -1,13 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { expect, type Page } from '@playwright/test';
 
-import type { ProviderData } from '../../e2e/shared/test-data';
+import type { ProviderData } from '../../types/test-data';
+import type { ResourceManager } from '../../utils/ResourceManager';
 
 export class CreateProviderWizardPage {
+  private readonly resourceManager?: ResourceManager;
   protected readonly page: Page;
 
-  constructor(page: Page) {
+  constructor(page: Page, resourceManager?: ResourceManager) {
     this.page = page;
+    this.resourceManager = resourceManager;
   }
 
   async fillAndSubmit(testData: ProviderData) {
@@ -51,6 +53,16 @@ export class CreateProviderWizardPage {
       await this.page.getByRole('textbox', { name: 'Password input' }).fill(password);
     }
     await this.page.locator('#insecureSkipVerify-off').click();
+
+    // Track the provider for cleanup before creation
+    if (this.resourceManager && name) {
+      this.resourceManager.addResource({
+        namespace: 'openshift-mtv',
+        resourceType: 'providers',
+        resourceName: name,
+      });
+    }
+
     await this.page.getByRole('button', { name: 'Create provider' }).click();
     await this.page.waitForTimeout(1000);
   }

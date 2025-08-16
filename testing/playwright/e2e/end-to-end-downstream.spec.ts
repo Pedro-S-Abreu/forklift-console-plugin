@@ -45,7 +45,7 @@ test.describe.serial(
       async ({ page }) => {
         const providersPage = new ProvidersListPage(page);
         await providersPage.navigateFromMainMenu();
-        const createWizard = new CreateProviderWizardPage(page);
+        const createWizard = new CreateProviderWizardPage(page, resourceManager);
 
         const providerKey = process.env.VSPHERE_PROVIDER ?? 'vsphere-8.0.1';
         const vsphereProvider = (providers as Record<string, unknown>)[providerKey] as {
@@ -56,13 +56,6 @@ test.describe.serial(
         };
 
         const providerName = `test-vsphere-provider-${Date.now()}`;
-
-        // Track the provider for cleanup
-        resourceManager.addResource({
-          namespace: 'openshift-mtv',
-          resourceType: 'providers',
-          resourceName: providerName,
-        });
 
         testProviderData = {
           name: providerName,
@@ -81,6 +74,8 @@ test.describe.serial(
         // Navigate to provider details and verify
         //await page.click(`text=${testProviderData.name}`);
         const providerDetailsPage = new ProviderDetailsPage(page);
+        await providerDetailsPage.waitForPageLoad();
+        await page.pause();
         await providerDetailsPage.verifyProviderDetails({
           providerName: testProviderData.name,
         });
@@ -95,26 +90,6 @@ test.describe.serial(
       async ({ page }) => {
         const planName = `real-test-plan-${Date.now()}`;
 
-        // Track the plan for cleanup
-        resourceManager.addResource({
-          namespace: 'openshift-mtv',
-          resourceType: 'plans',
-          resourceName: planName,
-        });
-
-        // Track network and storage maps
-        resourceManager.addResource({
-          namespace: 'openshift-mtv',
-          resourceType: 'networkmaps',
-          resourceName: `${planName}-network-map`,
-        });
-
-        resourceManager.addResource({
-          namespace: 'openshift-mtv',
-          resourceType: 'storagemaps',
-          resourceName: `${planName}-storage-map`,
-        });
-
         const testPlanData = createPlanTestData({
           planName,
           planProject: 'openshift-mtv',
@@ -123,16 +98,16 @@ test.describe.serial(
           targetProject: 'default',
           networkMap: {
             name: `${planName}-network-map`,
-            exists: false,
+            isPreExisting: false,
           },
           storageMap: {
             name: `${planName}-storage-map`,
-            exists: false,
+            isPreExisting: false,
           },
         });
         const plansPage = new PlansListPage(page);
         await plansPage.navigateFromMainMenu();
-        const createWizard = new CreatePlanWizardPage(page);
+        const createWizard = new CreatePlanWizardPage(page, resourceManager);
         const planDetailsPage = new PlanDetailsPage(page);
 
         // Navigate to the wizard

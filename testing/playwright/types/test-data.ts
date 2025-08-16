@@ -6,11 +6,11 @@ export interface PlanTestData {
   targetProject: string;
   networkMap: {
     name: string;
-    exists: boolean;
+    isPreExisting: boolean;
   };
   storageMap: {
     name: string;
-    exists: boolean;
+    isPreExisting: boolean;
   };
 }
 
