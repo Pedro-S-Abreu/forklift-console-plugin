@@ -1,6 +1,10 @@
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+
 import type { Page } from '@playwright/test';
 
 import { isEmpty } from '../../../src/utils/helpers';
+
+const RESOURCES_FILE = 'playwright/.resources.json';
 
 export interface ResourceToCleanup {
   namespace: string;
@@ -100,5 +104,16 @@ export class ResourceManager {
 
   getResources(): ResourceToCleanup[] {
     return [...this.resources];
+  }
+
+  loadResourcesFromFile() {
+    if (existsSync(RESOURCES_FILE)) {
+      const data = readFileSync(RESOURCES_FILE, 'utf-8');
+      this.resources = JSON.parse(data);
+    }
+  }
+
+  saveResourcesToFile() {
+    writeFileSync(RESOURCES_FILE, JSON.stringify(this.resources, null, 2));
   }
 }
