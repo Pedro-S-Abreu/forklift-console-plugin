@@ -22,6 +22,10 @@ export class LoginPage {
       // Check what's actually on the page
       const pageContent = await this.page.content();
       console.log('📜 Page HTML length:', pageContent.length);
+      console.log('📜 Full HTML content:');
+      console.log('='.repeat(80));
+      console.log(pageContent);
+      console.log('='.repeat(80));
       
       // Look for login-related elements
       const hasLoginForm = await this.page.locator('#co-login-form').count();
