@@ -1,12 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
-//const authFile = 'playwright/.auth/user.json';
-//const needsAuth = process.env.CLUSTER_USERNAME && process.env.CLUSTER_PASSWORD;
+const authFile = 'playwright/.auth/user.json';
 
 export default defineConfig({
-  // globalSetup: require.resolve('./playwright/global.setup.ts'),
+  globalSetup: require.resolve('./playwright/global.setup.ts'),
+  globalTeardown: require.resolve('./playwright/global.teardown.ts'),
   testDir: './playwright/e2e',
-  //globalSetup: require.resolve('./playwright/global.setup.ts'),
   timeout: 60_000,
   fullyParallel: true,
 
@@ -17,9 +16,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        //storageState: needsAuth ? authFile : undefined,
-        //storageState: needsAuth ? authFile : undefined,
-        // GitHub Actions uses port 30080, local dev uses 9000
+        storageState: authFile,
         baseURL:
           process.env.BRIDGE_BASE_ADDRESS ?? process.env.BASE_ADDRESS ?? 'http://localhost:9000',
         headless: true,
