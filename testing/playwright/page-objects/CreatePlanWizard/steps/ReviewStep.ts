@@ -41,11 +41,11 @@ export class ReviewStep {
     },
     expectedNetworkMap?: {
       name: string;
-      exists: boolean;
+      isPreExisting: boolean;
     },
     expectedStorageMap?: {
       name: string;
-      exists: boolean;
+      isPreExisting: boolean;
     },
   ): Promise<void> {
     await this.verifyGeneralSection(generalData);
@@ -94,13 +94,13 @@ export class ReviewStep {
 
   async verifyNetworkMapSection(expectedNetworkMap?: {
     name: string;
-    exists: boolean;
+    isPreExisting: boolean;
   }): Promise<void> {
     const section = this.page.getByTestId('review-network-map-section');
     await expect(section).toBeVisible();
 
     if (expectedNetworkMap) {
-      if (expectedNetworkMap.exists) {
+      if (expectedNetworkMap.isPreExisting) {
         await expect(section.getByTestId('review-network-map')).toContainText(
           expectedNetworkMap.name,
         );
@@ -124,12 +124,12 @@ export class ReviewStep {
 
   async verifyStorageMapSection(expectedStorageMap?: {
     name: string;
-    exists: boolean;
+    isPreExisting: boolean;
   }): Promise<void> {
     const section = this.page.getByTestId('review-storage-map-section');
     await expect(section).toBeVisible();
     if (expectedStorageMap) {
-      if (expectedStorageMap.exists) {
+      if (expectedStorageMap.isPreExisting) {
         await expect(section.getByTestId('review-storage-map')).toContainText(
           expectedStorageMap.name,
         );
