@@ -32,15 +32,9 @@ test.describe(
       const createWizard = new CreatePlanWizardPage(page);
       const planDetailsPage = new PlanDetailsPage(page);
 
-      // Navigate to the wizard
       await plansPage.clickCreatePlanButton();
       await createWizard.waitForWizardLoad();
-
-      // Fill and submit the wizard
       await createWizard.fillAndSubmit(testData);
-
-      // Verify plan details page
-
       await planDetailsPage.verifyBasicPlanDetailsPage(testData);
     });
   },

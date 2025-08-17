@@ -3,7 +3,6 @@ import { join } from 'path';
 
 import { test } from '@playwright/test';
 
-// Check if .providers.json file exists
 const providersPath = join(__dirname, '../../.providers.json');
 if (!existsSync(providersPath)) {
   throw new Error(`.providers.json file not found at: ${providersPath}`);
@@ -65,8 +64,6 @@ test.describe.serial(
         await createProvider.waitForWizardLoad();
         await createProvider.fillAndSubmit(testProviderData);
 
-        // Navigate to provider details and verify
-        //await page.click(`text=${testProviderData.name}`);
         const providerDetailsPage = new ProviderDetailsPage(page);
         await providerDetailsPage.waitForPageLoad();
         await providerDetailsPage.verifyProviderDetails(testProviderData);
