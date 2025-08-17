@@ -13,7 +13,7 @@ export class NetworkMapStep {
       await selectElement.click();
       await this.page.getByRole('option', { name: networkMap.name }).click();
     } else {
-      await this.page.getByRole('radio', { name: 'Use new network map' }).check();
+      await this.page.getByTestId('use-new-network-map-radio').check();
       await this.page.getByRole('textbox').click();
       await this.page.getByRole('textbox').fill(networkMap.name);
     }

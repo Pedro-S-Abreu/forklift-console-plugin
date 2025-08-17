@@ -8,13 +8,12 @@ export class StorageMapStep {
   }
 
   async selectStorageMap(storageMap: { name: string; isPreExisting: boolean }): Promise<void> {
-    //TODO set data-testid
     const selectElement = this.page.getByTestId('storage-map-select');
     if (storageMap.isPreExisting) {
       await selectElement.click();
       await this.page.getByRole('option', { name: storageMap.name }).click();
     } else {
-      await this.page.getByRole('radio', { name: 'Use new storage map' }).check();
+      await this.page.getByTestId('use-new-storage-map-radio').check();
       await this.page.getByRole('textbox').click();
       await this.page.getByRole('textbox').fill(storageMap.name);
     }
