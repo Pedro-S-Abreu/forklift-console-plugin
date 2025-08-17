@@ -41,13 +41,7 @@ test.describe(
 
       // Verify plan details page
 
-      await planDetailsPage.verifyBasicPlanDetailsPage({
-        planName: testData.planName,
-        planProject: testData.planProject,
-        sourceProvider: testData.sourceProvider,
-        targetProvider: testData.targetProvider,
-        targetProject: testData.targetProject,
-      });
+      await planDetailsPage.verifyBasicPlanDetailsPage(testData);
     });
   },
 );

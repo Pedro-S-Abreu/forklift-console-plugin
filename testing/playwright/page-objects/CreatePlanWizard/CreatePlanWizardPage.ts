@@ -79,17 +79,7 @@ export class CreatePlanWizardPage {
 
     // STEP 5: Review
     await this.review.verifyStepVisible();
-    await this.review.verifyAllSections(
-      {
-        planName: testData.planName,
-        planProject: testData.planProject,
-        sourceProvider: testData.sourceProvider,
-        targetProvider: testData.targetProvider,
-        targetProject: testData.targetProject,
-      },
-      testData.networkMap,
-      testData.storageMap,
-    );
+    await this.review.verifyAllSections(testData);
 
     if (this.resourceManager && testData.planName) {
       this.resourceManager.addResource({

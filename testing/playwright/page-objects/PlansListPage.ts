@@ -21,20 +21,14 @@ export class PlansListPage {
   }
 
   get createPlanButton() {
-    return this.page.getByRole('button', { name: 'Create Plan' }).first();
+    return this.page.getByTestId('create-plan-button');
   }
 
   async navigateFromMainMenu() {
     await disableGuidedTour(this.page);
     await this.page.goto('/');
-
     await waitForLoader(this.page);
-
-    // Wait for navigation elements to be visible before clicking
-    await this.page.getByTestId('migration-nav-item').waitFor({ state: 'visible', timeout: 10000 });
     await this.page.getByTestId('migration-nav-item').click();
-
-    await this.page.getByTestId('plans-nav-item').waitFor({ state: 'visible', timeout: 10000 });
     await this.page.getByTestId('plans-nav-item').click();
 
     expect(this.page.url()).toContain('forklift.konveyor.io~v1beta1~Plan');

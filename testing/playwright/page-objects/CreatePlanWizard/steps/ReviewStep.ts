@@ -1,5 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
+import type { PlanTestData } from '../../../types/test-data';
+
 export class ReviewStep {
   private readonly page: Page;
 
@@ -31,39 +33,17 @@ export class ReviewStep {
     await section.getByRole('button', { name: 'Edit step' }).click();
   }
 
-  async verifyAllSections(
-    generalData: {
-      planName: string;
-      planProject: string;
-      sourceProvider: string;
-      targetProvider: string;
-      targetProject: string;
-    },
-    expectedNetworkMap?: {
-      name: string;
-      isPreExisting: boolean;
-    },
-    expectedStorageMap?: {
-      name: string;
-      isPreExisting: boolean;
-    },
-  ): Promise<void> {
-    await this.verifyGeneralSection(generalData);
+  async verifyAllSections(planData: PlanTestData): Promise<void> {
+    await this.verifyGeneralSection(planData);
     await this.verifyVirtualMachinesSection();
-    await this.verifyNetworkMapSection(expectedNetworkMap);
-    await this.verifyStorageMapSection(expectedStorageMap);
+    await this.verifyNetworkMapSection(planData.networkMap);
+    await this.verifyStorageMapSection(planData.storageMap);
     await this.verifyMigrationTypeSection();
     await this.verifyOtherSettingsSection();
     await this.verifyHooksSection();
   }
 
-  async verifyGeneralSection(expectedData: {
-    planName: string;
-    planProject: string;
-    sourceProvider: string;
-    targetProvider: string;
-    targetProject: string;
-  }): Promise<void> {
+  async verifyGeneralSection(expectedData: PlanTestData): Promise<void> {
     await expect(this.page.getByTestId('review-general-section')).toBeVisible();
     await expect(this.page.getByTestId('review-plan-name')).toContainText(expectedData.planName);
     await expect(this.page.getByTestId('review-plan-project')).toContainText(
@@ -92,10 +72,7 @@ export class ReviewStep {
     await expect(this.page.getByTestId('review-migration-type')).toBeVisible();
   }
 
-  async verifyNetworkMapSection(expectedNetworkMap?: {
-    name: string;
-    isPreExisting: boolean;
-  }): Promise<void> {
+  async verifyNetworkMapSection(expectedNetworkMap: PlanTestData['networkMap']): Promise<void> {
     const section = this.page.getByTestId('review-network-map-section');
     await expect(section).toBeVisible();
 
@@ -122,10 +99,7 @@ export class ReviewStep {
     await expect(this.page.getByRole('heading', { name: 'Review and create' })).toBeVisible();
   }
 
-  async verifyStorageMapSection(expectedStorageMap?: {
-    name: string;
-    isPreExisting: boolean;
-  }): Promise<void> {
+  async verifyStorageMapSection(expectedStorageMap: PlanTestData['storageMap']): Promise<void> {
     const section = this.page.getByTestId('review-storage-map-section');
     await expect(section).toBeVisible();
     if (expectedStorageMap) {

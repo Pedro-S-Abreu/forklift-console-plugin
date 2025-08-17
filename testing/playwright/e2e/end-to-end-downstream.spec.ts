@@ -104,13 +104,7 @@ test.describe.serial(
         await plansPage.clickCreatePlanButton();
         await createWizard.waitForWizardLoad();
         await createWizard.fillAndSubmit(testPlanData);
-        await planDetailsPage.verifyBasicPlanDetailsPage({
-          planName: testPlanData.planName,
-          planProject: testPlanData.planProject,
-          sourceProvider: testPlanData.sourceProvider,
-          targetProvider: testPlanData.targetProvider,
-          targetProject: testPlanData.targetProject,
-        });
+        await planDetailsPage.verifyBasicPlanDetailsPage(testPlanData);
       },
     );
 

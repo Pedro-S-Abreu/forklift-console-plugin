@@ -1,5 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
+import type { PlanTestData } from '../types/test-data';
+
 export class PlanDetailsPage {
   protected readonly page: Page;
 
@@ -7,25 +9,14 @@ export class PlanDetailsPage {
     this.page = page;
   }
 
-  async verifyBasicPlanDetailsPage(planData?: {
-    planName: string;
-    planProject: string;
-    sourceProvider: string;
-    targetProvider: string;
-    targetProject: string;
-  }) {
-    // Verify that the Plan title is visible and correct
-
+  async verifyBasicPlanDetailsPage(planData: PlanTestData) {
     await this.verifyPlanTitle(planData.planName);
-
-    // Verify that navigation tabs are visible
     await this.verifyNavigationTabs();
     await this.verifyPlanDetails(planData);
     await this.verifyPlanStatus();
   }
 
   async verifyBreadcrumbs() {
-    // Verify breadcrumb navigation
     await expect(this.page.getByTestId('breadcrumb-link-0')).toContainText('Plans');
     await expect(this.page.locator('.pf-v5-c-breadcrumb__item').last()).toContainText(
       'Plan Details',
@@ -33,9 +24,7 @@ export class PlanDetailsPage {
   }
 
   async verifyNavigationTabs(): Promise<void> {
-    // Verify the Details tab exists and is visible
     const detailsTab = this.page.locator('[data-test-id="horizontal-link-Details"]');
-
     await expect(detailsTab).toBeVisible();
     const planDetailsSection = this.page
       .locator('section.pf-m-light')
@@ -43,11 +32,9 @@ export class PlanDetailsPage {
     await expect(planDetailsSection).toBeVisible();
   }
 
-  async verifyPlanDetails(planData: {
-    planName: string;
-    planProject: string;
-    targetProject: string;
-  }) {
+  async verifyPlanDetails(
+    planData: Pick<PlanTestData, 'planName' | 'planProject' | 'targetProject'>,
+  ) {
     await expect(this.page.getByTestId('name-detail-item')).toContainText(planData.planName);
     await expect(this.page.getByTestId('project-detail-item')).toContainText(planData.planProject);
     await expect(this.page.getByTestId('target-project-detail-item')).toContainText(
@@ -58,7 +45,6 @@ export class PlanDetailsPage {
   }
 
   async verifyPlanDetailsURL(planName: string) {
-    // Verify we're on the correct plan details page
     // Use string contains check instead of regex to avoid ReDoS vulnerability
     await expect(this.page).toHaveURL((url) =>
       url.toString().includes(`forklift.konveyor.io~v1beta1~Plan/${planName}`),
@@ -69,8 +55,6 @@ export class PlanDetailsPage {
     await expect(
       this.page.locator('.forklift-page-headings__status .pf-v5-c-label__text'),
     ).toContainText(expectedStatus, { timeout: 30000 });
-
-    // Verify the Start button is present
     await expect(this.page.getByRole('button', { name: 'Start' })).toBeVisible();
   }
 

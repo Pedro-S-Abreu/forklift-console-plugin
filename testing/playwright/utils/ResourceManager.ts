@@ -36,7 +36,7 @@ export class ResourceManager {
           'Content-Type': 'application/json',
           'X-CSRFToken': csrfToken ?? '',
         },
-        credentials: 'include', // Include cookies
+        credentials: 'include',
       });
       return {
         ok: fetchResponse.ok,
@@ -94,7 +94,6 @@ export class ResourceManager {
 
     console.log(`🧹 Cleanup completed: ${successCount} successful, ${failureCount} failed`);
 
-    // Clear the resources list after cleanup
     this.resources = [];
   }
 

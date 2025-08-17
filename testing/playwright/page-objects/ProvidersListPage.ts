@@ -27,9 +27,7 @@ export class ProvidersListPage {
     await disableGuidedTour(this.page);
     await this.page.goto('/');
     await waitForLoader(this.page);
-    await this.page.getByTestId('migration-nav-item').waitFor({ state: 'visible', timeout: 10000 });
     await this.page.getByTestId('migration-nav-item').click();
-    await this.page.getByTestId('providers-nav-item').waitFor({ state: 'visible', timeout: 10000 });
     await this.page.getByTestId('providers-nav-item').click();
     expect(this.page.url()).toContain('forklift.konveyor.io~v1beta1~Provider');
   }
