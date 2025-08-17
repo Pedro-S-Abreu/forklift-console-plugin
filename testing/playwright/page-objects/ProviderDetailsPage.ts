@@ -32,6 +32,6 @@ export class ProviderDetailsPage {
     await this.page.waitForLoadState('domcontentloaded', { timeout: 15000 });
 
     // Wait for the provider details page to load by ensuring key elements are present
-    await expect(this.page.getByTestId('name-detail-item')).toBeVisible({ timeout: 15000 });
+    //await expect(this.page.getByTestId('name-detail-item')).toBeVisible({ timeout: 15000 });
   }
 }

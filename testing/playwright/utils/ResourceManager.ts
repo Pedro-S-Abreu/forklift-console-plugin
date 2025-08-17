@@ -87,7 +87,7 @@ export class ResourceManager {
 
         console.warn(
           `⚠️ Failed to cleanup ${resource.resourceType} ${resource.resourceName}:`,
-          result.reason,
+          String(result.reason).split('\\n')[0],
         );
       }
     }

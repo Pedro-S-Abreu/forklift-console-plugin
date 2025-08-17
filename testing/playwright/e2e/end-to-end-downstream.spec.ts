@@ -11,7 +11,7 @@ if (!existsSync(providersPath)) {
 
 import * as providers from '../../.providers.json';
 import { CreatePlanWizardPage } from '../page-objects/CreatePlanWizard/CreatePlanWizardPage';
-import { CreateProviderWizardPage } from '../page-objects/CreateProviderWizard/CreateProviderWizardPage';
+import { CreateProviderPage } from '../page-objects/CreateProviderPage';
 import { PlanDetailsPage } from '../page-objects/PlanDetailsPage';
 import { PlansListPage } from '../page-objects/PlansListPage';
 import { ProviderDetailsPage } from '../page-objects/ProviderDetailsPage';
@@ -45,7 +45,7 @@ test.describe.serial(
       async ({ page }) => {
         const providersPage = new ProvidersListPage(page);
         await providersPage.navigateFromMainMenu();
-        const createWizard = new CreateProviderWizardPage(page, resourceManager);
+        const createProvider = new CreateProviderPage(page, resourceManager);
 
         const providerKey = process.env.VSPHERE_PROVIDER ?? 'vsphere-8.0.1';
         const providerName = `test-vsphere-provider-${Date.now()}`;
@@ -53,7 +53,7 @@ test.describe.serial(
 
         testProviderData = {
           name: providerName,
-          type: 'vsphere',
+          type: providerConfig.type,
           endpointType: 'esxi',
           hostname: providerConfig.api_url,
           username: providerConfig.username,
@@ -62,8 +62,8 @@ test.describe.serial(
         };
 
         await providersPage.clickCreateProviderButton();
-        await createWizard.waitForWizardLoad();
-        await createWizard.fillAndSubmit(testProviderData);
+        await createProvider.waitForWizardLoad();
+        await createProvider.fillAndSubmit(testProviderData);
 
         // Navigate to provider details and verify
         //await page.click(`text=${testProviderData.name}`);
@@ -79,7 +79,7 @@ test.describe.serial(
         tag: ['@downstream'],
       },
       async ({ page }) => {
-        const planName = `real-test-plan-${Date.now()}`;
+        const planName = `${testProviderData.name}-plan`;
 
         const testPlanData = createPlanTestData({
           planName,
@@ -96,19 +96,14 @@ test.describe.serial(
             isPreExisting: false,
           },
         });
+
         const plansPage = new PlansListPage(page);
         await plansPage.navigateFromMainMenu();
         const createWizard = new CreatePlanWizardPage(page, resourceManager);
         const planDetailsPage = new PlanDetailsPage(page);
-
-        // Navigate to the wizard
         await plansPage.clickCreatePlanButton();
         await createWizard.waitForWizardLoad();
-
-        // Fill and submit the wizard
         await createWizard.fillAndSubmit(testPlanData);
-
-        // Verify plan details page
         await planDetailsPage.verifyBasicPlanDetailsPage({
           planName: testPlanData.planName,
           planProject: testPlanData.planProject,
