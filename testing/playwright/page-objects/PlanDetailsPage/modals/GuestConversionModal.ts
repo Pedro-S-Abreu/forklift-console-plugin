@@ -1,31 +1,15 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-export class GuestConversionModal {
-  readonly cancelButton: Locator;
-  readonly modal: Locator;
-  protected readonly page: Page;
-  readonly saveButton: Locator;
+import { BaseModal } from '../../common/BaseModal';
+
+export class GuestConversionModal extends BaseModal {
   readonly skipGuestConversionCheckbox: Locator;
   readonly useCompatibilityModeCheckbox: Locator;
 
   constructor(page: Page) {
-    this.page = page;
-    this.modal = this.page.getByTestId('guest-conversion-mode-modal');
+    super(page, 'guest-conversion-mode-modal');
     this.skipGuestConversionCheckbox = this.page.getByTestId('skip-guest-conversion-checkbox');
     this.useCompatibilityModeCheckbox = this.page.getByTestId('use-compatibility-mode-checkbox');
-    this.saveButton = this.page.getByTestId('modal-confirm-button');
-    this.cancelButton = this.page.getByTestId('modal-cancel-button');
-  }
-
-  async cancel(): Promise<void> {
-    await this.cancelButton.click();
-    await this.waitForModalToClose();
-  }
-
-  async save(): Promise<void> {
-    await expect(this.saveButton).toBeEnabled();
-    await this.saveButton.click();
-    await this.waitForModalToClose();
   }
 
   async toggleSkipGuestConversion(check: boolean): Promise<void> {
@@ -51,14 +35,6 @@ export class GuestConversionModal {
       /If you don't use compatibility mode, you must have VirtIO drivers already installed in the source VM./,
     );
     await expect(compatibilityWarningMessage).toBeVisible();
-  }
-
-  async verifySaveButtonEnabled(shouldBeEnabled = true): Promise<void> {
-    if (shouldBeEnabled) {
-      await expect(this.saveButton).toBeEnabled();
-    } else {
-      await expect(this.saveButton).toBeDisabled();
-    }
   }
 
   async verifySkipGuestConversionCheckbox(shouldBeChecked: boolean): Promise<void> {
@@ -93,13 +69,5 @@ export class GuestConversionModal {
     } else {
       await expect(this.useCompatibilityModeCheckbox).not.toBeVisible();
     }
-  }
-
-  async waitForModalToClose(): Promise<void> {
-    await expect(this.modal).not.toBeVisible();
-  }
-
-  async waitForModalToOpen(): Promise<void> {
-    await expect(this.modal).toBeVisible();
   }
 }

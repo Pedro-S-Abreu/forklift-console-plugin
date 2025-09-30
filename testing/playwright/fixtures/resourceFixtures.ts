@@ -141,7 +141,6 @@ export const createResourceFixtures = (config: FixtureConfig = {}) => {
                   throw new Error('Failed to create provider');
                 }
 
-                // Close provider creation context immediately
                 await context.close();
 
                 await use(provider);
@@ -156,12 +155,6 @@ export const createResourceFixtures = (config: FixtureConfig = {}) => {
                   await cleanupContext.close();
                 }
               } catch (error) {
-                // Close context if it's still open (in case error happened before we closed it)
-                try {
-                  await context.close();
-                } catch (_e) {
-                  // Context might already be closed, ignore
-                }
                 throw new Error(`Failed to create or use provider: ${String(error)}`);
               }
             },

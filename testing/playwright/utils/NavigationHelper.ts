@@ -22,7 +22,6 @@ export class NavigationHelper {
     let url = '/k8s/';
 
     if (allNamespaces) {
-      // Use 'cluster' for create actions, 'all-namespaces' for list views
       url += action === 'new' ? 'cluster/' : 'all-namespaces/';
     } else if (namespace) {
       url += `ns/${namespace}/`;
@@ -60,7 +59,6 @@ export class NavigationHelper {
 
     await disableGuidedTour(this.page);
     await this.page.goto(url);
-    // await this.page.waitForLoadState('networkidle');
   }
 
   async navigateToMigrationMenu(): Promise<void> {

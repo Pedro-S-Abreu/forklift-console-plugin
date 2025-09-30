@@ -9,7 +9,7 @@ export class VirtualMachinesTab {
 
   constructor(page: Page) {
     this.page = page;
-    this.table = new Table(page, page.locator('main')); // Use main as root locator for the table
+    this.table = new Table(page, page.locator('main'));
   }
 
   get cancelButton() {
@@ -28,12 +28,6 @@ export class VirtualMachinesTab {
     await this.table.enableColumn(columnName);
   }
 
-  /**
-   * Gets a locator for a specific cell in a table row
-   * @param rowColumnName The column name to search for the row
-   * @param rowValue The value to search for in the row
-   * @param targetColumnName The column name of the cell to get
-   */
   async getTableCell(rowColumnName: string, rowValue: string, targetColumnName: string) {
     const vmRow = this.table.getRow({ [rowColumnName]: rowValue });
 
@@ -48,7 +42,6 @@ export class VirtualMachinesTab {
       throw new Error(`Column "${targetColumnName}" not found`);
     }
 
-    // nth-child is 1-based
     return vmRow.locator(`td:nth-child(${targetIndex + 1})`);
   }
 
@@ -88,9 +81,8 @@ export class VirtualMachinesTab {
 
   async openRenameDialog(vmName: string): Promise<void> {
     const modalCancelButton = this.page.getByTestId('modal-cancel-button');
-    await modalCancelButton.click({ timeout: 1000 }).catch(() => {
-      // Modal doesn't exist or isn't clickable
-    });
+    // Intentionally ignore errors if modal is not present
+    await modalCancelButton.click({ timeout: 1000 }).catch(() => undefined);
 
     await this.getVMActionsMenu(vmName).click();
 

@@ -53,11 +53,9 @@ export class NetworkMapCreatePage {
   }
 
   async populateMapping(index: number, sourceNetwork: string, targetNetwork: string) {
-    // Get all source and target network selects
     const sourceNetworkSelects = this.page.getByTestId('network-map-source-network-select');
     const targetNetworkSelects = this.page.getByTestId('network-map-target-network-select');
 
-    // Validate that the index exists
     const sourceCount = await sourceNetworkSelects.count();
     const targetCount = await targetNetworkSelects.count();
 
@@ -67,34 +65,25 @@ export class NetworkMapCreatePage {
       );
     }
 
-    // Fill the source network at the specified index
     const sourceSelect = sourceNetworkSelects.nth(index);
     await expect(sourceSelect).not.toBeDisabled();
     await sourceSelect.click();
-
-    // Target only the option buttons in the dropdown menu, not the menu toggle
     await this.page.locator('button[role="option"]').filter({ hasText: sourceNetwork }).click();
 
-    // Fill the target network at the specified index
     const targetSelect = targetNetworkSelects.nth(index);
     await expect(targetSelect).not.toBeDisabled();
     await targetSelect.click();
-
-    // Target only the option buttons in the dropdown menu, not the menu toggle
     await this.page.locator('button[role="option"]').filter({ hasText: targetNetwork }).click();
   }
 
   async removeMapping(index: number) {
-    // Get all remove buttons in the mapping table - they are in the last column of each row
     const removeButtons = this.page.locator('table tbody tr td:last-child button');
 
-    // Wait for the buttons to be available and ensure we have enough rows
     const count = await removeButtons.count();
     if (count <= index) {
       throw new Error(`Cannot remove mapping at index ${index}. Only ${count} mappings available.`);
     }
 
-    // Click the remove button at the specified index
     await removeButtons.nth(index).click();
   }
 
@@ -103,7 +92,6 @@ export class NetworkMapCreatePage {
     await expect(this.createButton).not.toBeDisabled();
     await this.createButton.click();
 
-    // Wait for navigation to NetworkMap details page (may have suffix appended)
     await this.page.waitForURL(
       new RegExp(
         `/k8s/ns/[^/]+/forklift\\.konveyor\\.io~v1beta1~NetworkMap/${expectedMapName}[^/]*$`,

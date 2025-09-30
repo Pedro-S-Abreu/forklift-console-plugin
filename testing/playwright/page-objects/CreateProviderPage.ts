@@ -55,9 +55,6 @@ export class CreateProviderPage {
     }
   }
 
-  /**
-   * Alias method for easier navigation to the create provider wizard
-   */
   async navigate(namespace?: string): Promise<void> {
     await this.navigationHelper.navigateToK8sResource({
       resource: 'Provider',
@@ -67,7 +64,6 @@ export class CreateProviderPage {
   }
 
   async selectProject(projectName: string, showDefaultProjects = false) {
-    // Use the actual test ID from production code - ProjectNameSelect uses default 'target-project-select'
     const projectSelect = this.page.getByTestId('target-project-select');
     await projectSelect.waitFor({ state: 'visible', timeout: 10000 });
     await projectSelect.getByRole('button').click();

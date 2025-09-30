@@ -37,36 +37,29 @@ export class Table {
   }
 
   async enableColumn(columnName: string): Promise<void> {
-    // First check if the column is already visible
     const currentColumns = await this.getColumns();
     if (currentColumns.some((col) => col === columnName)) {
-      // Column is already visible, no need to enable it
       return;
     }
 
-    // Click Manage columns to open the modal
     const manageColumnsButton = this.rootLocator.getByRole('button', { name: 'Manage columns' });
     await manageColumnsButton.click();
 
-    // Wait for the modal to be visible
     const modal = this.page.getByRole('dialog', { name: 'Manage columns' });
     await expect(modal).toBeVisible();
 
-    // Find the list item that exactly matches the column name
     const columnList = modal.getByRole('list', { name: 'Manage columns' });
     const targetListItem = columnList
       .getByRole('listitem')
       .filter({ hasText: new RegExp(`^${columnName}$`) });
 
     if ((await targetListItem.count()) === 0) {
-      // Close the modal and throw an error
       const cancelButton = modal.getByRole('button', { name: 'Cancel' });
       await cancelButton.click();
       await expect(modal).not.toBeVisible();
       throw new Error(`Column "${columnName}" not found in available columns`);
     }
 
-    // Check if the column has a checkbox and enable it if not already checked
     const checkbox = targetListItem.getByRole('checkbox');
     if ((await checkbox.count()) > 0) {
       const isChecked = await checkbox.isChecked();
@@ -77,16 +70,13 @@ export class Table {
       }
     }
 
-    // Save the changes
     const saveButton = modal.getByRole('button', { name: 'Save' });
     await saveButton.click();
 
-    // Wait for modal to close
     await expect(modal).not.toBeVisible();
   }
 
   async getColumns(): Promise<string[]> {
-    // Get all visible column headers from the table
     const tableContainer = this.rootLocator
       .getByTestId('table-grid')
       .or(this.rootLocator.getByRole('table'))
@@ -106,7 +96,6 @@ export class Table {
   }
 
   getRow(options: Record<string, string>): Locator {
-    // Try both table and grid roles to support different table implementations
     const tableContainer = this.rootLocator
       .getByTestId('table-grid')
       .or(this.rootLocator.getByRole('table'))
@@ -155,14 +144,12 @@ export class Table {
   }
 
   async waitForTableLoad(): Promise<void> {
-    // Wait for table to be visible and not show loading state - support both table and grid
     const tableContainer = this.rootLocator
       .getByTestId('table-grid')
       .or(this.rootLocator.getByRole('table'))
       .or(this.rootLocator.getByRole('grid'));
     await expect(tableContainer).toBeVisible();
 
-    // Wait for at least one row or empty state - support tbody tr structure
     await expect(
       tableContainer
         .locator('tbody tr')

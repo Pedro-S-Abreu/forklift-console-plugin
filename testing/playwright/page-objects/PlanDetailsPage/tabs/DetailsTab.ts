@@ -38,19 +38,16 @@ export class DetailsTab {
     await this.guestConversionModal.waitForModalToOpen();
   }
 
-  // Target Affinity methods
   async clickEditTargetAffinity(): Promise<void> {
     await this.page.getByTestId('vm-target-affinity-rules-detail-item').locator('button').click();
     await this.targetAffinityModal.waitForModalToOpen();
   }
 
-  // Target Labels methods
   async clickEditTargetLabels(): Promise<void> {
     await this.page.getByTestId('vm-target-labels-detail-item').locator('button').click();
     await this.targetLabelsModal.waitForModalToOpen();
   }
 
-  // Target Node Selector methods
   async clickEditTargetNodeSelector(): Promise<void> {
     await this.page.getByTestId('vm-target-node-selector-detail-item').locator('button').click();
     await this.targetNodeSelectorModal.waitForModalToOpen();
@@ -147,7 +144,6 @@ export class DetailsTab {
 
   async verifyTargetAffinityRulesCount(count: number): Promise<void> {
     const targetAffinityElement = this.page.getByTestId('vm-target-affinity-rules-detail-item');
-    // Increase timeout to allow for plan update to complete
     await expect(targetAffinityElement).toContainText(`${count} affinity rule`, { timeout: 15000 });
   }
 
@@ -163,8 +159,6 @@ export class DetailsTab {
     if (count === 0) {
       await expect(targetLabelsElement).toContainText('No labels defined');
     } else {
-      // When there are labels, they are displayed as individual label components
-      // We can verify by checking that the text "No labels defined" is not present
       await expect(targetLabelsElement).not.toContainText('No labels defined');
     }
   }
@@ -181,9 +175,6 @@ export class DetailsTab {
     if (count === 0) {
       await expect(targetNodeSelectorElement).toContainText('No node selectors defined');
     } else {
-      // When there are node selectors, they are displayed as text with commas
-      // We can verify by checking that the text "No node selectors defined" is not present
-      // Increase timeout to allow for plan update to complete
       await expect(targetNodeSelectorElement).not.toContainText('No node selectors defined', {
         timeout: 15000,
       });
