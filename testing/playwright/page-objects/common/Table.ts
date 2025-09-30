@@ -99,7 +99,8 @@ export class Table {
     const tableContainer = this.rootLocator
       .getByTestId('table-grid')
       .or(this.rootLocator.getByRole('table'))
-      .or(this.rootLocator.getByRole('grid'));
+      .or(this.rootLocator.getByRole('grid'))
+      .or(this.rootLocator.getByRole('treegrid'));
 
     let rows = tableContainer.locator('tbody tr');
 

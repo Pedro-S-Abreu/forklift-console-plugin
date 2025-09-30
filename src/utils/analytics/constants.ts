@@ -57,23 +57,9 @@ export enum CreationMethod {
   PlanWizard = 'plan-wizard',
 }
 
-export enum MigrationStatus {
-  Unknown = 'unknown',
-  Started = 'started',
-  Completed = 'completed',
-}
-
 export enum ProviderCreateSource {
   ProvidersPage = 'providers-page',
   PlanWizard = 'plan-wizard',
-}
-
-export enum OverviewTab {
-  Overview = 'Overview',
-  YAML = 'YAML',
-  Health = 'Health',
-  History = 'History',
-  Settings = 'Settings',
 }
 
 export enum TipsTopicSourceComponent {
@@ -82,18 +68,16 @@ export enum TipsTopicSourceComponent {
 }
 
 export enum TipsTopic {
-  MigratingVMs = 'Migrating your virtual machines',
-  MigrationTypes = 'Choosing the right migration type',
-  Troubleshooting = 'Troubleshooting',
-  KeyTerminology = 'Key terminology',
+  MigratingVMs = 'migratingVirtualMachines',
+  MigrationTypes = 'choosingMigrationType',
+  Troubleshooting = 'troubleshooting',
+  KeyTerminology = 'terminology',
 }
 
 // Add new events here following the pattern:
 // EVENT_NAME: 'Event name' (MTV prefix is automatically added)
 export const TELEMETRY_EVENTS = {
-  MIGRATION_COMPLETED: 'Migration completed',
   MIGRATION_CUTOVER_SCHEDULED: 'Migration cutover scheduled',
-  MIGRATION_FAILED: 'Migration failed',
   MIGRATION_STARTED: 'Migration started',
   NETWORK_MAP_CREATE_COMPLETED: 'Network map created',
   NETWORK_MAP_CREATE_FAILED: 'Network map create failed',
