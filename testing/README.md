@@ -39,7 +39,7 @@ This is the most common method for running the e2e tests during development.
     ```bash
     yarn test:e2e
     ```
-    This command runs all tests in a headless browser. To run them in headed mode, use `yarn test:e2e --headed`.
+    This command runs all tests in a headless browser. To run them in headed mode, use `yarn test:e2e -- --headed`.
 
 ### Running Specific Test Suites
 
@@ -50,7 +50,7 @@ If you want to run only a subset of the tests, you can use the following command
     ```bash
     yarn test:upstream
     ```
-    To run them in headed mode, use `yarn test:upstream --headed`.
+    To run them in headed mode, use `yarn test:upstream -- --headed`.
 
 -   **Downstream Tests Only:**
     Before running these, you'll need to create a `.providers.json` file in the `testing` directory to specify your provider's credentials.
@@ -68,7 +68,7 @@ If you want to run only a subset of the tests, you can use the following command
         ```bash
         yarn test:downstream
         ```
-    To run them in headed mode, use `yarn test:downstream --headed`.
+    To run them in headed mode, use `yarn test:downstream -- --headed`.
 
 
 
@@ -102,12 +102,4 @@ To closely replicate the downstream CI testing environment, you can run the test
 From the `testing` directory, run:
 ```bash
 yarn test:downstream:remote:docker
-```
-
-## Update The Docker Image
-
-```bash
-podman build --no-cache --platform linux/amd64 -f Dockerfile -t quay.io/rh-openshift-mtv/mtv-ui-tests:latest .
-podman login quay.io
-podman push quay.io/rh-openshift-mtv/mtv-ui-tests:latest
 ```

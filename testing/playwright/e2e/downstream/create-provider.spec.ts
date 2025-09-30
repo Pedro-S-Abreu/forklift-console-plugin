@@ -26,6 +26,7 @@ const createProviderData = ({
 
   return {
     name: `test-vsphere-provider-${suffix}-${crypto.randomUUID().slice(0, 8)}`,
+    projectName: 'openshift-mtv',
     type: providerConfig.type,
     endpointType: providerConfig.endpoint_type ?? 'vcenter',
     hostname: providerConfig.api_url,

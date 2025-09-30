@@ -14,6 +14,7 @@ export class CreateProviderPage {
   }
 
   async fillAndSubmit(testData: ProviderData) {
+    await this.selectProject(testData.projectName);
     await this.page.getByTestId(`${testData.type}-provider-card`).locator('label').click();
     await this.page.getByTestId('provider-name-input').fill(testData.name);
 
@@ -59,6 +60,24 @@ export class CreateProviderPage {
 
       this.resourceManager.addResource(provider);
     }
+  }
+
+  async selectProject(projectName: string, showDefaultProjects = false) {
+    // Use the actual test ID from production code - ProjectNameSelect uses default 'target-project-select'
+    const projectSelect = this.page.getByTestId('target-project-select');
+    await projectSelect.waitFor({ state: 'visible', timeout: 10000 });
+    await projectSelect.getByRole('button').click();
+
+    if (showDefaultProjects) {
+      await this.page.locator('label[for="show-default-projects-switch"]').click();
+    }
+
+    const searchBox = projectSelect.getByRole('combobox');
+    await searchBox.fill(projectName);
+
+    const option = this.page.getByRole('option', { name: projectName });
+    await option.waitFor({ state: 'visible', timeout: 15000 });
+    await option.click();
   }
 
   async waitForWizardLoad() {
