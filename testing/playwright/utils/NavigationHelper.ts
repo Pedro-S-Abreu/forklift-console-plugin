@@ -22,7 +22,8 @@ export class NavigationHelper {
     let url = '/k8s/';
 
     if (allNamespaces) {
-      url += 'all-namespaces/';
+      // Use 'cluster' for create actions, 'all-namespaces' for list views
+      url += action === 'new' ? 'cluster/' : 'all-namespaces/';
     } else if (namespace) {
       url += `ns/${namespace}/`;
     } else {
@@ -48,29 +49,23 @@ export class NavigationHelper {
     await this.page.waitForLoadState('networkidle');
   }
 
-  async navigateToCreatePlanWizard(): Promise<void> {
-    const url = '/k8s/cluster/forklift.konveyor.io~v1beta1~Plan/~new';
+  async navigateToK8sResource(options: {
+    resource: string;
+    name?: string;
+    namespace?: string;
+    action?: 'new' | 'edit';
+    allNamespaces?: boolean;
+  }): Promise<void> {
+    const url = this.buildK8sUrl(options);
 
     await disableGuidedTour(this.page);
     await this.page.goto(url);
-    await this.page.waitForLoadState('networkidle');
+    // await this.page.waitForLoadState('networkidle');
   }
 
   async navigateToMigrationMenu(): Promise<void> {
     await this.navigateToConsole();
     await this.page.getByTestId('migration-nav-item').click({ timeout: 20000 });
-  }
-
-  async navigateToPlanDetails(planName: string, namespace?: string): Promise<void> {
-    const url = this.buildK8sUrl({
-      resource: 'Plan',
-      name: planName,
-      namespace: namespace ?? this.defaultNamespace,
-    });
-
-    await disableGuidedTour(this.page);
-    await this.page.goto(url);
-    await this.page.waitForLoadState('networkidle');
   }
 
   async navigateToPlans(): Promise<void> {

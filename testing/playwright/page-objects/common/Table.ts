@@ -36,6 +36,75 @@ export class Table {
     await row.click();
   }
 
+  async enableColumn(columnName: string): Promise<void> {
+    // First check if the column is already visible
+    const currentColumns = await this.getColumns();
+    if (currentColumns.some((col) => col === columnName)) {
+      // Column is already visible, no need to enable it
+      return;
+    }
+
+    // Click Manage columns to open the modal
+    const manageColumnsButton = this.rootLocator.getByRole('button', { name: 'Manage columns' });
+    await manageColumnsButton.click();
+
+    // Wait for the modal to be visible
+    const modal = this.page.getByRole('dialog', { name: 'Manage columns' });
+    await expect(modal).toBeVisible();
+
+    // Find the list item that exactly matches the column name
+    const columnList = modal.getByRole('list', { name: 'Manage columns' });
+    const targetListItem = columnList
+      .getByRole('listitem')
+      .filter({ hasText: new RegExp(`^${columnName}$`) });
+
+    if ((await targetListItem.count()) === 0) {
+      // Close the modal and throw an error
+      const cancelButton = modal.getByRole('button', { name: 'Cancel' });
+      await cancelButton.click();
+      await expect(modal).not.toBeVisible();
+      throw new Error(`Column "${columnName}" not found in available columns`);
+    }
+
+    // Check if the column has a checkbox and enable it if not already checked
+    const checkbox = targetListItem.getByRole('checkbox');
+    if ((await checkbox.count()) > 0) {
+      const isChecked = await checkbox.isChecked();
+      const isDisabled = await checkbox.isDisabled();
+
+      if (!isDisabled && !isChecked) {
+        await checkbox.check();
+      }
+    }
+
+    // Save the changes
+    const saveButton = modal.getByRole('button', { name: 'Save' });
+    await saveButton.click();
+
+    // Wait for modal to close
+    await expect(modal).not.toBeVisible();
+  }
+
+  async getColumns(): Promise<string[]> {
+    // Get all visible column headers from the table
+    const tableContainer = this.rootLocator
+      .getByTestId('table-grid')
+      .or(this.rootLocator.getByRole('table'))
+      .or(this.rootLocator.getByRole('grid'));
+
+    const headers = tableContainer.locator('thead th, thead columnheader');
+    const count = await headers.count();
+
+    const headerTexts = await Promise.all(
+      Array.from({ length: count }, async (_, i) => headers.nth(i).textContent()),
+    );
+
+    return headerTexts
+      .filter((text) => text?.trim() && !text.includes('Row select') && !text.includes('Details'))
+      .map((text) => text!.replace(/\s+/g, ' ').trim())
+      .filter((cleanText) => cleanText && cleanText !== 'More information on concerns');
+  }
+
   getRow(options: Record<string, string>): Locator {
     // Try both table and grid roles to support different table implementations
     const tableContainer = this.rootLocator
@@ -54,6 +123,11 @@ export class Table {
 
   getRowByTestId(testId: string): Locator {
     return this.rootLocator.getByTestId(testId);
+  }
+
+  async isColumnVisible(columnName: string): Promise<boolean> {
+    const currentColumns = await this.getColumns();
+    return currentColumns.some((col) => col === columnName);
   }
 
   async search(value: string): Promise<void> {
