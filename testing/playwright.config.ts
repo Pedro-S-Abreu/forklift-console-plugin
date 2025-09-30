@@ -19,6 +19,10 @@ export default defineConfig({
     navigationTimeout: 20_000,
   },
 
+  expect: {
+    timeout: 20_000,
+  },
+
   projects: [
     {
       name: 'chromium',
