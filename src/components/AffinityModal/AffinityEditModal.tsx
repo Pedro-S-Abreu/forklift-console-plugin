@@ -36,6 +36,7 @@ const AffinityEditModal: FC<AffinityEditModalProps> = ({
       footer={
         <ActionGroup>
           <Button
+            data-testid="save-affinity-rule-button"
             onClick={() => {
               onSubmit({
                 ...focusedAffinity,
@@ -48,7 +49,12 @@ const AffinityEditModal: FC<AffinityEditModalProps> = ({
           >
             {t('Save affinity rule')}
           </Button>
-          <Button onClick={onCancel} size="sm" variant={ButtonVariant.link}>
+          <Button
+            data-testid="cancel-affinity-rule-button"
+            onClick={onCancel}
+            size="sm"
+            variant={ButtonVariant.link}
+          >
             {t('Cancel')}
           </Button>
         </ActionGroup>
@@ -60,13 +66,15 @@ const AffinityEditModal: FC<AffinityEditModalProps> = ({
       title={title}
       variant={ModalVariant.medium}
     >
-      <AffinityForm
-        expressions={expressions}
-        fields={fields}
-        focusedAffinity={focusedAffinity}
-        setFocusedAffinity={setFocusedAffinity}
-        setSubmitDisabled={setIsDisabled}
-      />
+      <div data-testid="affinity-edit-modal">
+        <AffinityForm
+          expressions={expressions}
+          fields={fields}
+          focusedAffinity={focusedAffinity}
+          setFocusedAffinity={setFocusedAffinity}
+          setSubmitDisabled={setIsDisabled}
+        />
+      </div>
     </Modal>
   );
 };
