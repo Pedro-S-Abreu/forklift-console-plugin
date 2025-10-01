@@ -90,6 +90,8 @@ export const useMultiTypeaheadInteractions = ({
 
       if (isCreatePick && typeof selectedValue === 'string') {
         onCreateOption?.(selectedValue);
+        // Close the dropdown after creating a new option
+        setIsOpen(false);
       }
 
       toggleSelectValue(selectedValue);
@@ -97,7 +99,16 @@ export const useMultiTypeaheadInteractions = ({
       resetFocus();
       inputRef.current?.focus();
     },
-    [inputRef, isCreatable, onCreateOption, options, resetFilter, resetFocus, toggleSelectValue],
+    [
+      inputRef,
+      isCreatable,
+      onCreateOption,
+      options,
+      resetFilter,
+      resetFocus,
+      setIsOpen,
+      toggleSelectValue,
+    ],
   );
 
   const onInputKeyDown = useCallback(
