@@ -356,8 +356,6 @@ test.describe('Plan Details - Target Affinity Rules', { tag: '@downstream' }, ()
       'kubernetes.io/hostname',
     );
     await planDetailsPage.detailsTab.targetAffinityModal.fillExpressionValue('worker-node-1');
-    //page.pause debugger
-    await page.pause();
 
     // Step 9: Save the affinity rule
     await planDetailsPage.detailsTab.targetAffinityModal.saveAffinityRule();
@@ -380,6 +378,7 @@ test.describe('Plan Details - Target Affinity Rules', { tag: '@downstream' }, ()
     await planDetailsPage.detailsTab.targetAffinityModal.selectRuleType(
       'Preferred during scheduling',
     );
+
     await planDetailsPage.detailsTab.targetAffinityModal.fillWeight('50');
     await planDetailsPage.detailsTab.targetAffinityModal.fillTopologyKey('kubernetes.io/hostname');
     await planDetailsPage.detailsTab.targetAffinityModal.addExpression();
