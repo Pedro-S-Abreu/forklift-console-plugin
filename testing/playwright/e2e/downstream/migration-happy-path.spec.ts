@@ -134,11 +134,7 @@ test.describe.serial('Plans - VSphere to Host Happy Path Cold Migration', () => 
       for (const vm of testPlanData.virtualMachines ?? []) {
         const migratedVMName = vm.targetName ?? vm.sourceName;
 
-        // Add VM to resource manager for cleanup
         resourceManager.addVm(migratedVMName, testPlanData.targetProject.name);
-
-        // Wait for migration to complete
-        // await page.waitForTimeout(15000);
 
         // Fetch the migrated VM to verify it exists
         const vmResource = await resourceManager.fetchVirtualMachine(
