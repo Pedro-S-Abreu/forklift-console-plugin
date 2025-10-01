@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 
 import { sharedProviderFixtures as test } from '../../fixtures/resourceFixtures';
 import { PlanDetailsPage } from '../../page-objects/PlanDetailsPage/PlanDetailsPage';
-import type { PlanTestData } from '../../types/test-data';
 
 test.describe('Plan Details Navigation', { tag: '@downstream' }, () => {
   test('should navigate to plan details and verify page content', async ({
@@ -12,8 +11,7 @@ test.describe('Plan Details Navigation', { tag: '@downstream' }, () => {
   }) => {
     if (!testPlan) throw new Error('testPlan is required');
 
-    const planName = testPlan.metadata!.name!;
-    const namespace = testPlan.metadata!.namespace ?? 'openshift-mtv';
+    const { name: planName, namespace } = testPlan.metadata;
     const planDetailsPage = new PlanDetailsPage(page);
 
     await planDetailsPage.navigate(planName, namespace);
@@ -34,14 +32,13 @@ test.describe('Plan Details - VM Rename Validation', { tag: '@downstream' }, () 
 
     const planDetailsPage = new PlanDetailsPage(page);
 
-    const planName = testPlan.metadata!.name!;
-    const namespace = testPlan.metadata!.namespace ?? 'openshift-mtv';
+    const { name: planName, namespace } = testPlan.metadata;
 
     await planDetailsPage.navigate(planName, namespace);
     await planDetailsPage.verifyPlanTitle(planName);
 
     await planDetailsPage.virtualMachinesTab.navigateToVirtualMachinesTab();
-    const testData = (testPlan as any).testData as PlanTestData;
+    const { testData } = testPlan;
     await planDetailsPage.virtualMachinesTab.verifyVirtualMachinesTab(testData);
 
     await planDetailsPage.virtualMachinesTab.enableColumn('Target name');
@@ -125,8 +122,7 @@ test.describe('Plan Details - Guest Conversion Mode', { tag: '@downstream' }, ()
 
     const planDetailsPage = new PlanDetailsPage(page);
 
-    const planName = testPlan.metadata!.name!;
-    const namespace = testPlan.metadata!.namespace ?? 'openshift-mtv';
+    const { name: planName, namespace } = testPlan.metadata;
 
     await planDetailsPage.navigate(planName, namespace);
     await planDetailsPage.verifyPlanTitle(planName);
@@ -152,10 +148,7 @@ test.describe('Plan Details - Guest Conversion Mode', { tag: '@downstream' }, ()
 
     // Step 5: Verify "Use compatibility mode" shows up and is checked
     // By default, compatibility mode should be enabled when skip is checked
-    await planDetailsPage.detailsTab.guestConversionModal.verifyUseCompatibilityModeCheckbox(
-      true,
-      true,
-    );
+    await planDetailsPage.detailsTab.guestConversionModal.verifyUseCompatibilityModeVisibleAndChecked();
 
     // Step 6: Save changes and verify detail items
     await planDetailsPage.detailsTab.guestConversionModal.save();
@@ -171,10 +164,7 @@ test.describe('Plan Details - Guest Conversion Mode', { tag: '@downstream' }, ()
 
     // Verify the previous settings are preserved
     await planDetailsPage.detailsTab.guestConversionModal.verifySkipGuestConversionCheckbox(true);
-    await planDetailsPage.detailsTab.guestConversionModal.verifyUseCompatibilityModeCheckbox(
-      true,
-      true,
-    );
+    await planDetailsPage.detailsTab.guestConversionModal.verifyUseCompatibilityModeVisibleAndChecked();
 
     // Uncheck "Use compatibility mode"
     await planDetailsPage.detailsTab.guestConversionModal.toggleUseCompatibilityMode(false);
@@ -199,8 +189,7 @@ test.describe('Plan Details - Target Labels', { tag: '@downstream' }, () => {
 
     const planDetailsPage = new PlanDetailsPage(page);
 
-    const planName = testPlan.metadata!.name!;
-    const namespace = testPlan.metadata!.namespace ?? 'openshift-mtv';
+    const { name: planName, namespace } = testPlan.metadata;
 
     await planDetailsPage.navigate(planName, namespace);
     await planDetailsPage.verifyPlanTitle(planName);
@@ -259,8 +248,7 @@ test.describe('Plan Details - Target Node Selector', { tag: '@downstream' }, () 
 
     const planDetailsPage = new PlanDetailsPage(page);
 
-    const planName = testPlan.metadata!.name!;
-    const namespace = testPlan.metadata!.namespace ?? 'openshift-mtv';
+    const { name: planName, namespace } = testPlan.metadata;
 
     await planDetailsPage.navigate(planName, namespace);
     await planDetailsPage.verifyPlanTitle(planName);
@@ -325,8 +313,7 @@ test.describe('Plan Details - Target Affinity Rules', { tag: '@downstream' }, ()
     if (!testPlan) throw new Error('testPlan is required');
     const planDetailsPage = new PlanDetailsPage(page);
 
-    const planName = testPlan.metadata!.name!;
-    const namespace = testPlan.metadata!.namespace ?? 'openshift-mtv';
+    const { name: planName, namespace } = testPlan.metadata;
 
     await planDetailsPage.navigate(planName, namespace);
     await planDetailsPage.verifyPlanTitle(planName);
@@ -369,6 +356,8 @@ test.describe('Plan Details - Target Affinity Rules', { tag: '@downstream' }, ()
       'kubernetes.io/hostname',
     );
     await planDetailsPage.detailsTab.targetAffinityModal.fillExpressionValue('worker-node-1');
+    //page.pause debugger
+    await page.pause();
 
     // Step 9: Save the affinity rule
     await planDetailsPage.detailsTab.targetAffinityModal.saveAffinityRule();

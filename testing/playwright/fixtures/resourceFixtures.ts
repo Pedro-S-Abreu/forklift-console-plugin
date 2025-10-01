@@ -9,11 +9,26 @@ import { createPlanTestData, type ProviderData } from '../types/test-data';
 import { getProviderConfig } from '../utils/providers';
 import { ResourceManager } from '../utils/resource-manager/ResourceManager';
 
+type TestProvider = V1beta1Provider & {
+  metadata: {
+    name: string;
+    namespace: string;
+  };
+};
+
+type TestPlan = V1beta1Plan & {
+  metadata: {
+    name: string;
+    namespace: string;
+  };
+  testData: ReturnType<typeof createPlanTestData>;
+};
+
 const createProvider = async (
   page: Page,
   resourceManager: ResourceManager,
   namePrefix = 'test-provider',
-): Promise<V1beta1Provider> => {
+): Promise<TestProvider> => {
   const uniqueId = crypto.randomUUID();
   const providerName = `${namePrefix}-${uniqueId}`;
 
@@ -42,14 +57,14 @@ const createProvider = async (
   await createProviderPage.fillAndSubmit(testProviderData);
   await providerDetailsPage.waitForPageLoad();
   await providerDetailsPage.verifyProviderDetails(testProviderData);
-  const provider = {
+  const provider: TestProvider = {
     apiVersion: 'forklift.konveyor.io/v1beta1',
     kind: 'Provider',
     metadata: {
       name: providerName,
       namespace: 'openshift-mtv',
     },
-  } as V1beta1Provider;
+  };
 
   (provider as any).testData = testProviderData;
   return provider;
@@ -62,7 +77,7 @@ const createPlanWithCustomData = async (
     sourceProvider: V1beta1Provider;
     customPlanData?: Partial<ReturnType<typeof createPlanTestData>>;
   },
-): Promise<V1beta1Plan> => {
+): Promise<TestPlan> => {
   const { sourceProvider, customPlanData } = options;
   const defaultPlanData = createPlanTestData({
     sourceProvider: sourceProvider.metadata!.name!,
@@ -77,16 +92,16 @@ const createPlanWithCustomData = async (
   await createWizard.waitForWizardLoad();
   await createWizard.fillAndSubmit(testPlanData);
   await planDetailsPage.verifyPlanTitle(testPlanData.planName);
-  const plan = {
+  const plan: TestPlan = {
     apiVersion: 'forklift.konveyor.io/v1beta1',
     kind: 'Plan',
     metadata: {
       name: testPlanData.planName,
       namespace: 'openshift-mtv',
     },
-  } as V1beta1Plan;
+    testData: testPlanData,
+  };
 
-  (plan as any).testData = testPlanData;
   return plan;
 };
 
@@ -94,7 +109,7 @@ const createPlan = async (
   page: Page,
   resourceManager: ResourceManager,
   sourceProvider: V1beta1Provider,
-): Promise<V1beta1Plan> => {
+): Promise<TestPlan> => {
   return createPlanWithCustomData(page, resourceManager, { sourceProvider });
 };
 
@@ -107,11 +122,11 @@ export interface FixtureConfig {
 
 export interface ConfigurableResourceFixtures {
   resourceManager: ResourceManager;
-  testProvider: V1beta1Provider | undefined;
-  testPlan: V1beta1Plan | undefined;
+  testProvider: TestProvider | undefined;
+  testPlan: TestPlan | undefined;
   createCustomPlan: (
     customPlanData?: Partial<ReturnType<typeof createPlanTestData>>,
-  ) => Promise<V1beta1Plan>;
+  ) => Promise<TestPlan>;
 }
 export const createResourceFixtures = (config: FixtureConfig = {}) => {
   const { providerScope = 'test', planScope = 'test', providerPrefix = 'test-provider' } = config;

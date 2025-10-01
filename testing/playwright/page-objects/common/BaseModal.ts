@@ -24,14 +24,6 @@ export abstract class BaseModal {
     await this.waitForModalToClose();
   }
 
-  async verifySaveButtonEnabled(shouldBeEnabled = true): Promise<void> {
-    if (shouldBeEnabled) {
-      await expect(this.saveButton).toBeEnabled();
-    } else {
-      await expect(this.saveButton).toBeDisabled();
-    }
-  }
-
   async waitForModalToClose(): Promise<void> {
     await expect(this.modal).not.toBeVisible();
   }

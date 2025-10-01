@@ -22,7 +22,7 @@ test.describe('Plan Creation Wizard - Project Creation Feature Tests', () => {
 
         const testPlanData = createPlanTestData({
           planName,
-          sourceProvider: testProvider.metadata!.name!,
+          sourceProvider: testProvider.metadata.name,
           targetProject: { name: targetProjectName, isPreexisting: false },
         });
 
@@ -75,7 +75,7 @@ test.describe('Plan Creation Wizard - Project Creation Feature Tests', () => {
       const planName = `validation-test-${Date.now()}`;
       await createWizard.generalInformation.fillPlanName(planName);
       await createWizard.generalInformation.selectProject('openshift-mtv', 'plan-project-select');
-      await createWizard.generalInformation.selectSourceProvider(testProvider.metadata!.name!);
+      await createWizard.generalInformation.selectSourceProvider(testProvider.metadata.name);
       await createWizard.generalInformation.selectTargetProvider('host');
       await createWizard.generalInformation.waitForTargetProviderNamespaces();
 
@@ -104,7 +104,7 @@ test.describe('Plan Creation Wizard - Project Creation Feature Tests', () => {
 
       const testPlanData = createPlanTestData({
         planName,
-        sourceProvider: testProvider.metadata!.name!,
+        sourceProvider: testProvider.metadata.name,
         targetProject: { name: 'default', isPreexisting: true },
       });
 

@@ -38,7 +38,7 @@ export class Table {
 
   async enableColumn(columnName: string): Promise<void> {
     const currentColumns = await this.getColumns();
-    if (currentColumns.some((col) => col === columnName)) {
+    if (currentColumns.includes(columnName)) {
       return;
     }
 
@@ -91,7 +91,7 @@ export class Table {
 
     return headerTexts
       .filter((text) => text?.trim() && !text.includes('Row select') && !text.includes('Details'))
-      .map((text) => text!.replace(/\s+/g, ' ').trim())
+      .map((text) => text!.replaceAll(/\s+/g, ' ').trim())
       .filter((cleanText) => cleanText && cleanText !== 'More information on concerns');
   }
 
@@ -117,7 +117,7 @@ export class Table {
 
   async isColumnVisible(columnName: string): Promise<boolean> {
     const currentColumns = await this.getColumns();
-    return currentColumns.some((col) => col === columnName);
+    return currentColumns.includes(columnName);
   }
 
   async search(value: string): Promise<void> {

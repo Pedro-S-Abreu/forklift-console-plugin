@@ -38,7 +38,11 @@ export class TargetAffinityModal extends BaseModal {
     const valueInput = this.page.getByPlaceholder('Enter value').nth(index);
     await valueInput.waitFor({ state: 'visible' });
     await valueInput.fill(value);
-    await valueInput.press('Enter');
+
+    const createButton = this.page.getByTestId('multi-typeahead-select-create-option');
+    await expect(createButton).toBeVisible();
+    await createButton.click();
+    await expect.soft(createButton).not.toBeVisible();
   }
 
   async fillTopologyKey(topologyKey: string): Promise<void> {

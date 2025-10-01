@@ -18,11 +18,11 @@ export class YamlEditorPage {
 
   async fillYamlContent(yamlContent: string): Promise<void> {
     await this.page.evaluate((content) => {
-      const monacoInstance = (window as any).monaco?.editor?.getModels?.()?.[0];
+      const monacoInstance = (globalThis as any).monaco?.editor?.getModels?.()?.[0];
       if (monacoInstance) {
         monacoInstance.setValue(content);
       } else {
-        const editors = (window as any).monaco?.editor?.getEditors?.();
+        const editors = (globalThis as any).monaco?.editor?.getEditors?.();
         if (editors && Array.isArray(editors) && !isEmpty(editors)) {
           editors[0].setValue(content);
         }
@@ -32,7 +32,7 @@ export class YamlEditorPage {
 
   async getYamlContent(): Promise<string> {
     const yamlContent = await this.page.evaluate(() => {
-      const monacoInstance = (window as any).monaco?.editor?.getModels?.()?.[0];
+      const monacoInstance = (globalThis as any).monaco?.editor?.getModels?.()?.[0];
       if (monacoInstance) {
         return monacoInstance.getValue() as string;
       }

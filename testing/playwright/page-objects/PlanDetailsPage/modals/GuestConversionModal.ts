@@ -53,21 +53,8 @@ export class GuestConversionModal extends BaseModal {
     await expect(skipWarningMessage).toBeVisible();
   }
 
-  async verifyUseCompatibilityModeCheckbox(
-    shouldBeVisible: boolean,
-    shouldBeChecked?: boolean,
-  ): Promise<void> {
-    if (shouldBeVisible) {
-      await expect(this.useCompatibilityModeCheckbox).toBeVisible();
-      if (shouldBeChecked !== undefined) {
-        if (shouldBeChecked) {
-          await expect(this.useCompatibilityModeCheckbox).toBeChecked();
-        } else {
-          await expect(this.useCompatibilityModeCheckbox).not.toBeChecked();
-        }
-      }
-    } else {
-      await expect(this.useCompatibilityModeCheckbox).not.toBeVisible();
-    }
+  async verifyUseCompatibilityModeVisibleAndChecked(): Promise<void> {
+    await expect(this.useCompatibilityModeCheckbox).toBeVisible();
+    await expect(this.useCompatibilityModeCheckbox).toBeChecked();
   }
 }
