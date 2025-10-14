@@ -68,8 +68,8 @@ export class NavigationHelper {
     // Check if tour modal appears after page load
     const tourDialog = this.page.getByRole('dialog');
 
-    // Wait up to 3s for modal to appear (it may render after page load)
-    if (await tourDialog.isVisible({ timeout: 3000 })) {
+    // Wait up to 10s for modal to appear (CI can be slow)
+    if (await tourDialog.isVisible({ timeout: 10000 })) {
       const skipButton = tourDialog.getByRole('button', { name: 'Skip tour' });
       await skipButton.click();
       // Wait for modal to fully dismiss before clicking nav
