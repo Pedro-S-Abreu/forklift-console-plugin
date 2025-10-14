@@ -64,7 +64,20 @@ export class NavigationHelper {
 
   async navigateToMigrationMenu(): Promise<void> {
     await this.navigateToConsole();
-    await this.page.getByTestId('migration-nav-item').click({ timeout: 20000 });
+
+    const skipButton = this.page.getByRole('button', { name: 'Skip tour' });
+    const migrationNav = this.page.getByTestId('migration-nav-item');
+
+    // Wait for either skip button OR migration nav to be visible (whichever comes first)
+    await skipButton.or(migrationNav).waitFor({ state: 'visible' });
+
+    // If modal is blocking, dismiss it
+    if (await skipButton.isVisible()) {
+      await skipButton.click();
+    }
+
+    // Now click migration nav exactly once
+    await migrationNav.click({ timeout: 20000 });
   }
 
   async navigateToPlans(): Promise<void> {
