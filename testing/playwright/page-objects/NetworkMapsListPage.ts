@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
 import { NavigationHelper } from '../utils/NavigationHelper';
+import { dismissGuidedTourModal } from '../utils/utils';
 
 export class NetworkMapsListPage {
   private readonly navigationHelper: NavigationHelper;
@@ -12,11 +13,17 @@ export class NetworkMapsListPage {
   }
 
   async clickCreateWithFormButton() {
+    // Dismiss guided tour modal if it's blocking the button
+    await dismissGuidedTourModal(this.page);
+
     await this.page.getByRole('button', { name: 'Create network map' }).first().click();
     await this.page.getByTestId('create-network-map-dropdown-item-form').click();
   }
 
   async clickCreateWithYamlButton() {
+    // Dismiss guided tour modal if it's blocking the button
+    await dismissGuidedTourModal(this.page);
+
     await this.page.getByRole('button', { name: 'Create network map' }).first().click();
     await this.page.getByTestId('create-network-map-dropdown-item-yaml').click();
     // Wait for YAML editor to load
