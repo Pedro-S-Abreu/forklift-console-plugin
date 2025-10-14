@@ -65,11 +65,11 @@ export class NavigationHelper {
   async navigateToMigrationMenu(): Promise<void> {
     await this.navigateToConsole();
 
-    // Check if tour modal is blocking (no artificial wait if not present)
+    // Check if tour modal appears after page load
     const tourDialog = this.page.getByRole('dialog');
 
-    // isVisible() with minimal timeout - instant check if modal is there
-    if (await tourDialog.isVisible({ timeout: 100 })) {
+    // Wait up to 3s for modal to appear (it may render after page load)
+    if (await tourDialog.isVisible({ timeout: 3000 })) {
       const skipButton = tourDialog.getByRole('button', { name: 'Skip tour' });
       await skipButton.click();
       // Wait for modal to fully dismiss before clicking nav
