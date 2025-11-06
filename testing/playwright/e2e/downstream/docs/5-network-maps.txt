@@ -1,0 +1,118 @@
+5 Network Maps
+
+Create Network Map via Form and YAML
+
+Given: Provider exists (test fixture)
+
+1. Navigate to Network Maps
+- Step:
+- Navigate to Network Maps → Create Network Map dropdown
+- Click Create with Form button
+- Expected Result:
+- Network map creation form loads successfully
+
+2. Fill Required Fields
+- Step:
+- Map name: test-network-map-{uniqueld}
+- Project: openshift-mtv
+- Source provider: Select test vSphere provider
+- Target provider: host
+- Source network: VM Network
+- Target network: Default network
+- Expected Result:
+- Required fields filled successfully
+- Create button is enabled
+
+3. Test Add Mapping Functionality
+- Step:
+- Click Add Mapping button
+- Verify button state
+- Expected Result:
+- New mapping row added
+- Create button is disabled (incomplete mapping)
+
+4. Populate Additional Mapping
+- Step:
+- Source network: Mgmt Network
+- Target network: Default network
+- Expected Result:
+- Second mapping populated
+- Create button is enabled
+
+5. Test Remove Mapping Functionality
+- Step:
+- Remove second mapping (Mgmt Network)
+- Verify button state
+- Remove first mapping (VM Network)
+- Verify button state
+- Expected Result:
+- Second mapping removed
+- Create button is enabled
+- First mapping removed
+- Create button is disabled (no mappings)
+
+6. Re-add Network Mappings
+- Step:
+- Add first mapping: VM Network → Default network
+- Add second mapping: Mgmt Network → Default network
+- Expected Result:
+- Both mappings added successfully
+- Create button is enabled
+
+7. Submit Network Map
+- Step:
+- Click Create button
+- Wait for network map creation
+- Expected Result:
+- Network map created successfully
+- Redirected to network map details page
+
+8. Verify Network Map Details
+- Step:
+- Verify network map name
+- Verify source provider matches test provider
+- Verify target provider is "host"
+- Verify mappings:
+- - VM Network → Default network
+- - Mgmt Network → Default network
+- Expected Result:
+- Network map details page displays correctly
+- Network map name matches expected
+- Source and target providers match configuration
+- Both network mappings display correctly
+
+9. Copy Network Map YAML
+- Step:
+- Navigate to YAML tab
+- Copy YAML content to clipboard
+- Expected Result:
+- YAML tab displays successfully
+- YAML content copied to clipboard
+
+10. Create Network Map from YAML
+- Step:
+- Navigate back to Network Maps list
+- Click Create with YAML button
+- Paste copied YAML
+- Update name to: {original-name}-copy
+- Submit YAML form
+- Expected Result:
+- YAML editor loads successfully
+- YAML content pasted
+- Name updated successfully
+- Second network map created from YAML
+
+11. Verify Second Network Map
+- Step:
+- Verify network map name: {original-name}-copy
+- Verify source provider matches test provider
+- Verify target provider is "host"
+- Verify mappings:
+- - VM Network → Default network
+- - Mgmt Network → Default network
+- Expected Result:
+- Second network map details page displays correctly
+- Network map name matches expected
+- Source and target providers match configuration
+- Both network mappings match original network map
+

@@ -1,0 +1,84 @@
+1 Full migration happy path
+
+VSphere to Host Happy Path Cold Migration
+
+1. Create VSphere Provider
+- Step:
+- Navigate to Providers → Create Provider
+- Configure vSphere connection (vCenter, credentials, VDDK image)
+- Submit provider configuration
+- Expected Result:
+- Provider status shows "Ready"
+- Connection to vSphere established
+
+2. Create VSphere Provider
+- Step:
+- Navigate to Plans → Create Plan
+- Set source provider (vsphere) and target provider (host)
+- Configure target project: test-project- timestamp) (create Project)
+- Click next
+- Expected Result:
+- Plan wizard opens
+- Should navigate to next step
+
+3. Create Migration Plan - VM Selection
+- Step:
+- Search and select source VM: mtv-func-rhel9
+- Click Next
+- Expected Result:
+- Should navigate to next step
+
+4. Create Migration Plan - Network Mapping
+- Step:
+- Create new network map: {plan-name}-network-map
+- Expected Result:
+- Network mapping created and configured
+
+5. Create Migration Plan - Storage Mapping
+- Step:
+- Create new storage map: {plan-name}-storage-map
+- Map to target storage: ocs-storagecluster-ceph-rbd-virtualization
+- Expected Result:
+- Storage mapping created and configured
+
+6. Complete Plan Creation
+- Step:
+- Review configuration
+- Submit plan
+- Expected Result:
+- Plan created successfully
+- Plan status: "Ready for migration"
+- Plan details match configuration
+
+7. Rename VM (Optional)
+- Step:
+- Navigate to plan details → Virtual Machines tab
+- Apply VM renaming if needed
+- Expected Result:
+- VM target name updated in plan configuration
+
+8. Start Migration
+- Step:
+- Open plan details page
+- Actions menu → Start
+- Confirm start dialog
+- Expected Result:
+- Migration status: "Migration running"
+- Progress percentage appears
+
+9. Monitor Migration Progress
+- Step:
+- Track status and percentage completion
+- Wait for terminal state (max 15 minutes)
+- Expected Result:
+- Migration progresses 0% 100%
+- Status updates logged with timestamps
+
+10. Verify Migration Completion
+- Step:
+- Check final migration status
+- Confirm VM exists in target namespace
+- Expected Result:
+- Migration status: "Complete"
+- VM mtv-func-rhel9-renamed-{timestamp) exists in test-project- timestamp) namespace
+

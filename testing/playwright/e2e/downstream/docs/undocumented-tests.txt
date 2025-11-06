@@ -1,0 +1,230 @@
+UNDOCUMENTED TESTS IN DOWNSTREAM DIRECTORY
+==========================================
+
+This document lists all tests found in the downstream test files that are NOT documented 
+in the main documentation files (1-5).
+
+================================================================================
+
+FILE: create-provider.spec.ts
+------------------------------
+
+DOCUMENTED:
+✓ Create VSphere Provider with VDDK AIO Optimization Enabled (3-provider-creation.txt)
+✓ Create VSphere Provider with VDDK AIO Optimization Disabled (3-provider-creation.txt)
+
+UNDOCUMENTED:
+✗ Create OVA Provider
+  - Test: "should create a new OVA provider"
+  - Description: Creates an OVA provider and verifies the provider resource
+  - Steps:
+    1. Navigate to provider creation
+    2. Fill OVA provider information (name, type, hostname)
+    3. Submit provider configuration
+    4. Verify provider resource exists with correct type and URL
+
+================================================================================
+
+FILE: ova-upload.spec.ts
+------------------------
+
+UNDOCUMENTED:
+✗ OVA Provider Upload Tests
+  - Test: "should create OVA provider with applianceManagement enabled and validate upload form"
+  - Description: Creates OVA provider, uploads OVA file, and verifies VM appears
+  - Steps:
+    1. Create OVA provider with applianceManagement enabled
+    2. Navigate to provider details page
+    3. Verify upload section is visible
+    4. Verify upload form elements are present
+    5. Upload OVA file and verify success
+    6. Upload same OVA file again and verify error (duplicate)
+    7. Verify uploaded VM appears in Virtual Machines tab
+
+================================================================================
+
+FILE: migration-happy-path.spec.ts
+-----------------------------------
+
+DOCUMENTED:
+✓ VSphere to Host Happy Path Cold Migration (1-full-migration-happy-path.txt)
+  - Note: Documentation matches the test flow but test is split into 3 separate tests:
+    1. "should create a new vsphere provider"
+    2. "should create a new cold migration plan"
+    3. "should run cold migration"
+
+================================================================================
+
+FILE: overview-page.spec.ts
+----------------------------
+
+UNDOCUMENTED:
+✗ Overview Page - Tips and Tricks
+  - Test: "should verify complete Tips and tricks functionality with all expandable content"
+  - Description: Tests the Tips and Tricks drawer functionality on Overview page
+  - Steps:
+    1. Navigate to Overview page
+    2. Open Tips and Tricks drawer
+    3. Verify all topic cards are present
+    4. Verify picklist functionality
+    5. Test all topics and expandable sections
+    6. Test navigation between topics (via cards and dropdown)
+    7. Test accordion structure for each topic
+    8. Verify drawer close functionality
+
+================================================================================
+
+FILE: plan-additional-settings.spec.ts
+---------------------------------------
+
+DOCUMENTED:
+✓ Set Power State on Plan Creation, Plan Details Tab, and VMs Tab (2-plan-creation.txt)
+  - Test: "should set power state on plan creation, plan details tab, and VMs tab"
+
+UNDOCUMENTED:
+✗ NBDE/Clevis Disk Decryption
+  - Test: "should set NBDE/Clevis on plan creation and edit from details page"
+  - Description: Tests NBDE/Clevis disk decryption settings during plan creation and editing
+  - Steps:
+    1. Navigate to Additional Settings in plan creation wizard
+    2. Enable NBDE/Clevis checkbox during plan creation
+    3. Verify checkbox is checked
+    4. Create plan and navigate to Details tab
+    5. Verify disk decryption detail item is visible
+    6. Edit disk decryption from Details tab
+    7. Test checkbox toggle functionality (check/uncheck/check)
+    8. Save disk decryption changes
+
+================================================================================
+
+FILE: vm-folder-list.spec.ts
+-----------------------------
+
+UNDOCUMENTED:
+✗ VM Folder List - Plan Creation Wizard
+  - Test: "should verify VM selection functionality on plan creation wizard"
+  - Description: Tests VM selection with folder navigation and search filters
+  - Steps:
+    1. Navigate to plan creation wizard
+    2. Verify VM selection step is visible
+    3. Test VM selection with search filter:
+       - Expand folder
+       - Get initial VM count
+       - Apply search filter
+       - Verify filtered count is less than initial
+       - Select entire folder
+       - Verify folder checkbox is checked
+       - Clear all filters
+       - Verify count returns to initial
+       - Verify checkbox state (checked or indeterminate)
+
+✗ VM Folder List - Provider Details Page
+  - Test: "should verify VM table functionality on provider details page"
+  - Description: Comprehensive test of VM table functionality on provider details
+  - Steps:
+    1. Navigate to provider details page and VM tab
+    2. Verify VM table is loaded
+    3. Test folder expand/collapse functionality
+    4. Test column management - remove column (Host)
+    5. Test column management - add column (Path)
+    6. Test column management - reorder columns via drag and drop (Power before Concerns)
+    7. Test filtering - VM count changes with search filter
+    8. Test sorting by Name column
+    9. Test sorting by Concerns column and expand concern icons
+
+================================================================================
+
+FILE: create-plan-wizard.spec.ts
+---------------------------------
+
+DOCUMENTED:
+✓ Create Plan with New Target Project and Verify Namespace Creation (2-plan-creation.txt)
+  - Test: "should create plan with new target project and verify namespace creation"
+
+✓ Validate Target Project Name Requirements (2-plan-creation.txt)
+  - Test: "should validate target project name requirements"
+
+✓ Create Plan with Existing Target Project and Verify Selection (2-plan-creation.txt)
+  - Test: "should create plan with existing target project and verify selection"
+
+================================================================================
+
+FILE: network-maps.spec.ts
+---------------------------
+
+DOCUMENTED:
+✓ Gate Network Map via Form and YAML (5-network-maps.txt)
+  - Test: "should create network map via form and YAML"
+
+================================================================================
+
+FILE: plan-details-page.spec.ts
+--------------------------------
+
+DOCUMENTED:
+✓ Navigate to Plan Details and Verify Page Content (4-plan-details-page.txt)
+  - Test: "should navigate to plan details and verify page content"
+
+✓ VM Rename Validation - Success and Failure Scenarios (4-plan-details-page.txt)
+  - Test: "should handle VM rename validation - success and failure scenarios"
+
+✓ Edit Guest Conversion Mode (4-plan-details-page.txt)
+  - Test: "should edit Guest conversion mode"
+
+✓ Edit VM Target Labels (4-plan-details-page.txt)
+  - Test: "should edit VM target labels"
+
+✓ Edit VM Target Node Selector (4-plan-details-page.txt)
+  - Test: "should edit VM target node selector"
+
+✓ Edit VM Target Affinity Rules (4-plan-details-page.txt)
+  - Test: "should edit VM target affinity rules"
+
+================================================================================
+
+SUMMARY OF UNDOCUMENTED TESTS
+==============================
+
+Total test files analyzed: 9
+Total undocumented test scenarios: 5
+
+Undocumented tests by category:
+
+1. PROVIDER CREATION (1 test)
+   - Create OVA Provider
+
+2. OVA UPLOAD (1 test)
+   - OVA Provider Upload with Validation
+
+3. OVERVIEW PAGE (1 test)
+   - Tips and Tricks Functionality
+
+4. PLAN ADDITIONAL SETTINGS (1 test)
+   - NBDE/Clevis Disk Decryption
+
+5. VM FOLDER LIST (2 tests)
+   - VM Selection on Plan Creation Wizard
+   - VM Table Functionality on Provider Details Page
+
+================================================================================
+
+RECOMMENDATIONS
+===============
+
+1. Create new documentation file: "6-ova-provider-and-upload.txt"
+   - Document OVA provider creation
+   - Document OVA file upload functionality
+
+2. Create new documentation file: "7-overview-page.txt"
+   - Document Tips and Tricks drawer functionality
+
+3. Add to "2-plan-creation.txt":
+   - NBDE/Clevis disk decryption settings
+
+4. Create new documentation file: "8-vm-folder-list-and-table.txt"
+   - Document VM folder list functionality in plan wizard
+   - Document VM table functionality in provider details page
+   - Document column management, sorting, filtering, and search
+
+================================================================================
+

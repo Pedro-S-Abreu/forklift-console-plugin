@@ -1,0 +1,477 @@
+TODO: UNDOCUMENTED TESTS
+========================
+
+This document lists tests that need to be documented. Each section indicates where
+the documentation should be added (existing file or new file to create).
+
+================================================================================
+
+SECTION 1: ADD TO EXISTING FILE "3-provider-creation.txt"
+==========================================================
+
+Test: Create OVA Provider
+File: create-provider.spec.ts
+Test Name: "should create a new OVA provider"
+
+1. Navigate to Provider Creation
+Navigate to Providers from main menu
+Click Create Provider button
+Wait for page to load
+- Expected Result:
+Provider creation page loads successfully
+
+2. Fill OVA Provider Information
+Provider name: test-ova-provider-{timestamp}
+Provider type: ova
+Hostname: NFS server URL
+- Expected Result:
+Provider form filled with OVA provider type
+
+3. Submit Provider Creation
+Submit provider configuration
+Wait for provider details page to load
+- Expected Result:
+Provider creation initiated
+Redirected to provider details page
+
+4. Verify Provider Details
+Verify provider details match configuration
+Check provider status
+- Expected Result:
+Provider created successfully
+Provider details display correctly
+Provider status shows "Ready"
+
+5. Verify Provider Resource
+Verify provider resource exists
+Verify provider spec type is "ova"
+Verify provider spec URL matches hostname
+- Expected Result:
+Provider resource exists
+Provider type is "ova"
+Provider URL matches configuration
+
+================================================================================
+
+SECTION 2: CREATE NEW FILE "6-ova-upload.txt"
+==============================================
+
+6 OVA Upload
+
+Create OVA Provider and Upload OVA File with Validation
+
+
+
+1. Create OVA Provider
+Navigate to Providers → Create Provider
+Configure OVA provider with applianceManagement enabled
+Provider name: test-ova-upload-{timestamp}
+Provider type: ova
+Hostname: NFS server URL
+Submit provider configuration
+- Expected Result:
+Provider created successfully
+Provider status shows "Ready"
+
+2. Navigate to Provider Details Page
+Navigate to provider details page using provider name and namespace
+Wait for page to load
+- Expected Result:
+Provider details page loads successfully
+Provider status shows "Ready"
+
+3. Verify Upload Section is Visible
+Locate upload section on provider details page
+Verify upload section heading is visible
+- Expected Result:
+Upload section is present and visible
+
+4. Verify Upload Form Elements
+Verify file upload input is visible
+Verify upload button is present
+Verify upload button is disabled (no file selected)
+- Expected Result:
+File upload input is visible
+Upload button is visible but disabled
+
+5. Upload OVA File and Verify Success
+Select OVA file from local filesystem
+Verify upload button becomes enabled
+Click upload button
+Wait for upload completion
+- Expected Result:
+File selected successfully
+Upload button becomes enabled
+Upload completes successfully
+Success alert is visible
+
+6. Upload Same OVA File Again and Verify Error
+Select the same OVA file again
+Verify upload button is enabled
+Click upload button
+Wait for error message
+- Expected Result:
+Upload button is enabled
+Error alert is visible
+Error message contains "already exists"
+
+7. Verify Uploaded VM Appears in Virtual Machines Tab
+Navigate to Virtual Machines tab
+Wait for table to load
+Search for uploaded VM by name
+Verify VM exists in table (may take up to 2 minutes)
+- Expected Result:
+Virtual Machines tab loads successfully
+VM table displays
+Uploaded VM appears in the table
+
+================================================================================
+
+SECTION 3: CREATE NEW FILE "7-overview-page.txt"
+=================================================
+
+7 Overview Page
+
+Verify Tips and Tricks Functionality with All Expandable Content
+
+1. Navigate to Overview Page
+Navigate to Overview page from main menu
+Wait for page to load
+- Expected Result:
+Overview page loads successfully
+
+2. Open Tips and Tricks Drawer
+Click Tips and Tricks button
+Wait for drawer to open
+- Expected Result:
+Tips and Tricks drawer opens
+Drawer title is visible
+
+3. Verify All Topic Cards are Present
+Verify all expected topic cards are displayed
+Verify topic cards are clickable
+- Expected Result:
+All topic cards are visible
+Topic cards display correct titles
+
+4. Verify Picklist Functionality
+Verify topic picklist/dropdown is present
+Verify all topics appear in picklist
+- Expected Result:
+Picklist is visible
+All topics are listed in picklist
+
+5. Test Topic Navigation via Card
+Click on first topic card
+Verify topic content loads
+Verify topic heading matches selected topic
+- Expected Result:
+Topic content displays
+Topic heading is correct
+
+6. Test Topic Navigation via Dropdown
+For remaining topics:
+  - Select topic from dropdown
+  - Verify topic heading updates
+  - Verify topic content loads
+- Expected Result:
+Dropdown navigation works correctly
+Topic content updates for each selection
+
+7. Test Expandable Sections (Accordions)
+For each topic with expandable sections:
+  - Verify minimum number of accordions present
+  - Test expand/collapse functionality
+  - Verify accordion content displays
+- Expected Result:
+Accordions are present
+Expand/collapse works correctly
+Content displays when expanded
+
+8. Verify Drawer Close Functionality
+Click close drawer button
+Verify drawer closes
+Verify drawer title is no longer visible
+- Expected Result:
+Close button works
+Drawer closes successfully
+Tips and Tricks drawer is hidden
+
+================================================================================
+
+SECTION 4: ADD TO EXISTING FILE "2-plan-creation.txt"
+======================================================
+
+Test: Set NBDE/Clevis Disk Decryption on Plan Creation and Edit from Details Page
+File: plan-additional-settings.spec.ts
+Test Name: "should set NBDE/Clevis on plan creation and edit from details page"
+
+Set NBDE/Clevis Disk Decryption on Plan Creation and Details Page
+
+Given: VSphere Provider exists (test fixture)
+
+1. Create Plan and Navigate to Additional Settings
+Step:
+Navigate to Plans → Create Plan
+Fill general information and complete VM selection, network map, and storage map steps
+Navigate to Additional Settings step
+Expected Result:
+Additional Settings step visible
+
+2. Enable NBDE/Clevis During Plan Creation
+Step:
+Check "Use NBDE/Clevis for disk decryption" checkbox
+Expected Result:
+Checkbox is checked
+
+3. Create Plan and Verify Details Tab
+Step:
+Click Skip to Review
+Click Next to create plan
+Navigate to Details tab
+Expected Result:
+Plan created successfully
+Disk decryption detail item is visible
+
+4. Edit Disk Decryption from Details Tab
+Step:
+Click edit icon next to Disk decryption
+Verify "Use NBDE/Clevis for disk decryption" checkbox is visible
+Expected Result:
+Edit modal opens
+NBDE/Clevis checkbox is visible
+
+5. Test Checkbox Toggle and Save
+Step:
+Toggle checkbox: check, uncheck, check
+Click Save button
+Expected Result:
+Checkbox toggles correctly
+Modal closes successfully
+
+================================================================================
+
+SECTION 5: CREATE NEW FILE "8-vm-folder-list-and-table.txt"
+============================================================
+
+8 VM List 
+
+VM Selection Functionality on Plan Creation Wizard
+
+Given: VSphere Provider exists (test fixture)
+
+1. Navigate to Plan Creation Wizard
+Navigate to Plans → Create Plan
+Fill general information: plan name, project, source provider, target provider
+Click Next
+- Expected Result:
+Plan wizard loads successfully
+General information step completed
+VM selection step is visible
+
+2. Verify VM Selection Step is Visible
+Verify VM selection step heading is visible
+Verify VM table is loaded
+Verify folder structure is visible
+- Expected Result:
+VM selection step displays
+VM table loads successfully
+Folder tree structure is visible
+
+3. Test VM Selection with Search Filter
+Expand folder: vm
+Wait for folder to expand
+Get initial VM count in folder
+Verify initial count is greater than 0
+- Expected Result:
+Folder expands successfully
+Initial VM count is recorded
+VMs are visible in folder
+
+4. Apply Search Filter and Verify Count Changes
+Enter search term: win2019
+Wait for filter to apply
+Get filtered VM count in folder
+Verify filtered count is less than initial count
+Verify filtered count is greater than 0
+- Expected Result:
+Search filter applies
+VM count decreases
+Some VMs still match filter
+
+5. Select Folder and Verify Checkbox State
+Click folder checkbox to select all VMs in folder
+Wait for selection to apply
+Verify folder checkbox is checked
+- Expected Result:
+Folder selection works
+Folder checkbox shows checked state
+All filtered VMs in folder are selected
+
+6. Clear Filters and Verify Count Returns
+Click "Clear all filters" button
+Wait for filters to clear
+Get VM count after clearing filters
+Verify count returns to initial count
+- Expected Result:
+Filters are cleared
+VM count returns to original
+All VMs are visible again
+
+7. Verify Checkbox State After Clear
+Verify folder checkbox state
+Check if checkbox is checked or indeterminate
+- Expected Result:
+Checkbox state is checked 
+Selection is preserved after clearing filters
+
+================================================================================
+
+VM Table Functionality on Provider Details Page
+
+Given: VSphere Provider exists (test fixture)
+
+1. Navigate to Provider Details Page and VM Tab
+Navigate to provider details page using provider name and namespace
+Click Virtual Machines tab
+Wait for page to load
+- Expected Result:
+Provider details page loads successfully
+Virtual Machines tab is active
+VM table is visible
+
+2. Verify VM Table is Loaded
+Verify VM table is visible
+Verify table contains rows
+Verify folder structure is visible
+- Expected Result:
+VM table displays correctly
+VMs are listed in table
+Folder tree structure is present
+
+3. Test Folder Expand/Collapse Functionality
+Locate folder in table
+Click to expand folder
+Verify folder expands and shows VMs
+Click to collapse folder
+Verify folder collapses and hides VMs
+- Expected Result:
+Folder expand works correctly
+VMs appear when expanded
+Folder collapse works correctly
+VMs hide when collapsed
+
+4. Test Column Management - Remove Column
+Open column management menu
+Locate "Host" column in management menu
+Uncheck "Host" column
+Close column management menu
+Verify "Host" column is no longer visible in table
+- Expected Result:
+Column management menu opens
+"Host" column can be toggled
+Column is removed from table
+Table updates correctly
+
+5. Test Column Management - Add Column
+Open column management menu
+Locate "Path" column in management menu
+Check "Path" column
+Close column management menu
+Verify "Path" column is now visible in table
+- Expected Result:
+Column management menu opens
+"Path" column can be toggled
+Column is added to table
+Table updates correctly
+
+6. Test Column Management - Reorder Columns via Drag and Drop
+Get initial column order
+Verify "Power" column is after "Concerns" column
+Open column management menu
+Drag "Power" column before "Concerns" column
+Close column management menu
+Get final column order
+Verify "Power" column is now before "Concerns" column
+- Expected Result:
+Initial column order recorded
+Drag and drop works in column management
+Column order changes in table
+"Power" appears before "Concerns"
+
+7. Test Filtering - VM Count Changes with Search Filter
+Expand folder: vm
+Get initial VM count in folder
+Verify initial count is greater than 0
+Enter search term: win2019
+Wait for filter to apply
+Get filtered VM count in folder
+Verify filtered count is less than initial count
+Verify filtered count is greater than 0
+- Expected Result:
+Folder expands successfully
+Search filter applies
+VM count decreases with filter
+Some VMs still match filter
+
+8. Clear Filters and Verify Count Returns
+Click "Clear all filters" button
+Wait for filters to clear
+Get VM count after clearing filters
+Verify count returns to initial count
+- Expected Result:
+Filters are cleared
+VM count returns to original
+All VMs are visible again
+
+9. Test Sorting by Name Column
+Get first VM name before sorting
+Click "Name" column header to sort
+Wait for sort to apply
+Get first VM name after sorting
+Verify first VM name has changed
+- Expected Result:
+Sort by Name works
+Table reorders
+First VM name is different
+VMs are sorted alphabetically
+
+10. Test Sorting by Concerns Column
+Click "Concerns" column header to sort
+Wait for sort to apply
+Verify table is sorted by concerns
+- Expected Result:
+Sort by Concerns works
+Table reorders by concern count
+
+11. Test Concern Button Expansion
+Locate VM with concerns
+Click concern icon/button
+Verify concern details expand
+Verify concern information is visible
+- Expected Result:
+Concern button is clickable
+Concern details display
+Concern information is readable
+
+================================================================================
+
+SUMMARY
+=======
+
+Files to modify:
+2-plan-creation.txt (add NBDE/Clevis test)
+3-provider-creation.txt (add OVA provider test)
+
+New files to create:
+6-ova-upload.txt
+7-overview-page.txt
+8-vm-folder-list-and-table.txt
+
+Total undocumented test scenarios: 5
+1 to add to existing file (3-provider-creation.txt)
+1 to add to existing file (2-plan-creation.txt)
+3 new files to create (6, 7, 8)
+
+================================================================================
+

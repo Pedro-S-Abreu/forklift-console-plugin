@@ -1,0 +1,76 @@
+6 OVA Upload
+
+Create OVA Provider and Upload OVA File with Validation
+
+Given: OVA provider configuration exists
+
+1. Create OVA Provider
+Step:
+- Navigate to Providers → Create Provider
+- Configure OVA provider with applianceManagement enabled
+- Provider name: test-ova-upload-{timestamp}
+- Provider type: ova
+- Hostname: NFS server URL
+- Submit provider configuration
+Expected Result:
+- Provider created successfully
+- Provider status shows "Ready"
+
+2. Navigate to Provider Details Page
+Step:
+- Navigate to provider details page using provider name and namespace
+- Wait for page to load
+Expected Result:
+- Provider details page loads successfully
+- Provider status shows "Ready"
+
+3. Verify Upload Section is Visible
+Step:
+- Locate upload section on provider details page
+- Verify upload section heading is visible
+Expected Result:
+- Upload section is present and visible
+
+4. Verify Upload Form Elements
+Step:
+- Verify file upload input is visible
+- Verify upload button is present
+- Verify upload button is disabled (no file selected)
+Expected Result:
+- File upload input is visible
+- Upload button is visible but disabled
+
+5. Upload OVA File and Verify Success
+Step:
+- Select OVA file from local filesystem
+- Verify upload button becomes enabled
+- Click upload button
+- Wait for upload completion
+Expected Result:
+- File selected successfully
+- Upload button becomes enabled
+- Upload completes successfully
+- Success alert is visible
+
+6. Upload Same OVA File Again and Verify Error
+Step:
+- Select the same OVA file again
+- Verify upload button is enabled
+- Click upload button
+- Wait for error message
+Expected Result:
+- Upload button is enabled
+- Error alert is visible
+- Error message contains "already exists"
+
+7. Verify Uploaded VM Appears in Virtual Machines Tab
+Step:
+- Navigate to Virtual Machines tab
+- Wait for table to load
+- Search for uploaded VM by name
+- Verify VM exists in table (may take up to 2 minutes)
+Expected Result:
+- Virtual Machines tab loads successfully
+- VM table displays
+- Uploaded VM appears in the table
+

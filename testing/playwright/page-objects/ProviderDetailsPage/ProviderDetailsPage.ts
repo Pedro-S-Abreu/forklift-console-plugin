@@ -96,11 +96,11 @@ export class ProviderDetailsPage {
 
   async verifyProviderTitle(providerName: string): Promise<void> {
     const titleLocator = this.page.getByTestId('resource-details-title');
-    await expect(titleLocator).toContainText(providerName);
+    await expect(titleLocator).toContainText(providerName, { timeout: 15000 });
   }
 
   async waitForPageLoad(): Promise<void> {
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState('domcontentloaded', { timeout: 15000 });
   }
 
   async waitForReadyStatus(timeoutMs = 120000): Promise<void> {

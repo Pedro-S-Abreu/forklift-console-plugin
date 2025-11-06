@@ -1,0 +1,75 @@
+7 Overview Page
+
+Verify Tips and Tricks Functionality with All Expandable Content
+
+1. Navigate to Overview Page
+Step:
+- Navigate to Overview page from main menu
+- Wait for page to load
+Expected Result:
+- Overview page loads successfully
+
+2. Open Tips and Tricks Drawer
+Step:
+- Click Tips and Tricks button
+- Wait for drawer to open
+Expected Result:
+- Tips and Tricks drawer opens
+- Drawer title is visible
+
+3. Verify All Topic Cards are Present
+Step:
+- Verify all expected topic cards are displayed
+- Verify topic cards are clickable
+Expected Result:
+- All topic cards are visible
+- Topic cards display correct titles
+
+4. Verify Picklist Functionality
+Step:
+- Verify topic picklist/dropdown is present
+- Verify all topics appear in picklist
+Expected Result:
+- Picklist is visible
+- All topics are listed in picklist
+
+5. Test Topic Navigation via Card
+Step:
+- Click on first topic card
+- Verify topic content loads
+- Verify topic heading matches selected topic
+Expected Result:
+- Topic content displays
+- Topic heading is correct
+
+6. Test Topic Navigation via Dropdown
+Step:
+- For remaining topics:
+  - Select topic from dropdown
+  - Verify topic heading updates
+  - Verify topic content loads
+Expected Result:
+- Dropdown navigation works correctly
+- Topic content updates for each selection
+
+7. Test Expandable Sections (Accordions)
+Step:
+- For each topic with expandable sections:
+  - Verify minimum number of accordions present
+  - Test expand/collapse functionality
+  - Verify accordion content displays
+Expected Result:
+- Accordions are present
+- Expand/collapse works correctly
+- Content displays when expanded
+
+8. Verify Drawer Close Functionality
+Step:
+- Click close drawer button
+- Verify drawer closes
+- Verify drawer title is no longer visible
+Expected Result:
+- Close button works
+- Drawer closes successfully
+- Tips and Tricks drawer is hidden
+

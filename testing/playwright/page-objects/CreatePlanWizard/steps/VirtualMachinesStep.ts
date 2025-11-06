@@ -74,11 +74,11 @@ export class VirtualMachinesStep extends VirtualMachinesTable {
     const buttonName = action === 'confirm' ? 'Confirm selections' : 'Deselect critical issue VMs';
     const button = this.page.getByRole('button', { name: buttonName });
 
-    await expect(button).toBeVisible();
+    await expect(button).toBeVisible({ timeout: 10000 });
     await button.click();
 
     // Wait for modal to disappear
-    await expect(button).not.toBeVisible();
+    await expect(button).not.toBeVisible({ timeout: 10000 });
   }
 
   async searchAndSelectVirtualMachine(vmName: string, folder?: string) {

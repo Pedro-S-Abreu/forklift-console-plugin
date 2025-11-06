@@ -1,0 +1,416 @@
+4 Plan Details Page
+
+Navigate to Plan Details and Verify Page Content
+
+Given: Plan and Provider exist (test fixtures)
+
+1. Navigate to Plan Details
+- Step:
+- Navigate to plan details page using plan name and namespace
+- Wait for page to load
+- Expected Result:
+- Plan details page loads successfully
+
+2. Verify Plan Information
+- Step:
+- Verify plan title displays correctly
+- Verify plan details URL is correct
+- Verify navigation tabs are present
+- Expected Result:
+- Plan title matches expected name
+- URL contains correct plan identifier
+- Navigation tabs (Details, Virtual Machines) are visible
+
+================================================================================
+
+VM Rename Validation - Success and Failure Scenarios
+
+Given: Plan and Provider exist (test fixtures)
+
+1. Navigate to Plan Details
+- Step:
+- Navigate to plan details page using plan name and namespace
+- Wait for page to load
+- Expected Result:
+- Plan details page loads successfully
+
+2. Test Invalid VM Names
+- Step:
+- For each invalid name (VM-With-Capitals, invalid@symbol):
+- - Open rename dialog
+- - Enter invalid name and press Tab
+- - Verify validation error and disabled Save button
+- - Cancel dialog
+- Expected Result:
+- For each invalid name:
+- - Validation error message appear
+- - Save button is disabled
+- - Dialog closes successfully
+
+3. Test Valid VM Names
+- Step:
+- For each valid name (valid-name-123, test123):
+- - Open rename dialog
+- - Enter valid name and press Tab
+- - Verify no validation error and enabled Save button
+- - Cancel dialog
+- Expected Result:
+- For each valid name:
+- - No validation error message
+- - Save button is enabled
+- - Dialog closes successfully
+
+4. Perform Successful VM Rename
+- Step:
+- Open rename dialog
+- Enter renamed-vm-test
+- Click Save button
+- Expected Result:
+- Save button is enabled
+- Rename operation completes
+- Dialog closes
+
+5. Verify Rename Persistence
+- Step:
+- Open rename dialog again
+- Verify input shows renamed-vm-test
+- Cancel dialog
+- Expected Result:
+- Input field displays new name
+- Dialog closes successfully
+
+================================================================================
+
+Edit Guest Conversion Mode
+
+Given: Plan and Provider exist (test fixtures)
+
+1. Navigate to Plan Details
+- Step:
+- Navigate to plan details page using plan name and namespace
+- Wait for page to load
+- Expected Result:
+- Plan details page loads successfully
+
+2. Verify Initial State and Open Editor
+- Step:
+- Verify Guest conversion mode shows "Include guest conversion"
+- Click edit icon next to Guest conversion mode
+- Expected Result:
+- Initial state: "Include guest conversion"
+- Edit dialog opens
+
+3. Enable Skip Guest Conversion
+- Step:
+- Verify "Skip guest conversion" checkbox is unchecked
+- Check "Skip guest conversion" checkbox
+- Expected Result:
+- Checkbox changes from unchecked to checked
+- Warning message appears
+
+4. Verify Compatibility Mode Default State
+- Step:
+- Verify "Use compatibility mode" checkbox appears and is checked by default
+- Expected Result:
+- "Use compatibility mode" visible and checked
+
+5. Save and Verify Changes
+- Step:
+- Click Save button
+- Verify Guest conversion mode displays:
+- - "Skip guest conversion"
+- - "Compatibility mode enabled"
+- Expected Result:
+- Verify Guest conversion mode displays:
+- - "Skip guest conversion"
+- - "Compatibility mode enabled"
+
+6. Disable Compatibility Mode
+- Step:
+- Click edit icon to reopen editor
+- Verify previous settings preserved
+- Uncheck "Use compatibility mode" checkbox
+- Expected Result:
+- Dialog opens with preserved settings
+- Compatibility warning message appears
+
+7. Save Final State
+- Step:
+- Click Save button
+- Expected Result:
+- Verify Guest conversion mode displays:
+- - "Skip guest conversion"
+- - "Compatibility mode disabled"
+
+================================================================================
+
+Edit VM Target Node Selector
+
+Given: Plan and Provider exist (test fixtures)
+
+1. Navigate to Plan Details
+- Step:
+- Navigate to plan details page using plan name and namespace
+- Wait for page to load
+- Expected Result:
+- Plan details page loads successfully
+
+2. Verify Initial State and Open Node Selector Editor
+- Step:
+- Verify no node selectors are present
+- Click edit icon next to VM target node selector section
+- Expected Result:
+- Details tab loads successfully
+- Node selector count: 0
+- Node selector modal opens
+
+3. Add and Save First Node Selector
+- Step:
+- Click Add node selector
+- Enter key: kubernetes.io/arch
+- Enter value: amd64
+- Click Save button
+- Expected Result:
+- New node selector row appears
+- Node selector populated successfully
+- Modal closes
+- Changes saved successfully
+
+4. Verify First Node Selector
+- Step:
+- Check node selector count
+- Verify node selector displays: kubernetes.io/arch
+- Expected Result:
+- Node selector count: 1
+- kubernetes.io/arch label visible
+
+5. Add and Save Second Node Selector
+- Step:
+- Click edit icon next to VM target node selector
+- Verify existing node selector is present: kubernetes.io/arch = amd64
+- Click Add node selector
+- Enter key: node-role.kubernetes.io/worker
+- Leave value empty
+- Click Save button
+- Expected Result:
+- Node selector modal opens
+- Existing node selector persists
+- New node selector row appears
+- Second node selector populated
+- Modal closes
+- Changes saved successfully
+
+6. Verify Both Node Selectors
+- Step:
+- Check node selector count
+- Verify node selector displays: kubernetes.io/arch
+- Verify node selector displays: node-role.kubernetes.io/worker
+- Expected Result:
+- Node selector count: 2
+- Both node selector labels display correctly:
+- - kubernetes.io/arch label visible
+- - node-role.kubernetes.io/worker label visible
+
+7. Remove Node Selector and Save
+- Step:
+- Click edit icon next to VM target node selector
+- Locate node-role.kubernetes.io/worker entry
+- Click delete button for node-role.kubernetes.io/worker
+- Click Save button
+- Expected Result:
+- Node selector modal opens
+- Both existing node selectors visible
+- Second node selector removed from list
+- Modal closes
+- Changes saved successfully
+
+8. Verify Single Node Selector Remains
+- Step:
+- Check node selector count
+- Verify only kubernetes.io/arch displays
+- Verify node-role.kubernetes.io/worker is removed
+- Expected Result:
+- Node selector count: 1
+- Only kubernetes.io/arch label visible
+- node-role.kubernetes.io/worker label not displayed
+
+================================================================================
+
+Edit VM Target Labels
+
+Given: Plan and Provider exist (test fixtures)
+
+1. Navigate to Plan Details
+- Step:
+- Navigate to plan details page using plan name and namespace
+- Wait for page to load
+- Expected Result:
+- Plan details page loads successfully
+
+2. Verify Initial State and Open Node Selector Editor (Note: PDF title is incorrect, step refers to Labels)
+- Step:
+- Navigate to Details tab
+- Verify no labels are present
+- Click edit icon next to VM target labels section
+- Expected Result:
+- Details tab loads successfully
+- Labels count: 0
+- Labels modal opens
+
+3. Add and Save First Label
+- Step:
+- Click Add label
+- Enter key: environment
+- Enter value: production
+- Click Save button
+- Expected Result:
+- New label row appears
+- Label populated successfully
+- Modal closes
+- Changes saved successfully
+
+4. Verify First Label
+- Step:
+- Check labels count
+- Verify label displays: environment
+- Expected Result:
+- Labels count: 1
+- environment label visible
+
+5. Add and Save Second Label
+- Step:
+- Click edit icon next to VM target labels
+- Verify existing label is present: environment = production
+- Click Add label
+- Enter key: team
+- Enter value: migration
+- Click Save button
+- Expected Result:
+- Labels modal opens
+- Existing label persists
+- New label row appears
+- Second label populated
+- Modal closes
+- Changes saved successfully
+
+6. Verify Both Labels
+- Step:
+- Check labels count
+- Verify label displays: environment
+- Verify label displays: team
+- Expected Result:
+- Labels count: 2
+- Both labels display correctly:
+- - environment label visible
+- - team label visible
+
+7. Remove Label and Save
+- Step:
+- Click edit icon next to VM target labels
+- Locate team entry
+- Click delete button for team
+- Click Save button
+- Expected Result:
+- Labels modal opens
+- Both existing labels visible
+- Second label removed from list
+- Modal closes
+- Changes saved successfully
+
+8. Verify Single Label Remains
+- Step:
+- Check labels count
+- Verify only environment displays
+- Verify team is removed
+- Expected Result:
+- Labels count: 1
+- Only environment label visible
+- team label not displayed
+
+================================================================================
+
+Edit VM Target Affinity Rules
+
+Given: Plan and Provider exist (test fixtures)
+
+1. Navigate to Plan Details
+- Step:
+- Navigate to plan details page using plan name and namespace
+- Wait for page to load
+- Expected Result:
+- Plan details page loads successfully
+
+2. Verify Initial State and Open Affinity Rules Editor
+- Step:
+- Navigate to Details tab
+- Verify no affinity rules are present
+- Click edit icon next to VM target affinity rules section
+- Expected Result:
+- Details tab loads successfully
+- Affinity rules count: 0
+- Affinity rules modal opens
+
+3. Add First Affinity Rule - Node Affinity (Required)
+- Step:
+- Click "Add affinity rule" button
+- Verify affinity type options: Node affinity, Workload (pod) affinity, Workload (pod) anti-affinity
+- Select affinity type: Node affinity
+- Verify condition options: Required during scheduling, Preferred during scheduling
+- Select rule type: Required during scheduling
+- Click "Add expression" button
+- Enter expression key: kubernetes.io/hostname
+- Enter expression value: worker-node-1
+- Click "Save rule" button
+- Expected Result:
+- Affinity rule form appears
+- All expected affinity type options available
+- Node affinity selected
+- All expected condition options available
+- Required during scheduling selected
+- Expression row added
+- Expression populated successfully
+- Rule saved and appears in rules list
+
+4. Save and Verify First Affinity Rule
+- Step:
+- Click "Apply" button to save all rules
+- Check affinity rules count
+- Expected Result:
+- Modal closes
+- Changes saved successfully
+- Affinity rules count: 1
+- Node affinity rule displayed
+
+5. Add Second Affinity Rule - Workload Affinity (Preferred)
+- Step:
+- Click edit icon next to VM target affinity rules
+- Click "Add affinity rule" button
+- Select affinity type: Workload (pod) affinity
+- Select rule type: Preferred during scheduling
+- Enter weight: 50
+- Enter topology key: kubernetes.io/hostname
+- Click "Add expression" button
+- Enter expression key: app
+- Enter expression value: database
+- Click "Save rule" button
+- Expected Result:
+- Affinity rules modal opens
+- Affinity rule form appears
+- Workload (pod) affinity selected
+- Preferred during scheduling selected
+- Weight field populated
+- Topology key populated
+- Expression row added
+- Expression populated successfully
+- Rule saved and appears in rules list
+
+6. Save and Verify Both Affinity Rules
+- Step:
+- Click "Apply" button to save all rules
+- Check affinity rules count
+- Expected Result:
+- Modal closes
+- Changes saved successfully
+- Affinity rules count: 2
+- Both affinity rules displayed (Node affinity and Workload affinity)
+

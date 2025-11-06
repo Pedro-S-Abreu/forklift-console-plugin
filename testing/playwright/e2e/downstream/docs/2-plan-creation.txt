@@ -1,0 +1,353 @@
+2 Plan Creation
+
+Create Plan with New Target Project and Verify Namespace Creation
+
+Given: VSphere Provider exists (test fixture)
+
+1. Navigate to Plan Creation
+- Step:
+- Navigate to Plans → Create Plan
+- Plan wizard opens
+- Expected Result:
+- Plan creation wizard loads successfully
+
+2. Fill General Information
+- Step:
+- Plan name: project-creation-{valid-name}-{uniqueld}
+- Plan project: openshift-mtv
+- Source provider: Select test vSphere provider
+- Target provider: host
+- Target project: {valid-name}-{uniqueld} (create new)
+- Click Next
+- Expected Result:
+- General information step completed
+- Should navigate to VM selection step
+
+3. VM Selection
+- Step:
+- Select source VM: mtv-func-rhel9
+- Click Next
+- Expected Result:
+- VM selected successfully
+- Should navigate to network mapping step
+
+4. Network Mapping
+- Step:
+- Create new network map: {plan-name}-network-map
+- Leave default mapping configuration
+- Click Next
+- Expected Result:
+- Network mapping created and configured
+- Should navigate to storage mapping step
+
+5. Storage Mapping
+- Step:
+- Create new storage map: {plan-name}-storage-map
+- Map to target storage: ocs-storagecluster-ceph-rbd-virtualization
+- Click Next
+- Expected Result:
+- Storage mapping created and configured
+- Should navigate to review step
+
+6. Review and Create Plan
+- Step:
+- Click Skip to Review
+- Review configuration
+- Click Next to create plan
+- Expected Result:
+- Plan creation initiated
+
+7. Verify Plan Creation
+- Step:
+- Wait for plan creation completion
+- Verify plan title
+- Navigate to Details tab
+- Verify plan details
+- Expected Result:
+- Plan created successfully
+- Plan details match configuration
+- New target project namespace created
+
+================================================================================
+
+Validate Target Project Name Requirements
+
+Given: VSphere Provider exists (test fixture)
+
+1. Navigate to Plan Creation
+- Step:
+- Navigate to Plans → Create Plan
+- Plan wizard opens
+- Expected Result:
+- Plan creation wizard loads successfully
+
+2. Fill Basic Plan Information
+- Step:
+- Plan name: validation-test-{timestamp}
+- Plan project: openshift-mtv
+- Source provider: Select test vSphere provider
+- Target provider: host
+- Wait for target provider namespaces to load
+- Expected Result:
+- Basic plan information filled
+- Target provider namespaces loaded
+
+3. Test Invalid Project Name: Empty String
+- Step:
+- Open Create Project modal
+- Enter empty string as project name
+- Click Create Project
+- Verify error message
+- Cancel project creation
+- Expected Result:
+- Validation error displayed
+- Project creation prevented
+- Modal cancelled successfully
+
+4. Test Invalid Project Name: Capitals
+- Step:
+- Open Create Project modal
+- Enter VM-With-Capitals as project name
+- Click Create Project
+- Verify error message
+- Cancel project creation
+- Expected Result:
+- Validation error displayed
+- Project creation prevented
+- Modal cancelled successfully
+
+5. Test Invalid Project Name: Special Characters
+- Step:
+- Open Create Project modal
+- Enter invalid@symbol as project name
+- Click Create Project
+- Verify error message
+- Cancel project creation
+- Expected Result:
+- Validation error displayed
+- Project creation prevented
+- Modal cancelled successfully
+
+================================================================================
+
+Create Plan with Existing Target Project and Verify Selection
+
+Given: VSphere Provider exists (test fixture)
+
+1. Navigate to Plan Creation
+- Step:
+- Navigate to Plans → Create Plan
+- Plan wizard opens
+- Expected Result:
+- Plan creation wizard loads successfully
+
+2. Fill General Information
+- Step:
+- Plan name: project-creation-{valid-name}-{uniqueld}
+- Plan project: openshiftmtv-
+- Source provider: Select test vSphere provider
+- Target provider: host
+- Target project: default
+- Click Next
+- Expected Result:
+- General information step completed
+- Should navigate to VM selection step
+
+3. Complete Plan Creation
+- Step:
+- Fill VM selection: mtv-func-rhel9
+- Create network map: {plan-name}-network-map
+- Create storage map: {plan-name}-storage-map
+- Map to storage: ocs-storagecluster-ceph-rbd-virtualization
+- Submit plan
+- Expected Result:
+- Plan created successfully using existing project
+
+4. Verify Plan Creation
+- Step:
+- Verify plan title displays correctly
+- Navigate to Details tab
+- Verify plan details match configuration
+- Confirm existing project default is used
+- Expected Result:
+- Plan created successfully
+- Plan title displays correctly
+- Plan details match configuration
+- Existing default project selected correctly
+
+================================================================================
+
+Set Power State on Plan Creation, Plan Details Tab, and VMs Tab
+
+Given: VSphere Provider exists (test fixture)
+
+1. Create Plan and Set Power State During Creation
+- Step:
+- Navigate to Plans → Create Plan
+- Fill general information: plan name, project, source provider (vsphere), target provider (host)
+- Click Next
+- Select source VM: mtv-func-rhel9
+- Click Next
+- Create network map with default mappings
+- Click Next
+- Create storage map with target storage: ocs-storagecluster-ceph-rbd-virtualization
+- Click Next
+- Click Next to skip Migration Type
+- Navigate to Additional Settings step
+- Expected Result:
+- Plan wizard loads successfully
+- General information step completed
+- VM selection completed
+- Network map created
+- Storage map created
+- Migration Type step skipped
+- Additional Settings step visible
+
+2. Review and Select Power State Options
+- Step:
+- Click Target VM power state dropdown
+- Verify options displayed:
+- - Retain source VM power state
+- - Powered on
+- - Powered off
+- Select: Powered on
+- Click Skip to Review
+- Expected Result:
+- Power state dropdown opens
+- All three power state options are visible
+- Powered on option selected
+- Review step displayed
+
+3. Create Plan and Navigate to Details Tab
+- Step:
+- Review plan configuration
+- Click Next to create plan
+- Wait for plan creation completion
+- Navigate to Details tab
+- Verify Target VM power state displays: Powered on
+- Expected Result:
+- Plan created successfully
+- Redirected to plan details page
+- Details tab loads
+- Target VM power state shows: Powered on
+
+4. Edit Power State from Details Tab
+- Step:
+- Click edit icon next to Target VM power state
+- Verify Save button is disabled (no change made)
+- Click power state dropdown
+- Verify all options displayed:
+- - Retain source VM power state
+- - Powered on
+- - Powered off
+- Select: Powered off
+- Verify Save button is enabled
+- Click Save button
+- Expected Result:
+- Edit power state modal opens
+- Save button initially disabled
+- Power state dropdown shows all three options
+- Powered off option selected
+- Save button becomes enabled
+- Modal closes
+- Changes saved successfully
+
+5. Verify Power State Change on Details Tab
+- Step:
+- Check Target VM power state displays: Powered off
+- Expected Result:
+- Target VM power state updated to: Powered off
+
+6. Enable Target Power State Column on VMs Tab
+- Step:
+- Navigate to Virtual Machines tab
+- Open column management
+- Enable "Target power state" column
+- Verify column is visible
+- Expected Result:
+- Virtual Machines tab loads
+- Column management opened
+- Target power state column enabled
+- Target power state column visible in table
+
+7. Verify VM Inherits Plan Power State
+- Step:
+- Locate VM in table: mtv-func-rhel9
+- Check Target power state value for VM
+- Expected Result:
+- VM displays: Powered off (Inherited from plan)
+
+8. Edit VM Power State and Review Options
+- Step:
+- Click edit power state icon for VM: mtv-func-rhel9
+- Verify Save button is disabled (no change made)
+- Click power state dropdown
+- Verify all four options displayed:
+- - Inherit from plan (Set to: Powered off)
+- - Retain source VM power state
+- - Powered on
+- - Powered off
+- Expected Result:
+- Edit power state modal opens for VM
+- Save button initially disabled
+- Power state dropdown shows all four options
+- Inherit option shows current plan setting
+
+9. Change VM Power State and Save
+- Step:
+- Select: Powered on
+- Verify Save button is enabled
+- Click Save button
+- Wait for modal to close
+- Verify VM Target power state displays: Powered on
+- Expected Result:
+- Powered on option selected
+- Save button becomes enabled
+- Modal closes
+- VM power state updated to: Powered on (overrides plan setting)
+
+================================================================================
+
+Set NBDE/Clevis Disk Decryption on Plan Creation and Details Page
+
+Given: VSphere Provider exists (test fixture)
+
+1. Create Plan and Navigate to Additional Settings
+Step:
+- Navigate to Plans → Create Plan
+- Fill general information and complete VM selection, network map, and storage map steps
+- Navigate to Additional Settings step
+Expected Result:
+- Additional Settings step visible
+
+2. Enable NBDE/Clevis During Plan Creation
+Step:
+- Check "Use NBDE/Clevis for disk decryption" checkbox
+Expected Result:
+- Checkbox is checked
+
+3. Create Plan and Verify Details Tab
+Step:
+- Click Skip to Review
+- Click Next to create plan
+- Navigate to Details tab
+Expected Result:
+- Plan created successfully
+- Disk decryption detail item is visible
+
+4. Edit Disk Decryption from Details Tab
+Step:
+- Click edit icon next to Disk decryption
+- Verify "Use NBDE/Clevis for disk decryption" checkbox is visible
+Expected Result:
+- Edit modal opens
+- NBDE/Clevis checkbox is visible
+
+5. Test Checkbox Toggle and Save
+Step:
+- Toggle checkbox: check, uncheck, check
+- Click Save button
+Expected Result:
+- Checkbox toggles correctly
+- Modal closes successfully
+

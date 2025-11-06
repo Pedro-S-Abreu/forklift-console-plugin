@@ -1,0 +1,147 @@
+3 Provider Creation
+
+Create VSphere Provider with VDDK AIO Optimization Disabled
+
+1. Navigate to Provider Creation
+- Step:
+- Navigate to Providers from main menu
+- Click Create Provider button
+- Wait for page to load
+- Expected Result:
+- Provider creation page loads successfully
+
+2. Fill Provider Information
+- Step:
+- Provider name: test-vsphere-provider-disabled-{timestamp}
+- Provider type: vsphere
+- Endpoint type: vcenter
+- Hostname: vCenter server URL
+- Username: vCenter credentials
+- Password: vCenter credentials
+- VDDK Init Image: VMware VDDK image
+- VDDK AIO Optimization: Disabled
+- Expected Result:
+- Provider form filled with "VDDK AIO Optimization" disabled
+
+3. Submit Provider Creation
+- Step:
+- Submit provider configuration
+- Wait for provider details page to load
+- Expected Result:
+- Provider creation initiated
+- Redirected to provider details page
+
+4. Verify Provider Details
+- Step:
+- Verify provider details match configuration
+- Check provider stat
+- Expected Result:
+- Provider created successfully
+- Provider details display correctly
+- Provider status shows "Ready"
+
+5. Verify VDDK AIO Optimization Setting
+- Step:
+- Verify provider resource
+- Verify useVddkAioOptimization field in provider spec
+- Expected Result:
+- Provider resource exists
+- useVddkAioOptimization field is undefined or false
+
+================================================================================
+
+Create VSphere Provider with VDDK AIO Optimization Enabled
+
+1. Navigate to Provider Creation
+- Step:
+- Navigate to Providers from main menu
+- Click Create Provider button
+- Wait for page to load
+- Expected Result:
+- Provider creation page loads successfully
+
+2. Fill Provider Information
+- Step:
+- Provider name: test-vsphere-provider-disabled-{timestamp}
+- Provider type: vsphere
+- Endpoint type: vcenter
+- Hostname: vCenter server URL
+- Username: vCenter credentials
+- Password: vCenter credentials
+- VDDK Init Image: VMware VDDK image
+- VDDK AIO Optimization: Enabled (Note: PDF source says Disabled, but title implies Enabled. Assuming text is typo and title is correct)
+- Expected Result:
+- Provider form filled with "VDDK AIO Optimization" enabled
+
+3. Submit Provider Creation
+- Step:
+- Submit provider configuration
+- Wait for provider details page to load
+- Expected Result:
+- Provider creation initiated
+- Redirected to provider details page
+
+4. Verify Provider Details
+- Step:
+- Verify provider details match configuration
+- Check provider stat
+- Expected Result:
+- Provider created successfully
+- Provider details display correctly
+- Provider status shows "Ready"
+
+5. Verify VDDK AIO Optimization Setting
+- Step:
+- Verify provider resource
+- Verify useVddkAioOptimization field in provider spec
+- Expected Result:
+- Provider resource exists
+- useVddkAioOptimization field is set to true
+
+================================================================================
+
+Create OVA Provider
+
+1. Navigate to Provider Creation
+Step:
+- Navigate to Providers from main menu
+- Click Create Provider button
+- Wait for page to load
+Expected Result:
+- Provider creation page loads successfully
+
+2. Fill OVA Provider Information
+Step:
+- Provider name: test-ova-provider-{timestamp}
+- Provider type: ova
+- Hostname: NFS server URL
+Expected Result:
+- Provider form filled with OVA provider type
+
+3. Submit Provider Creation
+Step:
+- Submit provider configuration
+- Wait for provider details page to load
+Expected Result:
+- Provider creation initiated
+- Redirected to provider details page
+
+4. Verify Provider Details
+Step:
+- Verify provider details match configuration
+- Check provider status
+Expected Result:
+- Provider created successfully
+- Provider details display correctly
+- Provider status shows "Ready"
+
+5. Verify Provider Resource
+Step:
+- Verify provider resource exists
+- Verify provider spec type is "ova"
+- Verify provider spec URL matches hostname
+Expected Result:
+- Provider resource exists
+- Provider type is "ova"
+- Provider URL matches configuration
+

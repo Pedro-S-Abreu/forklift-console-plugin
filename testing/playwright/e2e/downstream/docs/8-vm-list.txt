@@ -1,0 +1,218 @@
+8 VM List
+
+VM Selection Functionality on Plan Creation Wizard
+
+Given: VSphere Provider exists (test fixture)
+
+1. Navigate to Plan Creation Wizard
+Step:
+- Navigate to Plans → Create Plan
+- Fill general information: plan name, project, source provider, target provider
+- Click Next
+Expected Result:
+- Plan wizard loads successfully
+- General information step completed
+- VM selection step is visible
+
+2. Verify VM Selection Step is Visible
+Step:
+- Verify VM selection step heading is visible
+- Verify VM table is loaded
+- Verify folder structure is visible
+Expected Result:
+- VM selection step displays
+- VM table loads successfully
+- Folder tree structure is visible
+
+3. Test VM Selection with Search Filter
+Step:
+- Expand folder: vm
+- Wait for folder to expand
+- Get initial VM count in folder
+- Verify initial count is greater than 0
+Expected Result:
+- Folder expands successfully
+- Initial VM count is recorded
+- VMs are visible in folder
+
+4. Apply Search Filter and Verify Count Changes
+Step:
+- Enter search term: win2019
+- Wait for filter to apply
+- Get filtered VM count in folder
+- Verify filtered count is less than initial count
+- Verify filtered count is greater than 0
+Expected Result:
+- Search filter applies
+- VM count decreases
+- Some VMs still match filter
+
+5. Select Folder and Verify Checkbox State
+Step:
+- Click folder checkbox to select all VMs in folder
+- Wait for selection to apply
+- Verify folder checkbox is checked
+Expected Result:
+- Folder selection works
+- Folder checkbox shows checked state
+- All filtered VMs in folder are selected
+
+6. Clear Filters and Verify Count Returns
+Step:
+- Click "Clear all filters" button
+- Wait for filters to clear
+- Get VM count after clearing filters
+- Verify count returns to initial count
+Expected Result:
+- Filters are cleared
+- VM count returns to original
+- All VMs are visible again
+
+7. Verify Checkbox State After Clear
+Step:
+- Verify folder checkbox state
+- Check if checkbox is checked or indeterminate
+Expected Result:
+- Checkbox state is checked
+- Selection is preserved after clearing filters
+
+================================================================================
+
+VM Table Functionality on Provider Details Page
+
+Given: VSphere Provider exists (test fixture)
+
+1. Navigate to Provider Details Page and VM Tab
+Step:
+- Navigate to provider details page using provider name and namespace
+- Click Virtual Machines tab
+- Wait for page to load
+Expected Result:
+- Provider details page loads successfully
+- Virtual Machines tab is active
+- VM table is visible
+
+2. Verify VM Table is Loaded
+Step:
+- Verify VM table is visible
+- Verify table contains rows
+- Verify folder structure is visible
+Expected Result:
+- VM table displays correctly
+- VMs are listed in table
+- Folder tree structure is present
+
+3. Test Folder Expand/Collapse Functionality
+Step:
+- Locate folder in table
+- Click to expand folder
+- Verify folder expands and shows VMs
+- Click to collapse folder
+- Verify folder collapses and hides VMs
+Expected Result:
+- Folder expand works correctly
+- VMs appear when expanded
+- Folder collapse works correctly
+- VMs hide when collapsed
+
+4. Test Column Management - Remove Column
+Step:
+- Open column management menu
+- Locate "Host" column in management menu
+- Uncheck "Host" column
+- Close column management menu
+- Verify "Host" column is no longer visible in table
+Expected Result:
+- Column management menu opens
+- "Host" column can be toggled
+- Column is removed from table
+- Table updates correctly
+
+5. Test Column Management - Add Column
+Step:
+- Open column management menu
+- Locate "Path" column in management menu
+- Check "Path" column
+- Close column management menu
+- Verify "Path" column is now visible in table
+Expected Result:
+- Column management menu opens
+- "Path" column can be toggled
+- Column is added to table
+- Table updates correctly
+
+6. Test Column Management - Reorder Columns via Drag and Drop
+Step:
+- Get initial column order
+- Verify "Power" column is after "Concerns" column
+- Open column management menu
+- Drag "Power" column before "Concerns" column
+- Close column management menu
+- Get final column order
+- Verify "Power" column is now before "Concerns" column
+Expected Result:
+- Initial column order recorded
+- Drag and drop works in column management
+- Column order changes in table
+- "Power" appears before "Concerns"
+
+7. Test Filtering - VM Count Changes with Search Filter
+Step:
+- Expand folder: vm
+- Get initial VM count in folder
+- Verify initial count is greater than 0
+- Enter search term: win2019
+- Wait for filter to apply
+- Get filtered VM count in folder
+- Verify filtered count is less than initial count
+- Verify filtered count is greater than 0
+Expected Result:
+- Folder expands successfully
+- Search filter applies
+- VM count decreases with filter
+- Some VMs still match filter
+
+8. Clear Filters and Verify Count Returns
+Step:
+- Click "Clear all filters" button
+- Wait for filters to clear
+- Get VM count after clearing filters
+- Verify count returns to initial count
+Expected Result:
+- Filters are cleared
+- VM count returns to original
+- All VMs are visible again
+
+9. Test Sorting by Name Column
+Step:
+- Get first VM name before sorting
+- Click "Name" column header to sort
+- Wait for sort to apply
+- Get first VM name after sorting
+- Verify first VM name has changed
+Expected Result:
+- Sort by Name works
+- Table reorders
+- First VM name is different
+- VMs are sorted alphabetically
+
+10. Test Sorting by Concerns Column
+Step:
+- Click "Concerns" column header to sort
+- Wait for sort to apply
+- Verify table is sorted by concerns
+Expected Result:
+- Sort by Concerns works
+- Table reorders by concern count
+
+11. Test Concern Button Expansion
+Step:
+- Locate VM with concerns
+- Click concern icon/button
+- Verify concern details expand
+- Verify concern information is visible
+Expected Result:
+- Concern button is clickable
+- Concern details display
+- Concern information is readable
+

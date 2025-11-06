@@ -1,0 +1,97 @@
+{
+  "cookies": [
+    {
+      "name": "login-state",
+      "value": "39320e9ef5787abf75950779ea486b38",
+      "domain": "console-openshift-console.apps.qemtv-09.rhos-psi.cnv-qe.rhood.us",
+      "path": "/auth",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "openshift-session-token-console-5bf7f96568-ptdff",
+      "value": "MTc2MjI3OTA5Mnw4cHhiQnd2QVdJbW1LVFdfWG01Z0NYMlFvSE5oOHhPNEFRSjZHNGYwRnZuaG1NSGh3amxhWmJlbjZDZ1JIdHg0U3E1QWNJbDVtaGZQSGpONDZOMmt0S1c3emlaRFhrOGZFQTVQckktd1FIYmpINy1BYUJnOWlPT3ZXMDJSdm5sc0VwNHRYMzg3a3h5R2tyYzFiQ3hoUEZETjl0ZElERHFEdUkxMTh1LURlWG9UWExsNTJMQ2RIaEF2YXZSZ0MzUU5BUmo1VmZUR19LVHNHYmxNYTMxeTh6bnI5YnZhUHB2X1VoVUlPUkZza0dta3J2d3I3ako1RGFWbWx6Y0pSUXMxMzBPeVRUUjh2QThGelc2UWYwRDBNd2JMbHlGaXBXd0NJOTZHNUpFNkFTSVZUd0IzbkI0MlM3cW05UVoyZ0dCZURLaGd5VHc0NW5LeVphNmZaYjEtWXhWbHVPQ0d3UWNUdkJ3TjN0LWRpZWJTYmc2U19qYzFLc1BWdTlQX2x6bWJVTWJCd1U0VkR4VllDVVZMZGR2NmxoQXlTX19jdkVUdkc3VWJMZEF4ZDlhQi1nWkFXS3dBVm5UQVA3Yz18ulUTSXjEBg5RVbgaKx8QLJD-9sPfjkw3r0oF62k1jlc=",
+      "domain": "console-openshift-console.apps.qemtv-09.rhos-psi.cnv-qe.rhood.us",
+      "path": "/api",
+      "expires": 1764871092.509497,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "openshift-refresh-token",
+      "value": "MTc2MjI3OTA5MnxXT2NObUlrX2JxUS16UG1aOFFVTHJta0p5Tld5TnpaZUZKNEVfV3NyeDg3d0l3V1ZVeGM0S3FYSThoWVFmUHVXcjFlbl9Hb0tiYnZTZy1Bb3Z1Tnd0M1lmQ0I4cWl3PT18WMPJzJ6USaQ2yYCf7kXN1IljSz2kLAtzO67clsyyFwU=",
+      "domain": "console-openshift-console.apps.qemtv-09.rhos-psi.cnv-qe.rhood.us",
+      "path": "/api",
+      "expires": 1764871092.509814,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "csrf-token",
+      "value": "hUPiEjqsnYnxXI69JvAkYpo8RVT-J6BaaCtlMDhHLB2rg17suHmCW3-JsIPhMsOD",
+      "domain": "console-openshift-console.apps.qemtv-09.rhos-psi.cnv-qe.rhood.us",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "1e2670d92730b515ce3a1bb65da45062",
+      "value": "581b9ab87b5ded11ac6f81c7d5fac14f",
+      "domain": "console-openshift-console.apps.qemtv-09.rhos-psi.cnv-qe.rhood.us",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "csrf",
+      "value": "f8qcpjqfsJOWlz2N3t5Vo4Yo2ysUtedOZE_S7wVqOcg",
+      "domain": "oauth-openshift.apps.qemtv-09.rhos-psi.cnv-qe.rhood.us",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ssn",
+      "value": "MTc2MjI3OTA5Mnx1blpmME91WWFncjFDNGhDME9uenpxUDRsMlJMQ1hoUlJZdnZMY3pNazlEU0h4NHdtQlJrWVRLbmVMY2R1WEJTQTlsWS1NbjFmUlNzVmxPS3B3aERHbTZjcHUxOHFiWkZwMFdIZTIybGZCSjE2Qjd0S0lIazJ2bDJxdnJUa0plX3h4VmVRVDVWR2J3YnVmMm1XLWdBeXBFbmh0YjM2YjVtZlhBS0tYYW1iQ3dlUFBHay1neWZlSzRodzNkTG5rQkFrTlpNUW1JVmRfSEJFMGY2QVpJUm9lSkFEVFc1UWl3eEZuTEJZSmtKTzZBNDl1YktSaG5YeHhGMVpIS3pmZFZZdDV0dHVZZC1VQ3ZxR1dNc3U4aTRRMjJ6aEhFak9NY2l5dGg4TllzPXzx9h7rrew8fJeWVZTiR0wpVpKqCDPLoRboDk-jjsEDRA==",
+      "domain": "oauth-openshift.apps.qemtv-09.rhos-psi.cnv-qe.rhood.us",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://console-openshift-console.apps.qemtv-09.rhos-psi.cnv-qe.rhood.us",
+      "localStorage": [
+        {
+          "name": "exp",
+          "value": "1762365492"
+        },
+        {
+          "name": "name",
+          "value": ""
+        },
+        {
+          "name": "userID",
+          "value": ""
+        },
+        {
+          "name": "email",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}
