@@ -81,9 +81,6 @@ export class CreatePlanWizardPage {
       testData.criticalIssuesAction,
     );
     await this.clickNext();
-    if (testData.criticalIssuesAction) {
-      await this.virtualMachines.handleCriticalIssuesModal(testData.criticalIssuesAction);
-    }
 
     // STEP 3: Network Map
     await this.networkMap.fillAndComplete(testData.networkMap);
@@ -132,9 +129,6 @@ export class CreatePlanWizardPage {
       testData.criticalIssuesAction,
     );
     await this.clickNext();
-    if (testData.criticalIssuesAction) {
-      await this.virtualMachines.handleCriticalIssuesModal(testData.criticalIssuesAction);
-    }
     await this.networkMap.fillAndComplete(testData.networkMap);
     await this.clickNext();
     await this.storageMap.fillAndComplete(testData.storageMap);
