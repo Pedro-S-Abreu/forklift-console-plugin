@@ -113,6 +113,7 @@ const OvirtCredentialsEdit: FC<CredentialsEditModeByTypeProps> = ({
           value={user}
           validated={userValidation.type}
           onChange={onChangeUser}
+          data-testid="provider-username-input"
         />
       </FormGroupWithHelpText>
       <FormGroupWithHelpText
@@ -132,6 +133,7 @@ const OvirtCredentialsEdit: FC<CredentialsEditModeByTypeProps> = ({
             value={password}
             validated={passwordValidation.type}
             onChange={onChangePassword}
+            data-testid="provider-password-input"
           />
           <Button
             variant={ButtonVariant.control}

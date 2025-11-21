@@ -99,6 +99,7 @@ const PasswordSecretFieldsEditSection: FC<CredentialsEditModeByTypeProps> = ({
             value={password}
             onChange={onChangeFactory(OpenstackSecretFieldsId.Password)}
             validated={passwordValidation.type}
+            data-testid="provider-password-input"
           />
           <Button
             variant={ButtonVariant.control}

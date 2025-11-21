@@ -69,6 +69,7 @@ const ProviderUrlEditItem: FC<ProviderUrlEditItemProps> = ({
           value={url}
           validated={urlValidation.type}
           onChange={onChangeUrl}
+          data-testid="provider-url-input"
         />
       </FormGroupWithHelpText>
     </Form>

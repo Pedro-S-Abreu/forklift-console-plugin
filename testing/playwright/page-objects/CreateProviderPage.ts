@@ -37,6 +37,11 @@ export class CreateProviderPage {
   async fillAndSubmit(testData: ProviderData) {
     await this.selectProject(testData.projectName);
     await this.page.getByTestId(`${testData.type}-provider-card`).locator('label').click();
+
+    // Wait for provider-specific fields to load after selecting provider type
+    await this.page
+      .getByTestId('provider-name-input')
+      .waitFor({ state: 'visible', timeout: 10000 });
     await this.page.getByTestId('provider-name-input').fill(testData.name);
 
     // VSphere-specific endpoint selection (vCenter vs ESXi)

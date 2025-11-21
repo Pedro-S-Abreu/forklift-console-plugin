@@ -1,7 +1,7 @@
 import { existsSync } from 'fs';
 import { join } from 'path';
 
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 
 const providersPath = join(__dirname, '../../../.providers.json');
 if (!existsSync(providersPath)) {
@@ -10,31 +10,48 @@ if (!existsSync(providersPath)) {
 
 import { CreateProviderPage } from '../../page-objects/CreateProviderPage';
 import type { ProviderData } from '../../types/test-data';
-import { getProviderConfig } from '../../utils/providers';
-import { MTV_NAMESPACE } from '../../utils/resource-manager/constants';
+import { createProviderData } from '../../utils/providers';
 import { ResourceManager } from '../../utils/resource-manager/ResourceManager';
 
-const createProviderData = ({
-  useVddkAioOptimization,
-}: {
-  useVddkAioOptimization: boolean;
-}): ProviderData => {
-  const providerKey = process.env.VSPHERE_PROVIDER ?? 'vsphere-8.0.1';
-  const providerConfig = getProviderConfig(providerKey);
-  const suffix = useVddkAioOptimization ? 'enabled' : 'disabled';
+interface ProviderTestScenario {
+  scenarioName: string;
+  providerType: 'vsphere' | 'ovirt';
+  providerData: Partial<ProviderData>;
+}
 
-  return {
-    name: `test-vsphere-provider-${suffix}-${crypto.randomUUID().slice(0, 8)}`,
-    projectName: MTV_NAMESPACE,
-    type: providerConfig.type,
-    endpointType: providerConfig.endpoint_type ?? 'vcenter',
-    hostname: providerConfig.api_url,
-    username: providerConfig.username,
-    password: providerConfig.password,
-    vddkInitImage: providerConfig.vddk_init_image,
-    useVddkAioOptimization,
-  };
-};
+// Define test scenarios - add more scenarios here as needed
+const providerTestScenarios: ProviderTestScenario[] = [
+  {
+    scenarioName: 'VDDK AIO optimization enabled',
+    providerType: 'vsphere',
+    providerData: {
+      useVddkAioOptimization: true,
+    },
+  },
+  {
+    scenarioName: 'VDDK AIO optimization disabled',
+    providerType: 'vsphere',
+    providerData: {
+      useVddkAioOptimization: false,
+    },
+  },
+  {
+    scenarioName: 'oVirt 4.4.9 provider',
+    providerType: 'ovirt',
+    providerData: {},
+  },
+  // Example: Add more scenarios like this:
+  // {
+  //   scenarioName: 'ESXi endpoint with AIO enabled',
+  //   providerType: 'vsphere',
+  //   providerData: {
+  //     endpointType: 'esxi',
+  //     hostname: 'esxi.example.com',
+  //     useVddkAioOptimization: true,
+  //   },
+  //   expectedAioValue: 'true',
+  // },
+];
 
 test.describe('Provider Creation Tests', () => {
   const resourceManager = new ResourceManager();

@@ -22,3 +22,12 @@ kubectl
 kubectl.sha256
 
 forkliftci
+*.sh
+.gitignore
+.playwright-mcp/*
+testing/playwright/CUSTOM_FIXTURES_SUMMARY.md
+testing/playwright/.auth/user.json
+testing/playwright/fixtures/FIXTURES.md
+.secrets.example
+.DS_Store
+testing/playwright/e2e/downstream/docs/*

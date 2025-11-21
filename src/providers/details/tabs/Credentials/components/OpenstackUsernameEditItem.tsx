@@ -39,6 +39,7 @@ const OpenstackUsernameEditItem: FC<OpenstackUsernameEditItemProps> = ({
         value={username}
         onChange={onChangeFactory(OpenstackSecretFieldsId.Username)}
         validated={usernameValidation.type}
+        data-testid="provider-username-input"
       />
     </FormGroupWithHelpText>
   );

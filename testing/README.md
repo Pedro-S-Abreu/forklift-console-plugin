@@ -118,9 +118,9 @@ podman build \
   --build-arg GIT_COMMIT=$(git rev-parse HEAD) \
   --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   -f PlaywrightContainerFile \
-  -t quay.io/kubev2v/forklift-ui-tests:latest \
+  -t quay.io/rh-openshift-mtv/mtv-ui-tests:latest \
   .
 
 podman login quay.io
-podman quay.io/kubev2v/forklift-ui-tests:latest
+podman push quay.io/rh-openshift-mtv/mtv-ui-tests:latest
 ```

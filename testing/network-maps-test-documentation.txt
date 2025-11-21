@@ -1,0 +1,575 @@
+Edit VM Target Labels
+
+Given: Plan and Provider exist (test fixtures)
+
+1. Navigate to Plan Details
+- Step:
+Navigate to plan details page using plan name and namespace
+Wait for page to load
+
+- Expected Result:
+Plan details page loads successfully
+
+2. Navigate to Details Tab and Open Labels Editor
+- Step:
+Navigate to Details tab
+Verify no labels are present
+Click edit icon next to VM target labels section
+
+- Expected Result:
+Details tab loads successfully
+Labels count: 0
+Labels modal opens
+
+3. Add and Save First Label
+- Step:
+Click Add label
+Enter key: environment
+Enter value: production
+Click Save button
+
+- Expected Result:
+New label row appears
+Label populated successfully
+Modal closes
+Changes saved successfully
+
+4. Verify First Label
+- Step:
+Check labels count
+Verify label displays: environment
+
+- Expected Result:
+Labels count: 1
+environment label visible
+
+5. Add and Save Second Label
+- Step:
+Click edit icon next to VM target labels
+Verify existing label is present: environment = production
+Click Add label
+Enter key: team
+Enter value: migration
+Click Save button
+
+- Expected Result:
+Labels modal opens
+Existing label persists
+New label row appears
+Second label populated
+Modal closes
+Changes saved successfully
+
+6. Verify Both Labels
+- Step:
+Check labels count
+Verify label displays: environment
+Verify label displays: team
+
+- Expected Result:
+Labels count: 2
+Both labels display correctly:
+  - environment label visible
+  - team label visible
+
+7. Remove Label and Save
+- Step:
+Click edit icon next to VM target labels
+Locate team entry
+Click delete button for team
+Click Save button
+
+- Expected Result:
+Labels modal opens
+Both existing labels visible
+Second label removed from list
+Modal closes
+Changes saved successfully
+
+8. Verify Single Label Remains
+- Step:
+Check labels count
+Verify only environment displays
+Verify team is removed
+
+- Expected Result:
+Labels count: 1
+Only environment label visible
+team label not displayed
+
+
+================================================================================
+
+Edit VM Target Node Selector
+
+Given: Plan and Provider exist (test fixtures)
+
+1. Navigate to Plan Details
+- Step:
+Navigate to plan details page using plan name and namespace
+Wait for page to load
+
+- Expected Result:
+Plan details page loads successfully
+
+2. Navigate to Details Tab and Open Node Selector Editor
+- Step:
+Navigate to Details tab
+Verify no node selectors are present
+Click edit icon next to VM target node selector section
+
+- Expected Result:
+Details tab loads successfully
+Node selector count: 0
+Node selector modal opens
+
+3. Add and Save First Node Selector
+- Step:
+Click Add node selector
+Enter key: kubernetes.io/arch
+Enter value: amd64
+Click Save button
+
+- Expected Result:
+New node selector row appears
+Node selector populated successfully
+Modal closes
+Changes saved successfully
+
+4. Verify First Node Selector
+- Step:
+Check node selector count
+Verify node selector displays: kubernetes.io/arch
+
+- Expected Result:
+Node selector count: 1
+kubernetes.io/arch label visible
+
+5. Add and Save Second Node Selector
+- Step:
+Click edit icon next to VM target node selector
+Verify existing node selector is present: kubernetes.io/arch = amd64
+Click Add node selector
+Enter key: node-role.kubernetes.io/worker
+Leave value empty
+Click Save button
+
+- Expected Result:
+Node selector modal opens
+Existing node selector persists
+New node selector row appears
+Second node selector populated
+Modal closes
+Changes saved successfully
+
+6. Verify Both Node Selectors
+- Step:
+Check node selector count
+Verify node selector displays: kubernetes.io/arch
+Verify node selector displays: node-role.kubernetes.io/worker
+
+- Expected Result:
+Node selector count: 2
+Both node selector labels display correctly:
+  - kubernetes.io/arch label visible
+  - node-role.kubernetes.io/worker label visible
+
+7. Remove Node Selector and Save
+- Step:
+Click edit icon next to VM target node selector
+Locate node-role.kubernetes.io/worker entry
+Click delete button for node-role.kubernetes.io/worker
+Click Save button
+
+- Expected Result:
+Node selector modal opens
+Both existing node selectors visible
+Second node selector removed from list
+Modal closes
+Changes saved successfully
+
+8. Verify Single Node Selector Remains
+- Step:
+Check node selector count
+Verify only kubernetes.io/arch displays
+Verify node-role.kubernetes.io/worker is removed
+
+- Expected Result:
+Node selector count: 1
+Only kubernetes.io/arch label visible
+node-role.kubernetes.io/worker label not displayed
+
+
+================================================================================
+
+Edit VM Target Affinity Rules
+
+Given: Plan and Provider exist (test fixtures)
+
+1. Navigate to Plan Details
+- Step:
+Navigate to plan details page using plan name and namespace
+Wait for page to load
+
+- Expected Result:
+Plan details page loads successfully
+
+2. Navigate to Details Tab and Open Affinity Rules Editor
+- Step:
+Navigate to Details tab
+Verify no affinity rules are present
+Click edit icon next to VM target affinity rules section
+
+- Expected Result:
+Details tab loads successfully
+Affinity rules count: 0
+Affinity rules modal opens
+
+3. Add First Affinity Rule - Node Affinity (Required)
+- Step:
+Click "Add affinity rule" button
+Verify affinity type options: Node affinity, Workload (pod) affinity, Workload (pod) anti-affinity
+Select affinity type: Node affinity
+Verify condition options: Required during scheduling, Preferred during scheduling
+Select rule type: Required during scheduling
+Click "Add expression" button
+Enter expression key: kubernetes.io/hostname
+Enter expression value: worker-node-1
+Click "Save rule" button
+
+- Expected Result:
+Affinity rule form appears
+All expected affinity type options available
+Node affinity selected
+All expected condition options available
+Required during scheduling selected
+Expression row added
+Expression populated successfully
+Rule saved and appears in rules list
+
+4. Save and Verify First Affinity Rule
+- Step:
+Click "Apply" button to save all rules
+Check affinity rules count
+
+- Expected Result:
+Modal closes
+Changes saved successfully
+Affinity rules count: 1
+Node affinity rule displayed
+
+5. Add Second Affinity Rule - Workload Affinity (Preferred)
+- Step:
+Click edit icon next to VM target affinity rules
+Click "Add affinity rule" button
+Select affinity type: Workload (pod) affinity
+Select rule type: Preferred during scheduling
+Enter weight: 50
+Enter topology key: kubernetes.io/hostname
+Click "Add expression" button
+Enter expression key: app
+Enter expression value: database
+Click "Save rule" button
+
+- Expected Result:
+Affinity rules modal opens
+Affinity rule form appears
+Workload (pod) affinity selected
+Preferred during scheduling selected
+Weight field populated
+Topology key populated
+Expression row added
+Expression populated successfully
+Rule saved and appears in rules list
+
+6. Save and Verify Both Affinity Rules
+- Step:
+Click "Apply" button to save all rules
+Check affinity rules count
+
+- Expected Result:
+Modal closes
+Changes saved successfully
+Affinity rules count: 2
+Both affinity rules displayed (Node affinity and Workload affinity)
+
+
+================================================================================
+
+Set Power State on Plan Creation, Plan Details Tab, and VMs Tab
+
+Given: VSphere Provider exists (test fixture)
+
+1. Create Plan and Set Power State During Creation
+- Step:
+Navigate to Plans → Create Plan
+Fill general information: plan name, project, source provider (vsphere), target provider (host)
+Click Next
+Select source VM: mtv-func-rhel9
+Click Next
+Create network map with default mappings
+Click Next
+Create storage map with target storage: ocs-storagecluster-ceph-rbd-virtualization
+Click Next
+Click Next to skip Migration Type
+Navigate to Additional Settings step
+
+- Expected Result:
+Plan wizard loads successfully
+General information step completed
+VM selection completed
+Network map created
+Storage map created
+Migration Type step skipped
+Additional Settings step visible
+
+2. Review and Select Power State Options
+- Step:
+Click Target VM power state dropdown
+Verify options displayed:
+  - Retain source VM power state
+  - Powered on
+  - Powered off
+Select: Powered on
+Click Skip to Review
+
+- Expected Result:
+Power state dropdown opens
+All three power state options are visible
+Powered on option selected
+Review step displayed
+
+3. Create Plan and Navigate to Details Tab
+- Step:
+Review plan configuration
+Click Next to create plan
+Wait for plan creation completion
+Navigate to Details tab
+Verify Target VM power state displays: Powered on
+
+- Expected Result:
+Plan created successfully
+Redirected to plan details page
+Details tab loads
+Target VM power state shows: Powered on
+
+4. Edit Power State from Details Tab
+- Step:
+Click edit icon next to Target VM power state
+Verify Save button is disabled (no change made)
+Click power state dropdown
+Verify all options displayed:
+  - Retain source VM power state
+  - Powered on
+  - Powered off
+Select: Powered off
+Verify Save button is enabled
+Click Save button
+
+- Expected Result:
+Edit power state modal opens
+Save button initially disabled
+Power state dropdown shows all three options
+Powered off option selected
+Save button becomes enabled
+Modal closes
+Changes saved successfully
+
+5. Verify Power State Change on Details Tab
+- Step:
+Check Target VM power state displays: Powered off
+
+- Expected Result:
+Target VM power state updated to: Powered off
+
+6. Enable Target Power State Column on VMs Tab
+- Step:
+Navigate to Virtual Machines tab
+Open column management
+Enable "Target power state" column
+Verify column is visible
+
+- Expected Result:
+Virtual Machines tab loads
+Column management opened
+Target power state column enabled
+Target power state column visible in table
+
+7. Verify VM Inherits Plan Power State
+- Step:
+Locate VM in table: mtv-func-rhel9
+Check Target power state value for VM
+
+- Expected Result:
+VM displays: Powered off (Inherited from plan)
+
+8. Edit VM Power State and Review Options
+- Step:
+Click edit power state icon for VM: mtv-func-rhel9
+Verify Save button is disabled (no change made)
+Click power state dropdown
+Verify all four options displayed:
+  - Inherit from plan (Set to: Powered off)
+  - Retain source VM power state
+  - Powered on
+  - Powered off
+
+- Expected Result:
+Edit power state modal opens for VM
+Save button initially disabled
+Power state dropdown shows all four options
+Inherit option shows current plan setting
+
+9. Change VM Power State and Save
+- Step:
+Select: Powered on
+Verify Save button is enabled
+Click Save button
+Wait for modal to close
+Verify VM Target power state displays: Powered on
+
+- Expected Result:
+Powered on option selected
+Save button becomes enabled
+Modal closes
+VM power state updated to: Powered on (overrides plan setting)
+
+
+================================================================================
+
+Set NBDE/Clevis on Plan Creation and Edit from Details Page
+
+Given: VSphere Provider exists (test fixture)
+
+1. Create Plan with NBDE/Clevis Configuration
+- Step:
+Navigate to Plans → Create Plan
+Fill general information: plan name, project, source provider (vsphere), target provider (host)
+Click Next
+Select source VM from list
+Click Next
+Create network map with default mappings
+Click Next
+Create storage map with target storage
+Click Next
+Click Next to skip Migration Type
+Navigate to Additional Settings step
+
+- Expected Result:
+Plan wizard loads successfully
+General information step completed
+VM selection completed
+Network map created
+Storage map created
+Migration Type step skipped
+Additional Settings step visible
+
+2. Enable NBDE/Clevis During Plan Creation
+- Step:
+Verify "Use NBDE/Clevis for disk decryption" checkbox is visible
+Check the "Use NBDE/Clevis for disk decryption" checkbox
+Verify checkbox is checked
+Click Skip to Review
+
+- Expected Result:
+NBDE/Clevis checkbox is visible
+Checkbox is successfully checked
+Review step displayed
+
+3. Create Plan and Navigate to Details Tab
+- Step:
+Review plan configuration
+Click Next to create plan
+Wait for plan creation completion
+Navigate to Details tab
+Verify Disk decryption section is visible
+
+- Expected Result:
+Plan created successfully
+Redirected to plan details page
+Details tab loads
+Disk decryption section displays correctly
+
+4. Edit Disk Decryption from Details Tab
+- Step:
+Click edit icon next to Disk decryption section
+Verify edit disk decryption modal opens
+Verify "Use NBDE/Clevis for disk decryption" checkbox is visible
+
+- Expected Result:
+Edit disk decryption modal opens
+NBDE/Clevis checkbox is visible in modal
+
+5. Test Checkbox Toggle Functionality
+- Step:
+Verify checkbox is checked
+Check the checkbox
+Verify checkbox is checked
+Uncheck the checkbox
+Verify checkbox is unchecked
+Check the checkbox again
+Verify checkbox is checked
+
+- Expected Result:
+Checkbox state changes correctly
+Check operation works
+Uncheck operation works
+Re-check operation works
+
+6. Save Disk Decryption Changes
+- Step:
+Verify Save button is enabled
+Click Save button
+Verify modal closes
+
+- Expected Result:
+Save button is enabled
+Modal closes successfully
+Changes saved
+
+
+================================================================================
+
+Verify Tips and Tricks Functionality with All Expandable Content
+
+Given: User has access to the console application
+Data Source: https://docs.google.com/document/d/1yFLTjFaCqzDtUFa4NlWO6pWzS3OsY81c9pU1IN7EOyU/edit?tab=t.9oxu52iwgx6#heading=h.25bvf8m1r57n
+
+1. Navigate to Tips and Tricks and Verify All Topics Present
+- Step:
+Navigate to Overview page
+Open Tips and Tricks drawer
+Verify all topic cards are visible
+Verify all topics appear in dropdown/picklist
+
+- Expected Result:
+Tips and Tricks drawer opens successfully
+All topic cards displayed with titles and descriptions
+All topics available in dropdown selector
+
+2. Test All Topics and Expandable Sections
+- Step:
+For each topic:
+  Select topic (first via card, remaining via dropdown)
+  For each expandable section within topic:
+    Expand section and verify content displays
+    Collapse section and verify content is hidden
+Navigate between topics using dropdown
+
+- Expected Result:
+All topics are selectable
+All expandable sections within each topic work correctly
+Content displays correctly when expanded
+Sections collapse properly
+Topic navigation via dropdown functions correctly
+
+3. Verify Drawer Close Functionality
+- Step:
+Close Tips and Tricks drawer
+Verify drawer is hidden
+
+- Expected Result:
+Drawer closes successfully
+Content is no longer visible
+
+

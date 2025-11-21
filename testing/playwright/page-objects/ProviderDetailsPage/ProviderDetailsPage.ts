@@ -20,6 +20,20 @@ export class ProviderDetailsPage {
     this.virtualMachinesTab = new VirtualMachinesTab(page);
   }
 
+  /**
+   * Get the display name for a provider type as shown in the UI
+   */
+  private getProviderTypeDisplayName(type: string): string {
+    const typeMap: Record<string, string> = {
+      vsphere: 'VMware',
+      ovirt: 'oVirt',
+      openstack: 'OpenStack',
+      ova: 'OVA',
+      openshift: 'OpenShift',
+    };
+    return typeMap[type] || type;
+  }
+
   async navigate(providerName: string, namespace: string): Promise<void> {
     await this.navigation.navigateToK8sResource({
       resource: 'Provider',
@@ -97,6 +111,30 @@ export class ProviderDetailsPage {
   async verifyProviderTitle(providerName: string): Promise<void> {
     const titleLocator = this.page.getByTestId('resource-details-title');
     await expect(titleLocator).toContainText(providerName, { timeout: 15000 });
+  }
+
+  /**
+   * Verify VDDK AIO optimization settings in the provider resource
+   * @param providerResource - The provider resource object from k8s API
+   * @param providerData - The test data used to create the provider
+   */
+  verifyVddkAioOptimization(providerResource: any, providerData: ProviderData): void {
+    // Verify basic resource properties
+    expect(providerResource).not.toBeNull();
+    expect(providerResource?.spec?.type).toBe(providerData.type);
+
+    // Verify vSphere-specific settings
+    const aioOptimization = providerResource?.spec?.settings?.useVddkAioOptimization;
+    if (providerData.useVddkAioOptimization === true) {
+      expect(aioOptimization).toBe('true');
+    } else {
+      // When disabled, the field might be undefined, 'false', or not present
+      expect(
+        aioOptimization === undefined ||
+          String(aioOptimization) === 'false' ||
+          String(aioOptimization) === 'undefined',
+      ).toBe(true);
+    }
   }
 
   async waitForPageLoad(): Promise<void> {
