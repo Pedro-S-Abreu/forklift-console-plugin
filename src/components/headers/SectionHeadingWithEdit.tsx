@@ -11,11 +11,13 @@ type SectionHeadingWithEditProps = Omit<
     title: string;
     editable?: boolean;
     onClick: () => void;
+    'data-testid'?: string;
   } & SectionHeadingProps,
   'text'
 >;
 
 const SectionHeadingWithEdit: FC<SectionHeadingWithEditProps> = ({
+  'data-testid': dataTestId,
   editable = true,
   onClick,
   title,
@@ -33,6 +35,7 @@ const SectionHeadingWithEdit: FC<SectionHeadingWithEditProps> = ({
             variant={ButtonVariant.link}
             onClick={onClick}
             isDisabled={!editable}
+            data-testid={dataTestId}
           >
             {t('Edit')}
           </Button>
