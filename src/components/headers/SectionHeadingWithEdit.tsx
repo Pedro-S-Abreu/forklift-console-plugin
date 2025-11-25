@@ -9,14 +9,14 @@ import SectionHeading, { type SectionHeadingProps } from './SectionHeading';
 type SectionHeadingWithEditProps = Omit<
   {
     title: string;
-    editable: boolean;
+    editable?: boolean;
     onClick: () => void;
   } & SectionHeadingProps,
   'text'
 >;
 
 const SectionHeadingWithEdit: FC<SectionHeadingWithEditProps> = ({
-  editable,
+  editable = true,
   onClick,
   title,
   ...rest
