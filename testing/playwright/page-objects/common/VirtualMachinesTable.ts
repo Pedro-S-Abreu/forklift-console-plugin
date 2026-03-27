@@ -250,22 +250,18 @@ export class VirtualMachinesTable {
    * @returns true if a concern button was found and tested, false otherwise
    */
   async testConcernButton(): Promise<boolean> {
-    // Find a VM with concerns (has concern buttons visible)
-    const concernButton = this.page.locator('button').filter({ hasText: /^\d+$/ }).first();
+    const concernButton = this.page.locator('[data-testid^="concern-badge-"]').first();
 
-    if (!(await concernButton.isVisible())) {
+    if (!(await concernButton.isVisible().catch(() => false))) {
       return false;
     }
 
-    // Click the concern button to open popover
     await concernButton.click();
     await this.page.waitForTimeout(500);
 
-    // Verify concerns popover is visible
-    const concernsPopover = this.page.getByTestId('concerns-popover');
+    const concernsPopover = this.page.locator('[role="dialog"]').filter({ hasText: /Total:/ });
     await expect(concernsPopover).toBeVisible();
 
-    // Close the popover by pressing Escape
     await this.page.keyboard.press('Escape');
     await expect(concernsPopover).not.toBeVisible();
 
