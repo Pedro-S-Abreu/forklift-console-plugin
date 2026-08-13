@@ -1,4 +1,5 @@
 import { getMapResourceLabel } from 'src/plans/create/steps/utils';
+import { createOffloadPluginConfig } from 'src/storageMaps/utils/createOffloadPluginConfig';
 import {
   getOffloadConfigFields,
   resolveOffloadPlugin,
@@ -19,8 +20,6 @@ import {
 } from '@utils/storage/types';
 
 import type { CustomStorageMapSpecMap, OffloadPluginConfig } from '../types';
-
-import { createOffloadPluginConfig } from './createOffloadPluginConfig';
 
 /**
  * Creates a storage mapping with optional offload plugin configuration
