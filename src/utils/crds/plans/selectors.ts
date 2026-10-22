@@ -88,6 +88,10 @@ export const getRootDisk = (plan: V1beta1Plan): string | undefined =>
 export const getVmExcludeDisks = (vm?: V1beta1PlanSpecVms): string[] | undefined =>
   vm?.excludeDisks;
 
+export const getVmExcludedNicsFromStaticIPs = (
+  vm?: V1beta1PlanSpecVms & { excludeNICsFromStaticIPs?: string[] },
+): string[] | undefined => vm?.excludeNICsFromStaticIPs;
+
 export const getPlanTargetPowerState = (plan: V1beta1Plan): TargetPowerStateValue =>
   plan?.spec?.targetPowerState;
 

@@ -9,9 +9,14 @@ import { isEmpty } from '@utils/helpers';
 import { useDefaultProject } from '@utils/hooks/useDefaultProject';
 import useWatchProjectNames from '@utils/hooks/useWatchProjectNames';
 import { useForkliftTranslation } from '@utils/i18n';
+import { NetworkMapFieldId } from '@utils/mappings/networkMap';
 import { isSystemNamespace } from '@utils/namespaces';
 
 import { useCreatePlanFormContext } from '../../hooks/useCreatePlanFormContext';
+import { MigrationTypeFieldId } from '../migration-type/constants';
+import { OtherSettingsFormFieldId, StaticIpSelectionMode } from '../other-settings/constants';
+import { CreatePlanStorageMapFieldId } from '../storage-map/constants';
+import { VmFormFieldId } from '../virtual-machines/constants';
 
 import { GeneralFormFieldId, generalFormFieldLabels } from './constants';
 
@@ -25,6 +30,7 @@ const PlanProjectField: FC<PlanProjectFieldProps> = ({ testId = 'plan-project-se
     control,
     formState: { errors },
     setValue,
+    unregister,
   } = useCreatePlanFormContext();
 
   const [projectNames] = useWatchProjectNames();
@@ -87,6 +93,14 @@ const PlanProjectField: FC<PlanProjectFieldProps> = ({ testId = 'plan-project-se
                 setValue<FieldPath<FieldValues>>(GeneralFormFieldId.SourceProvider, '', {
                   shouldValidate: true,
                 });
+                setValue(OtherSettingsFormFieldId.ExcludedNicsFromStaticIPs, {});
+                setValue(OtherSettingsFormFieldId.StaticIpSelectionMode, StaticIpSelectionMode.All);
+                setValue(VmFormFieldId.Vms, {}, { shouldDirty: true, shouldValidate: true });
+                unregister([
+                  NetworkMapFieldId.NetworkMap,
+                  CreatePlanStorageMapFieldId.StorageMap,
+                  MigrationTypeFieldId.MigrationType,
+                ]);
               }
               if (targetProvider) {
                 setValue<FieldPath<FieldValues>>(GeneralFormFieldId.TargetProvider, '', {

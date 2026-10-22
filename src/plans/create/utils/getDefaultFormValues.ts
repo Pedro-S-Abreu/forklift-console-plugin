@@ -25,6 +25,7 @@ import {
   defaultDiskPassPhrase,
   DiskDecryptionType,
   OtherSettingsFormFieldId,
+  StaticIpSelectionMode,
 } from '../steps/other-settings/constants';
 import { CreatePlanStorageMapFieldId, StorageMapType } from '../steps/storage-map/constants';
 import { defaultVms, VmFormFieldId } from '../steps/virtual-machines/constants';
@@ -61,10 +62,12 @@ export const getDefaultFormValues = (
     [NetworkMapFieldId.NetworkMapType]: NetworkMapType.Existing,
     [OtherSettingsFormFieldId.DiskDecryptionPassPhrases]: [defaultDiskPassPhrase],
     [OtherSettingsFormFieldId.DiskDecryptionType]: DiskDecryptionType.New,
+    [OtherSettingsFormFieldId.ExcludedNicsFromStaticIPs]: {},
     [OtherSettingsFormFieldId.ExistingLUKSSecret]: undefined,
     [OtherSettingsFormFieldId.InstanceTypes]: {},
     [OtherSettingsFormFieldId.MigrateSharedDisks]: true,
     [OtherSettingsFormFieldId.PreserveStaticIps]: true,
+    [OtherSettingsFormFieldId.StaticIpSelectionMode]: StaticIpSelectionMode.All,
     [OtherSettingsFormFieldId.TargetPowerState]: defaultTargetPowerStateOption,
     [StorageMapFieldId.StorageMap]: [defaultStorageMapping],
     [VmFormFieldId.Vms]: defaultVms,

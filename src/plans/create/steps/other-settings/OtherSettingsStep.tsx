@@ -24,6 +24,7 @@ import NBDEClevisField from './NBDEClevisField';
 import PreserveStaticIpsField from './PreserveStaticIpsField';
 import RootDeviceField from './RootDeviceField';
 import SharedDisksField from './SharedDisksField';
+import StaticIpSelectionField from './StaticIpSelectionField';
 import TargetPowerStateField from './TargetPowerStateField';
 import TransferNetworkField from './TransferNetworkField';
 
@@ -116,6 +117,7 @@ const OtherSettingsStep: FC<{ isLiveMigrationFeatureEnabled: boolean }> = ({
         {isVsphere && (
           <>
             <PreserveStaticIpsField />
+            <StaticIpSelectionField />
             <RootDeviceField />
             <SharedDisksField />
           </>

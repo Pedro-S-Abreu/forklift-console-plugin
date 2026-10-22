@@ -6,7 +6,11 @@ import { useForkliftTranslation } from 'src/utils/i18n';
 
 import { useOverlay } from '@openshift-console/dynamic-plugin-sdk';
 import { Label } from '@patternfly/react-core';
-import { getPlanPreserveIP } from '@utils/crds/plans/selectors';
+import {
+  getPlanPreserveIP,
+  getPlanVirtualMachines,
+  getVmExcludedNicsFromStaticIPs,
+} from '@utils/crds/plans/selectors';
 
 import type { EditableDetailsItemProps } from '../../../utils/types';
 
@@ -25,13 +29,26 @@ const PreserveStaticIPsDetailsItem: FC<EditableDetailsItemProps> = ({
   }
 
   const preserveStaticIPs = getPlanPreserveIP(plan);
+  const excludedCount = getPlanVirtualMachines(plan).reduce(
+    (count, vm) => count + (getVmExcludedNicsFromStaticIPs(vm)?.length ?? 0),
+    0,
+  );
+  let preservationLabel = t('Do not preserve static IPs');
+  if (preserveStaticIPs) {
+    preservationLabel = t('Preserve static IPs on all vNICs');
+    if (excludedCount > 0) {
+      preservationLabel = t('Static IP preservation exclusions: {{excludedCount}}', {
+        excludedCount,
+      });
+    }
+  }
 
   return (
     <DetailsItem
       canEdit={canPatch && isPlanEditable(plan)}
       content={
         <Label color="grey" isCompact>
-          {preserveStaticIPs ? t('Preserve static IPs') : t('Do not preserve static IPs')}
+          {preservationLabel}
         </Label>
       }
       crumbs={['spec', 'preserveStaticIPs']}

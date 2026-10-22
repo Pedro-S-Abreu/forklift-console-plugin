@@ -49,6 +49,7 @@ Defines a migration plan selecting VMs and their mappings.
 - References NetworkMap, StorageMap, and optional Hooks
 - Specifies target namespace and power state settings
 - **Per-VM disk exclusion (vSphere):** `spec.vms[].excludeDisks` — array of vSphere bus addresses (e.g. `scsi0:1`); edited in plan details Virtual machines tab (not plan-level)
+- **Per-VM vNIC static IP preservation exclusions (vSphere):** `spec.vms[].excludeNICsFromStaticIPs` stores source NIC MACs whose detected static IPs must not be preserved. The plan-level `preserveStaticIPs` setting remains the default; the wizard offers all-vNIC and manual selection, and Plan details can edit those selections. Rows come from full VM inventory (`vms?detail=4`).
 
 ### Migration
 Represents an active migration execution, created when a Plan starts.

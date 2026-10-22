@@ -4,6 +4,10 @@ import { StorageMapFieldId } from '@utils/storage/types';
 
 import { GeneralFormFieldId } from '../../steps/general-information/constants';
 import { HooksFormFieldId, MigrationHookFieldId } from '../../steps/migration-hooks/constants';
+import {
+  OtherSettingsFormFieldId,
+  StaticIpSelectionMode,
+} from '../../steps/other-settings/constants';
 import { CreatePlanStorageMapFieldId, StorageMapType } from '../../steps/storage-map/constants';
 import { getDefaultFormValues } from '../getDefaultFormValues';
 
@@ -20,6 +24,8 @@ describe('getDefaultFormValues - defaults', () => {
     expect(values[CreatePlanStorageMapFieldId.StorageMapType]).toBe(StorageMapType.Existing);
     expect(values[NetworkMapFieldId.NetworkMap]).toHaveLength(1);
     expect(values[StorageMapFieldId.StorageMap]).toHaveLength(1);
+    expect(values[OtherSettingsFormFieldId.StaticIpSelectionMode]).toBe(StaticIpSelectionMode.All);
+    expect(values[OtherSettingsFormFieldId.ExcludedNicsFromStaticIPs]).toEqual({});
   });
 
   it('applies optional planProject and sourceProvider overrides', () => {

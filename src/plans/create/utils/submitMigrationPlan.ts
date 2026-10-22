@@ -24,6 +24,7 @@ export const submitMigrationPlan = async (
   targetStorages?: TargetStorage[],
 ): Promise<void> => {
   const {
+    excludedNicsFromStaticIPs,
     instanceTypes,
     migrateSharedDisks,
     migrationType,
@@ -36,6 +37,7 @@ export const submitMigrationPlan = async (
     preserveStaticIps,
     rootDevice,
     sourceProvider,
+    staticIpSelectionMode,
     targetPowerState,
     targetProject,
     targetProvider,
@@ -72,6 +74,7 @@ export const submitMigrationPlan = async (
 
   const createdPlanRef = await createPlan({
     customScriptsConfigMap: scriptsConfigMap,
+    excludedNicsFromStaticIPs,
     instanceTypes,
     luks: decryptionResult.secret ? { name: decryptionResult.secret.metadata?.name } : undefined,
     migrateSharedDisks,
@@ -86,6 +89,7 @@ export const submitMigrationPlan = async (
     preserveStaticIps,
     rootDevice,
     sourceProvider,
+    staticIpSelectionMode,
     storageMap: planStorageMap,
     targetPowerState: targetPowerState.value,
     targetProject,

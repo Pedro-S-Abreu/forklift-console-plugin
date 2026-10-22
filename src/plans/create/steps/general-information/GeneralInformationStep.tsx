@@ -12,6 +12,7 @@ import { planStepNames, PlanWizardStepId } from '../../constants';
 import { useCreatePlanFormContext } from '../../hooks/useCreatePlanFormContext';
 import { validateVmSelection } from '../../utils/vmValidation';
 import { MigrationTypeFieldId } from '../migration-type/constants';
+import { OtherSettingsFormFieldId, StaticIpSelectionMode } from '../other-settings/constants';
 import { CreatePlanStorageMapFieldId } from '../storage-map/constants';
 import { VmFormFieldId } from '../virtual-machines/constants';
 
@@ -37,6 +38,8 @@ const GeneralInformationStep: FC = () => {
 
   const handleSourceProviderChange = useCallback(() => {
     setValue(VmFormFieldId.Vms, {}, { shouldDirty: true, shouldValidate: true });
+    setValue(OtherSettingsFormFieldId.ExcludedNicsFromStaticIPs, {});
+    setValue(OtherSettingsFormFieldId.StaticIpSelectionMode, StaticIpSelectionMode.All);
 
     // Set validation error since no VMs are selected after provider change
     const validationError = validateVmSelection({});

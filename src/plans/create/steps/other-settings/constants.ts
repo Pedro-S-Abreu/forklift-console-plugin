@@ -8,6 +8,8 @@ export enum OtherSettingsFormFieldId {
   NBDEClevis = 'nbdeClevis',
   TransferNetwork = 'transferNetwork',
   PreserveStaticIps = 'preserveStaticIps',
+  StaticIpSelectionMode = 'staticIpSelectionMode',
+  ExcludedNicsFromStaticIPs = 'excludedNicsFromStaticIPs',
   RootDevice = 'rootDevice',
   MigrateSharedDisks = 'migrateSharedDisks',
   TargetPowerState = 'targetPowerState',
@@ -18,6 +20,11 @@ export enum DiskDecryptionType {
   New = 'new',
 }
 
+export enum StaticIpSelectionMode {
+  All = 'all',
+  Manual = 'manual',
+}
+
 export const DiskDecryptionTypeLabels: Record<DiskDecryptionType, ReturnType<typeof t>> = {
   [DiskDecryptionType.Existing]: t('Use an existing secret'),
   [DiskDecryptionType.New]: t('Enter passphrases'),
@@ -26,12 +33,14 @@ export const DiskDecryptionTypeLabels: Record<DiskDecryptionType, ReturnType<typ
 export const otherFormFieldLabels: Record<OtherSettingsFormFieldId, ReturnType<typeof t>> = {
   [OtherSettingsFormFieldId.DiskDecryptionPassPhrases]: t('Disk decryption passphrases'),
   [OtherSettingsFormFieldId.DiskDecryptionType]: t('Disk decryption type'),
+  [OtherSettingsFormFieldId.ExcludedNicsFromStaticIPs]: t('vNICs to preserve'),
   [OtherSettingsFormFieldId.ExistingLUKSSecret]: t('Secret'),
   [OtherSettingsFormFieldId.InstanceTypes]: t('Instance types'),
   [OtherSettingsFormFieldId.MigrateSharedDisks]: t('Migrate shared disks'),
   [OtherSettingsFormFieldId.NBDEClevis]: t('Use network-bound disk encryption (NBDE/Clevis)'),
   [OtherSettingsFormFieldId.PreserveStaticIps]: t('Preserve static IPs'),
   [OtherSettingsFormFieldId.RootDevice]: t('Root device'),
+  [OtherSettingsFormFieldId.StaticIpSelectionMode]: t('vNIC selection'),
   [OtherSettingsFormFieldId.TargetPowerState]: t('VM target power state'),
   [OtherSettingsFormFieldId.TransferNetwork]: t('Transfer network'),
 };

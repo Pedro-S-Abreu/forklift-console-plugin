@@ -38,6 +38,8 @@ const OtherSettingsReviewSection: FC<{ isLiveMigrationFeatureEnabled: boolean }>
     nbdeClevis,
     transferNetwork,
     preserveStaticIps,
+    staticIpSelectionMode,
+    excludedNicsFromStaticIPs,
     rootDevice,
     sharedDisks,
     targetPowerState,
@@ -54,6 +56,8 @@ const OtherSettingsReviewSection: FC<{ isLiveMigrationFeatureEnabled: boolean }>
       OtherSettingsFormFieldId.NBDEClevis,
       OtherSettingsFormFieldId.TransferNetwork,
       OtherSettingsFormFieldId.PreserveStaticIps,
+      OtherSettingsFormFieldId.StaticIpSelectionMode,
+      OtherSettingsFormFieldId.ExcludedNicsFromStaticIPs,
       OtherSettingsFormFieldId.RootDevice,
       OtherSettingsFormFieldId.MigrateSharedDisks,
       OtherSettingsFormFieldId.TargetPowerState,
@@ -85,10 +89,13 @@ const OtherSettingsReviewSection: FC<{ isLiveMigrationFeatureEnabled: boolean }>
         {isVsphere && (
           <>
             <VsphereOtherSettingsReviewItems
+              excludedNicsFromStaticIPs={excludedNicsFromStaticIPs}
               nbdeClevis={nbdeClevis}
               preserveStaticIps={preserveStaticIps}
               rootDevice={rootDevice}
               sharedDisks={sharedDisks}
+              staticIpSelectionMode={staticIpSelectionMode}
+              vms={vms}
             />
             <DiskDecryptionReviewItem
               diskDecryptionType={diskDecryptionType}

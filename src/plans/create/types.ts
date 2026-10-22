@@ -17,10 +17,8 @@ import type {
   OVirtNetwork,
   OVirtNicProfile,
   OVirtVM,
-  V1beta1Hook,
   V1beta1NetworkMap,
   V1beta1PlanSpecTransferNetwork,
-  V1beta1PlanSpecVmsLuks,
   V1beta1Provider,
   V1beta1StorageMap,
   V1NetworkAttachmentDefinition,
@@ -28,7 +26,6 @@ import type {
   VSphereVM,
 } from '@forklift-ui/types';
 import type { NetworkMapFieldId, NetworkMapping } from '@utils/mappings/networkMap';
-import type { TargetPowerStateValue } from '@utils/plans/constants';
 import type { StorageMapping, TargetStorage } from '@utils/storage/types';
 import type { MappingValue } from '@utils/types';
 
@@ -49,6 +46,7 @@ import type {
   DiskDecryptionType,
   DiskPassPhrase,
   OtherSettingsFormFieldId,
+  StaticIpSelectionMode,
 } from './steps/other-settings/constants';
 import type { CreatePlanStorageMapFieldId } from './steps/storage-map/constants';
 import type { VmFormFieldId } from './steps/virtual-machines/constants';
@@ -98,12 +96,14 @@ export type CreatePlanFormData = FieldValues & {
   [NetworkMapFieldId.NetworkMapName]: string;
   [OtherSettingsFormFieldId.DiskDecryptionPassPhrases]: DiskPassPhrase[];
   [OtherSettingsFormFieldId.DiskDecryptionType]: DiskDecryptionType;
+  [OtherSettingsFormFieldId.ExcludedNicsFromStaticIPs]: Record<string, string[]>;
   [OtherSettingsFormFieldId.ExistingLUKSSecret]: IoK8sApiCoreV1Secret | undefined;
   [OtherSettingsFormFieldId.InstanceTypes]: Record<string, string>;
   [OtherSettingsFormFieldId.MigrateSharedDisks]: boolean;
   [OtherSettingsFormFieldId.NBDEClevis]: boolean;
   [OtherSettingsFormFieldId.PreserveStaticIps]: boolean;
   [OtherSettingsFormFieldId.RootDevice]: string;
+  [OtherSettingsFormFieldId.StaticIpSelectionMode]: StaticIpSelectionMode;
   [OtherSettingsFormFieldId.TargetPowerState]: TargetPowerState;
   [OtherSettingsFormFieldId.TransferNetwork]: V1beta1PlanSpecTransferNetwork;
   [VmFormFieldId.Vms]: Record<string, ProviderVirtualMachine>;
@@ -118,30 +118,6 @@ export type MappingFieldIds = {
 export type CategorizedSourceMappings = {
   other: MappingValue[];
   used: MappingValue[];
-};
-
-export type CreatePlanParams = {
-  customScriptsConfigMap?: IoK8sApiCoreV1ConfigMap;
-  instanceTypes?: Record<string, string>;
-  luks?: V1beta1PlanSpecVmsLuks;
-  migrateSharedDisks?: boolean;
-  migrationType: MigrationTypeValue;
-  nbdeClevis?: boolean;
-  networkMap: V1beta1NetworkMap;
-  planDescription?: string;
-  planName: string;
-  planProject: string;
-  postHook?: V1beta1Hook;
-  preHook?: V1beta1Hook;
-  preserveStaticIps?: boolean;
-  rootDevice?: string;
-  sourceProvider: V1beta1Provider | undefined;
-  storageMap: V1beta1StorageMap;
-  targetPowerState: TargetPowerStateValue;
-  targetProject: string;
-  targetProvider: V1beta1Provider | undefined;
-  transferNetwork?: V1beta1PlanSpecTransferNetwork;
-  vms: ProviderVirtualMachine[];
 };
 
 type ResourceQueryResult<T> = [T, boolean, Error | null];
