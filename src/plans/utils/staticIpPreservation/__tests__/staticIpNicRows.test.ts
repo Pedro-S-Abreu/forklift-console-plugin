@@ -19,19 +19,36 @@ describe('getStaticIpNicRows', () => {
     const vms = [
       makeVm('vm-1', {
         guestNetworks: [
-          { ip: '192.0.2.10', mac: 'aa:bb:cc:dd:ee:01', origin: 'manual' },
+          {
+            ip: '192.0.2.10',
+            mac: 'aa:bb:cc:dd:ee:01',
+            network: 'shared-network',
+            origin: 'manual',
+          },
           { ip: '192.0.2.10', mac: 'AA:BB:CC:DD:EE:01', origin: 'MANUAL' },
           { ip: '2001:db8::10', mac: 'AA:BB:CC:DD:EE:01', origin: 'manual' },
-          { ip: '192.0.2.20', mac: 'AA:BB:CC:DD:EE:02', origin: 'dhcp' },
+          {
+            ip: '192.0.2.20',
+            mac: 'AA:BB:CC:DD:EE:02',
+            network: 'shared-network',
+            origin: 'dhcp',
+          },
         ],
         nics: [
-          { mac: 'AA:BB:CC:DD:EE:01', network: { name: 'shared-network' } },
-          { mac: 'AA:BB:CC:DD:EE:02', network: { name: 'shared-network' } },
+          { mac: 'AA:BB:CC:DD:EE:01', network: { id: 'network-1', kind: 'Network' } },
+          { mac: 'AA:BB:CC:DD:EE:02', network: { id: 'network-1', kind: 'Network' } },
         ],
       }),
       makeVm('vm-2', {
-        guestNetworks: [{ ip: '198.51.100.5', mac: 'AA:BB:CC:DD:EE:01', origin: 'manual' }],
-        nics: [{ mac: 'aa:bb:cc:dd:ee:01', network: { name: 'other-network' } }],
+        guestNetworks: [
+          {
+            ip: '198.51.100.5',
+            mac: 'AA:BB:CC:DD:EE:01',
+            network: 'other-network',
+            origin: 'manual',
+          },
+        ],
+        nics: [{ mac: 'aa:bb:cc:dd:ee:01', network: { id: 'network-2', kind: 'Network' } }],
       }),
       makeVm('ovirt-1', { nics: [{ mac: 'AA:BB:CC:DD:EE:99' }] }, 'ovirt'),
     ];
@@ -70,7 +87,7 @@ describe('getStaticIpNicRows', () => {
           null,
           {},
           { mac: 'aa:bb:02' },
-          { mac: 'AA:BB:CC:DD:EE:02' },
+          { mac: 'AA:BB:CC:DD:EE:02', network: { id: 'network-2', kind: 'Network' } },
           { mac: 'aa-bb-cc-dd-ee-02' },
         ],
       }),
@@ -80,7 +97,7 @@ describe('getStaticIpNicRows', () => {
       {
         ipAddresses: [],
         mac: 'AA:BB:CC:DD:EE:02',
-        networkName: '',
+        networkName: 'network-2',
         vmId: 'vm-2',
         vmName: 'VM vm-2',
       },

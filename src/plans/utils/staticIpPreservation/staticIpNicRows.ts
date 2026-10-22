@@ -24,28 +24,35 @@ const asArray = (value: unknown): unknown[] => (Array.isArray(value) ? value : [
 const normalizeMac = (mac: string): string =>
   mac.toLowerCase().replaceAll(':', '').replaceAll('-', '');
 
-const getManualIpAddressesByMac = (vm: Record<string, unknown>): Map<string, string[]> => {
+const getGuestNetworkDetailsByMac = (
+  vm: Record<string, unknown>,
+): { addressesByMac: Map<string, string[]>; networkNamesByMac: Map<string, string> } => {
   const addressesByMac = new Map<string, string[]>();
+  const networkNamesByMac = new Map<string, string>();
 
   for (const guestNetwork of asArray(vm.guestNetworks)) {
-    if (
-      isRecord(guestNetwork) &&
-      isNonEmptyString(guestNetwork.mac) &&
-      isNonEmptyString(guestNetwork.ip) &&
-      isNonEmptyString(guestNetwork.origin) &&
-      guestNetwork.origin.toLowerCase() === 'manual'
-    ) {
+    if (isRecord(guestNetwork) && isNonEmptyString(guestNetwork.mac)) {
       const mac = normalizeMac(guestNetwork.mac);
-      const { ip } = guestNetwork;
-      const addresses = addressesByMac.get(mac) ?? [];
-      if (!addresses.some((address) => address.toLowerCase() === ip.toLowerCase())) {
-        addresses.push(ip);
-        addressesByMac.set(mac, addresses);
+      if (isNonEmptyString(guestNetwork.network) && !networkNamesByMac.has(mac)) {
+        networkNamesByMac.set(mac, guestNetwork.network);
+      }
+
+      if (
+        isNonEmptyString(guestNetwork.ip) &&
+        isNonEmptyString(guestNetwork.origin) &&
+        guestNetwork.origin.toLowerCase() === 'manual'
+      ) {
+        const { ip } = guestNetwork;
+        const addresses = addressesByMac.get(mac) ?? [];
+        if (!addresses.some((address) => address.toLowerCase() === ip.toLowerCase())) {
+          addresses.push(ip);
+          addressesByMac.set(mac, addresses);
+        }
       }
     }
   }
 
-  return addressesByMac;
+  return { addressesByMac, networkNamesByMac };
 };
 
 export const getStaticIpNicRows = (vms: ProviderVirtualMachine[]): StaticIpNicRow[] => {
@@ -53,7 +60,7 @@ export const getStaticIpNicRows = (vms: ProviderVirtualMachine[]): StaticIpNicRo
 
   for (const vm of vms) {
     if (vm.providerType === PROVIDER_TYPES.vsphere && isRecord(vm)) {
-      const addressesByMac = getManualIpAddressesByMac(vm);
+      const { addressesByMac, networkNamesByMac } = getGuestNetworkDetailsByMac(vm);
       const seenMacs = new Set<string>();
 
       for (const nic of asArray(vm.nics)) {
@@ -66,7 +73,11 @@ export const getStaticIpNicRows = (vms: ProviderVirtualMachine[]): StaticIpNicRo
           const normalizedMac = normalizeMac(nic.mac);
           seenMacs.add(normalizedMac);
 
-          const networkName = isRecord(nic.network) ? nic.network.name : undefined;
+          const networkRef = isRecord(nic.network) ? nic.network : {};
+          const networkName =
+            networkNamesByMac.get(normalizedMac) ??
+            (isNonEmptyString(networkRef.name) ? networkRef.name : undefined) ??
+            networkRef.id;
           rows.push({
             ipAddresses: addressesByMac.get(normalizedMac) ?? [],
             mac: nic.mac,
