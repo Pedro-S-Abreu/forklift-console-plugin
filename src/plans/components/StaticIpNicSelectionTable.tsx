@@ -57,7 +57,7 @@ const StaticIpNicSelectionTable: FC<StaticIpNicSelectionTableProps> = ({
     >
       <Thead>
         <Tr>
-          <Th modifier="wrap">{t('Preserve')}</Th>
+          <Th modifier="nowrap">{t('Preserve')}</Th>
           <Th modifier="wrap">{t('Virtual machine')}</Th>
           <Th modifier="wrap">{t('Source network')}</Th>
           <Th modifier="wrap">{t('MAC address')}</Th>
