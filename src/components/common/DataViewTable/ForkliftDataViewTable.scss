@@ -17,6 +17,8 @@
   &[data-column-widths-customized='false'] th[data-resizable-column='true'] {
     // Keep headers readable by wrapping them or scrolling the table when space is tight.
     --pf-v6-c-table--cell--MaxWidth: none;
+    --pf-v6-c-table--cell--Overflow: visible;
+    --pf-v6-c-table--cell--TextOverflow: clip;
     --pf-v6-c-table--cell--WhiteSpace: normal;
   }
 
